@@ -1,0 +1,51 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+*** Descriptive statistics ***
+
+# 1. Read the data tuno.txt into R.
+```{r}
+data <- read.delim("tuno.txt",header = TRUE, sep = " ", dec = ".")
+head(data,6)
+```
+
+
+# 2. Make a graphical presentation of data or parts of the data, and present some summary statistics.
+
+# Summary statistics:
+```{r}
+
+summary(data[c(0,4:6)],digits = 2)
+
+```
+
+#Graphical presentation:
+
+
+```{r}
+library(ggpubr)
+gghistogram(data, x = "pow.obs", bins = 15, 
+             add = "mean")
+```
+
+
+```{r}
+# Are some months on average more windy?
+library(tidyverse)
+
+mean_by_month <- data %>% 
+  group_by(month) %>% 
+  summarize(averaged.power = mean(pow.obs))
+
+plot(mean_by_month)
+```
+
+```{r}
+#does a high prediction equal a high production?
+# Indeed yes!
+plot(data$ws30,data$pow.obs)
+```
+
+
