@@ -23,29 +23,90 @@ summary(data[c(0,4:6)],digits = 2)
 
 #Graphical presentation:
 
-
 ```{r}
+# Distribution of the power production
+
 library(ggpubr)
-gghistogram(data, x = "pow.obs", bins = 15, 
+gghistogram(data, x = "pow.obs", bins = 30, 
              add = "mean")
+
+ggboxplot(data, y = "pow.obs", width = 0.5)
+
+plot(data$r.day,data$pow.obs)
+```
+```{r}
+# Number of rows with 0 in them:
+colSums(data == 0)
 ```
 
 
 ```{r}
-# Are some months on average more windy?
+# do we in some months produce more power?
 library(tidyverse)
 
-mean_by_month <- data %>% 
+mean_by_month_power <- data %>% 
   group_by(month) %>% 
   summarize(averaged.power = mean(pow.obs))
 
-plot(mean_by_month)
+plot(mean_by_month_power)
+
+# Are some months on average more windy?
+mean_by_month_wind <- data %>% 
+  group_by(month) %>% 
+  summarize(averaged.wind= mean(ws30))
+
+plot(mean_by_month_wind)
+
 ```
 
 ```{r}
-#does a high prediction equal a high production?
+#does a high wind prediction equal a high power production?
 # Indeed yes!
 plot(data$ws30,data$pow.obs)
 ```
+```{r}
+# correlation matrix with power, wind speed and wind direction:
+
+cor(data)
+```
+
+# Normalize the power production before modelling:
+```{r}
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))}
+
+data$pow.obs.norm<-normalize(data$pow.obs)
+
+data
+
+```
+
+# 3. Simple models:
+```{r}
+data$pow.obs.log<-log(data$pow.obs)
+
+qqnorm(data$pow.obs.norm, pch = 1, frame = FALSE)
+qqline(data$pow.obs.norm, col = "steelblue", lwd = 2)
+```
+The curvature of the qq-plot indicates that a beta distribution might fit the data well.
+**http://onlinestatbook.com/2/advanced_graphs/q-q_plots.html
+```{r}
+
+```
+
+
+```{r}
+library(fitdistrplus)
+fitdist (data$pow.obs.norm, "beta")
+
+```
+
+
+
+
+
+
+
+
 
 
