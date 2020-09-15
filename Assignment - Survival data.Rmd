@@ -3,22 +3,95 @@ title: "R Notebook"
 output: html_notebook
 ---
 
-*** Descriptive statistics ***
+*** Analysis of binary data ***
 
 # 1. Read the Logistic.txt into R.
 
+```{r}
+data <- read.delim("Logistic.txt",header = TRUE, sep = "", dec = ".")
+head(data,2) 
 
+```
+*** Fitting data to binomial distribution ***
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
-
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
 
 ```{r}
-plot(cars)
+f <- c(25+44, 170+168)
+y <- seq(0,1)
+fitdist(y, f, "binom", plot=TRUE, xlab="Number of males",
+	main="Distribution of males in families of 8 children")
+```
+*** Comparing the two groups ***
+Since the p-value is below 0.05, we can reject the null hypothesis, and the two group are significantly different from each other.
+
+```{r}
+# Kode er tyvstjålet fra Jan
+## AIDS yes
+n1 <- 25+44
+x1 <- 25
+
+## AIDS no
+x2 <- 170
+n2 <- 170+168
+
+## chiÂ² test directly in R
+prop.test(c(x1,x2), c(n1, n2))
+
+
+## Log odds
+(theta <- log(x1/(n1-x1)*(n2-x2)/x2))
+
+
+## Plot
+loglik.fun <- function(theta, eta, x, n){
+    a <- exp(theta + eta)
+    b <- exp(eta)
+    x[1] * theta + (x[1] + x[2]) * eta - n[1] *
+        log(1 + a) - n[2] * log(1 + b)
+}
+
+
+eta <- seq(-0.5,0.5,length=100)
+theta <- seq(-2,2,length=100)
+
+
+par(mfrow=c(1,2))
+ll<- outer(theta,eta,'loglik.fun', x=c(x1,x2), n=c(n1,n2))
+like<- exp(ll-max(ll))
+contour(theta,eta,like,level=c(0.05,.1,.3,.5,.7,.9),
+        xlab=expression(theta),
+        ylab=expression(eta))
+  title(expression('Likelihood contour'))
+lines(c(0,0),c(0,2),lty=2,col=2)
+
+## profile likelihood
+lp.theta <- function(theta,x,n){
+    fun.tmp <- function(eta,theta,x,n){
+        loglik.fun(theta, eta, x, n)
+    }
+    ## interval from plot
+    optimise(fun.tmp,c(-20,20),theta=theta,
+             x=x, n=n,maximum=TRUE)$objective
+}
+
+
+lp <- sapply(theta,lp.theta,x=c(x1,x2),n=c(n1,n2))
+
+lp <- lp - max(lp)
+
+plot(theta,exp(lp),type="l")
+lines(c(-2,10),exp(-qchisq(0.95,df=1)/2)*c(1,1), col=2)
+lines(c(0,0),c(0,1),col=4,lty=2,lwd=2)
+ title(expression('Profile Likelihood'))
+## So we cannot reject that p1=p2
+
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
+
+
+
+
+
