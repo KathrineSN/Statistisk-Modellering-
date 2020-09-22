@@ -76,10 +76,6 @@ data$pow.obs.norm<-normalize(data$pow.obs)
 head(data,6)
 
 ```
-```{r}
-t=c(1,2,3,4)
-normalize(t)
-```
 
 ### 3. Simple models:
 ```{r}
@@ -163,8 +159,153 @@ plot(shape2,exp(-lp.shape2.plot), type="l", xlab="Profile Likelihood Shape 2")
 lines(c(-2,10),exp(-qchisq(0.95,df=1)/2)*c(1,1),col=2)
 
 ```
+Plot distribution of power.obs and the optimal fit for beta distribution.
+```{r}
+# Add a Beta Curve
+x <- data$pow.obs.norm
+h<-hist(x, xlab="Power Obs Norm",
+   main="Histogram with Beta Curve")
+xfit<-seq(min(x),max(x),length=40)
+yfit<-dbeta(xfit,opt.shape1,opt.shape2)
+yfit <- yfit*diff(h$mids[1:2])*length(x)
+lines(xfit, yfit, col="blue", lwd=2)
+```
+AIC is calculated using the formular:
+$$AIC=2k-2ln(\hat{L})$$
+where L is the maximum value for the likelihood function for the model. 
+```{r}
+# Maximum value of the likelihood function for the model
+(AIC.beta =2*2-2*log(-Beta.likelihood(opt.shape1,opt.shape2)))
+```
 
-What next?
+
+#### Fitting a gamma distribution to the data.
+
+The density function for a gamma distribution is: 
+$$f(x) = \frac{(\frac{x-\mu}{\beta})^{\gamma - 1}\exp{(-\frac{x-\mu}
+{\beta}})} {\beta\Gamma(\gamma)}  \hspace{.2in}  x \ge \mu; \gamma,
+\beta > 0$$
+
+```{r}
+Gamma.likelihood=function(shape, rate){ -sum(dgamma(x=data$pow.obs.norm,shape=shape, rate=rate, log=TRUE))}
+
+```
+
+Now the optimal value of the two shape parameters must be found. This can be done using profile likelihood. 
+
+```{r}
+#Profile likelihood for shape 
+shape=seq(0.1, 0.9,by=0.001)
+rate=seq(0.1, 0.9,by=0.01)
+
+
+lp.gamma.shape= function(shape){
+  ## Function for inner optimization:
+  fun.tmp<- function(shape, rate){
+    Gamma.likelihood(shape,rate)
+  }
+  # Find the profile likelihood
+  optimise(fun.tmp,c(0.1,10), shape=shape)$objective
+}
+
+(opt.gamma.shape=optimise(lp.gamma.shape, c(0.1,10))$minimum)
+```
+Find the optimal value for the rate parameter. 
+
+```{r}
+#Profile likelihood for rate 
+
+lp.gamma.rate= function(rate){
+  ## Function for inner optimization:
+  fun.tmp<- function(shape, rate){
+    Gamma.likelihood(shape,rate)
+  }
+  # Find the profile likelihood
+  optimise(fun.tmp,c(0.1,10), rate=rate)$objective
+}
+
+(opt.gamma.rate=optimise(lp.gamma.rate, c(0.1,10))$minimum)
+```
+
+Plot distribution of power.obs and the optimal fit for beta distribution.
+```{r}
+# Add a Gamma Curve
+x <- data$pow.obs.norm
+h<-hist(x, xlab="Power Obs Norm",
+   main="Histogram with Gamma Curve")
+xfit<-seq(min(x),max(x),length=40)
+yfit<-dgamma(xfit,opt.gamma.shape,opt.gamma.rate)
+yfit <- yfit*diff(h$mids[1:2])*length(x)
+lines(xfit, yfit, col="blue", lwd=2)
+```
+Calculating AIC for the gamma fit. 
+
+```{r}
+# Maximum value of the likelihood function for the model
+k = 2 #Number of parameters
+(AIC.gamma =2*k-2*log(-Gamma.likelihood(opt.gamma.shape,opt.gamma.rate)))
+```
+#### Fitting a log-normal distribution to the data.
+
+The density function for a gamma distribution is: 
+$$\frac{1}{x \sigma \sqrt{2 \pi}} \exp \left(-\frac{(\ln x-\mu)^{2}}{2 \sigma^{2}}\right)$$
+
+```{r}
+LogNormal.likelihood=function(meanlog, sdlog){ -sum(dlnorm(x=data$pow.obs.norm,meanlog=meanlog, sdlog=sdlog, log=TRUE))}
+```
+
+Profile likelihood functions for the log-normal distribution. 
+
+```{r}
+#Profile likelihood for meanlog
+meanlog=seq(0.1, 0.9,by=0.001)
+sdlog=seq(0.1, 0.9,by=0.01)
+
+
+lp.LogNormal.meanlog= function(meanlog){
+  ## Function for inner optimization:
+  fun.tmp<- function(meanlog, sdlog){
+    LogNormal.likelihood(meanlog,sdlog)
+  }
+  # Find the profile likelihood
+  optimise(fun.tmp,c(0.1,10), meanlog=meanlog)$objective
+}
+
+(opt.LogNormal.meanlog=optimise(lp.LogNormal.meanlog, c(0.1,10))$minimum)
+```
+Find the optimal value for sdlog. 
+
+```{r}
+#Profile likelihood for sdlog
+lp.LogNormal.sdlog= function(sdlog){
+  ## Function for inner optimization:
+  fun.tmp<- function(meanlog, sdlog){
+    LogNormal.likelihood(meanlog,sdlog)
+  }
+  # Find the profile likelihood
+  optimise(fun.tmp,c(0.1,10), sdlog=sdlog)$objective
+}
+
+(opt.LogNormal.sdlog=optimise(lp.LogNormal.sdlog, c(0.1,10))$minimum)
+```
+Plot distribution of power.obs and the optimal fit for log-normal distribution.
+```{r}
+# Add a Log-normal Curve
+x <- data$pow.obs.norm
+h<-hist(x, xlab="Power Obs Norm",
+   main="Histogram with Log-normal Curve")
+xfit<-seq(min(x),max(x),length=40)
+yfit<-dlnorm(xfit,opt.LogNormal.meanlog,opt.LogNormal.sdlog)
+yfit <- yfit*diff(h$mids[1:2])*length(x)
+lines(xfit, yfit, col="blue", lwd=2)
+```
+
+Calculate AIC for log-normal distribution. 
+```{r}
+# Maximum value of the likelihood function for the model
+k=2
+(AIC.LogNormal =2*k-2*log(-LogNormal.likelihood(opt.LogNormal.meanlog,opt.LogNormal.sdlog)))
+```
 
 
 

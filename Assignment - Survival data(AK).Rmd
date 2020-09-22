@@ -34,8 +34,10 @@ binomial.log.likelihood = function(x,size,theta){
 ### Fit the Binomial separately to the two distributions and test if there is a difference between the groups.
 
 ```{r}
-
+#Theta for patients treated with AZT. This is the probability of having AIDS when treated with AZT. 
 (theta_AZT_yes.opt=optimize(binomial.log.likelihood, c(0.01,0.99),x=data$AIDS_yes[1],size=data$n[1])$minimum)
+
+#Theta for patients treated without AZT. This is the probability of having AIDS without treament. 
 (theta_AZT_no.opt=optimize(binomial.log.likelihood, c(0.01,0.99),x=data$AIDS_yes[2],size=data$n[2])$minimum)
 ```
 
@@ -56,12 +58,57 @@ t=x+y
 ```
 With a p-value of 0.008816159 we have strong evidence against the null hypothesis meaning that the two groups does not follow the same distribution.
 
-To proceed with a likelihood analysis, the number of people with AIDS (X) in the group treated with AZT is $B(m,\pi_x)$ and independently the number of people with AIDS (Y) in the second group is $B(n,\pi_y)$.
+To proceed with a likelihood analysis, the number of people with AIDS (X) in the group treated with AZT is $B(m,\pi_x)$ and independently the number of people with AIDS (Y)  in the second group is $B(n,\pi_y)$.
 
 On observing x and y the joint likelihood of $(\pi_x,\pi_y)$:
 $$L(\pi_x, \pi_y)=\pi_x^x*(1-\pi_x)^{m-x}\pi_y^y(1-\pi_y)^{n-y}$$
+
+The log odds-ratio is defined by:
+$$\theta=\log \frac{\pi_{x} /\left(1-\pi_{x}\right)}{\pi_{y} /\left(1-\pi_{y}\right)}$$
 ```{r}
-log((x/(m-x))/(y/(n-y)))
+(theta.compare = log((theta_AZT_yes.opt/(1-theta_AZT_yes.opt))/(theta_AZT_no.opt/(1- theta_AZT_no.opt))))
+
+```
+To make a profile likelihood function for $\theta$ as stated above, the eta is calculated:
+
+$$\eta=\log \frac{\pi_{y}}{1-\pi_{y}}$$
+With $\eta$ the joint likelihood function for $\theta$ and $\eta$ can be found:
+
+$$L(\theta, \eta)=e^{\theta x} e^{\eta(x+y)}\left(1+e^{\theta+\eta}\right)^{-m}\left(1+e^{\eta}\right)^{-n}$$
+This joint likelihood function can be used to find the profile likelihood for $\theta$.
+
+```{r}
+
+#calculate eta
+eta = log(theta_AZT_no.opt/(1- theta_AZT_no.opt))
+
+joint.likelihood = function(theta,eta){
+  -sum(exp(theta_AZT_yes.opt)*exp(eta*(x+y))*(1+exp(theta+eta))^(-m)*(1+exp(eta)^(-n)))
+}
+
+```
+
+Profile likelihood for the joint likelihood function. 
+```{r}
+(optimize(joint.likelihood,c(0.01,1000),eta=eta)$minimum)
+```
+
+
+```{r}
+#Profile likelihood for theta
+theta=seq(0.1, 4,by=0.01)
+eta=seq(0.1, 4,by=0.01)
+
+lp.theta= function(theta){
+  ## Function for inner optimization:
+  fun.tmp<- function(theta, eta){
+    joint.likelihood(theta, eta)
+  }
+  # Find the profile likelihood
+  optimise(fun.tmp,c(0.1,10), theta=theta)$objective
+}
+
+(opt.theta=optimise(lp.theta, c(0.1,10))$minimum)
 ```
 
 
