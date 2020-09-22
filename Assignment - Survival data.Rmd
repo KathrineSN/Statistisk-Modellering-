@@ -14,7 +14,6 @@ head(data,2)
 ```
 *** Fitting data to binomial distribution ***
 
-
 ```{r}
 f <- c(25+44, 170+168)
 y <- seq(0,1)
@@ -26,6 +25,7 @@ Since the p-value is below 0.05, we can reject the null hypothesis, and the two 
 
 ```{r}
 # Kode er tyvstjålet fra Jan
+
 ## AIDS yes
 n1 <- 25+44
 x1 <- 25

@@ -1,0 +1,77 @@
+---
+title: Assignment - Financial Data
+output: html_notebook
+---
+
+## 1: Descriptive statistics and simple models
+```{r}
+setwd("/Users/akterminsprove/Desktop/DTU/5. Semester/02418 Statistisk Modellering Teori og Anvendelser/Assignments/Financial Data")
+data <- read.csv("finance_data.csv", header=TRUE,sep=";")
+data$time=as.Date(data$time)
+head(data,6)
+```
+
+### a) Present the data, estimate the parameters in a normal model, and asses if the normal model is appropriate.
+
+A scatter plot and a qq-plot of the data is made:
+```{r}
+plot(data$time,data$SLV)
+qqnorm(data$SLV, pch = 1, frame = FALSE)
+qqline(data$SLV, col = "steelblue", lwd = 2)
+```
+It seems reasonable that the data could fit a normal distribution, though some deviations at the ends.
+
+Ignoring irrelevant constant terms the log-likelihood of a normal distribution can be formulated as:
+$$ l(\mu,\sigma^2)=\frac{-n}{2} log(\sigma^2)-\frac{1}{2\sigma^2}\cdot \sum_{i}(x_i-\mu)^2$$
+Where the maximum likelihood estimates are:
+$$\hat{\mu}= \bar{x}$$
+$$\hat{\sigma^2}=\frac{1}{n}\cdot \sum_i (x_i-\bar{x})^2$$
+```{r}
+normal.likelihood=function(mu,sigma2){
+  -sum(dnorm(x=data$SLV,mu,sigma2,log=TRUE))}
+
+```
+
+
+```{r}
+#Profile likelihood for shape1 
+mu=seq(1, 10,by=0.0001)
+sigma2=seq(0.01, 5,by=0.01)
+
+
+lp.mu= function(mu){
+  ## Function for inner optimization:
+  fun.tmp<- function(mu, sigma2){
+    normal.likelihood(mu,sigma2)
+  }
+  # Find the profile likelihood
+  optimise(fun.tmp,c(0.001,10), mu=mu)$objective
+}
+
+(opt.mu=optimise(lp.mu, c(0.001,10))$minimum)
+
+```
+
+```{r}
+#Profile likelihood for shape1 
+mu=seq(1, 10,by=0.0001)
+sigma2=seq(0.01, 5,by=0.01)
+
+
+lp.sigma2= function(sigma2){
+  ## Function for inner optimization:
+  fun.tmp<- function(mu, sigma2){
+    normal.likelihood(mu,sigma2)
+  }
+  # Find the profile likelihood
+  optimise(fun.tmp,c(0.001,10), sigma2=sigma2)$objective
+}
+
+(opt.mu=optimise(lp.sigma2, c(0.001,10))$minimum)
+```
+
+
+#### b) Hypothesize a model that could fit the data better (Hint: consider tail probabilities), and compare with the normal model estimated above
+
+A model that considers the tail probabilities is a Cauchy model.
+

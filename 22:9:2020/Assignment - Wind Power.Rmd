@@ -1,0 +1,175 @@
+---
+title: "Assignment Wind Power"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+# Descriptive statistics 
+
+### 1. Read the data tuno.txt into R.
+```{r}
+data <- read.delim("tuno.txt",header = TRUE, sep = " ", dec = ".")
+head(data,6)
+```
+
+
+### 2. Make a graphical presentation of data or parts of the data, and present some summary statistics.
+
+#### Summary statistics:
+```{r}
+summary(data[c(0,4:6)],digits = 2)
+```
+
+#### Graphical presentation:
+```{r}
+# Distribution of the power production
+
+library(ggpubr)
+
+gghistogram(data, x = "pow.obs", bins = 30, 
+             add = "mean")
+
+ggboxplot(data, y = "pow.obs", width = 0.5)
+
+plot(data$r.day,data$pow.obs)
+```
+
+
+
+```{r}
+# do we in some months produce more power?
+library(tidyverse)
+
+mean_by_month_power <- data %>% 
+  group_by(month) %>% 
+  summarize(averaged.power = mean(pow.obs))
+
+plot(mean_by_month_power)
+
+# Are some months on average more windy?
+mean_by_month_wind <- data %>% 
+  group_by(month) %>% 
+  summarize(averaged.wind= mean(ws30))
+
+plot(mean_by_month_wind)
+
+```
+
+```{r}
+#does a high wind prediction equal a high power production?
+# Indeed yes!
+plot(data$ws30,data$pow.obs)
+```
+```{r}
+# correlation matrix with power, wind speed and wind direction:
+cor(data)
+```
+
+#### Normalize the power production before modelling:
+```{r}
+normalize <- function(x) {
+  return ((x+0.01 - min(x)) / (max(x) - min(x)+0.04))}
+
+data$pow.obs.norm<-normalize(data$pow.obs)
+
+head(data,6)
+
+```
+```{r}
+t=c(1,2,3,4)
+normalize(t)
+```
+
+### 3. Simple models:
+```{r}
+data$pow.obs.norm.log<-log(data$pow.obs.norm)
+
+qqnorm(data$pow.obs.norm, pch = 1, frame = FALSE)
+qqline(data$pow.obs.norm, col = "steelblue", lwd = 2)
+```
+The curvature of the qq-plot indicates that a beta distribution might fit the data well.
+**http://onlinestatbook.com/2/advanced_graphs/q-q_plots.html
+
+
+#### Fitting a beta distribution to the data.
+The likelihood function for the wind data, can be defined as a sum of the log density functions $$l(\theta)=\sum_{i=1}^{n}log(p_{\theta}(x_{i}))$$
+
+where $p_{\theta}$ in this case is the beta density function
+given as:
+$$f(x) = \frac{(x-a)^{p-1}(b-x)^{q-1}}{B(p,q) (b-a)^{p+q-1}}
+\hspace{.3in} a \le x \le b; p, q > 0$$
+
+where p and q are the shape parameters, a and b are the lower and upper bounds, respectively, of the distribution, and B(p,q) is the beta function. The beta function has the formula
+$$B(\alpha,\beta) = \int_{0}^{1} {t^{\alpha-1}(1-t)^{\beta-1}dt}$$
+The likelihood function can easily be implemented in R:
+```{r}
+Beta.likelihood=function(shape1, shape2){ -sum(dbeta(x=data$pow.obs.norm,shape1=shape1, shape2=shape2, log=TRUE))}
+```
+
+Now the optimal value of the two shape parameters must be found. This can be done using profile likelihood, the profile likelihood is defined as:
+Let $(\theta, \delta)$ be the full parameter and $\theta$ the parameter of interest. Given the joint likelihood $L(\theta, \delta)$ the profile likelihood of $\theta$ is 
+$$L(\theta)=max_{\delta}L(\theta, \delta)$$
+Where the maximation is performed at fixed value of $\theta$ .
+
+```{r}
+#Profile likelihood for shape1 
+shape1=seq(0.35, 0.68,by=0.001)
+shape2=seq(0.8, 1.6,by=0.01)
+
+
+lp.shape1= function(shape1){
+  ## Function for inner optimization:
+  fun.tmp<- function(shape1, shape2){
+    Beta.likelihood(shape1,shape2)
+  }
+  # Find the profile likelihood
+  optimise(fun.tmp,c(0.1,10), shape1=shape1)$objective
+}
+
+(opt.shape1=optimise(lp.shape1, c(0.1,10))$minimum)
+
+
+```
+
+```{r}
+#Profile likelihood for shape2
+
+lp.shape2= function(shape2){
+  ## Function for inner optimization:
+  fun.tmp<- function(shape1, shape2){
+    Beta.likelihood(shape1,shape2)
+  }
+  # Find the profile likelihood
+  optimise(fun.tmp,c(0.1,10), shape2=shape2)$objective
+}
+
+(opt.shape2=optimise(lp.shape2, c(0.1,10))$minimum)
+```
+
+This means, that the MLE for the two shape parameters are $shape1=0.5051217$ and $shape2=1.147125$.
+
+```{r}
+
+# Profile likelihoods:
+lp.shape1.plot= sapply(shape1, lp.shape1)
+lp.shape2.plot= sapply(shape2, lp.shape2)
+
+par(mfrow=c(2,1), mar=c(3.3,3.3,1,1),mgp=c(2,0.7,0))
+plot(shape1,exp(-lp.shape1.plot), type="l", xlab="Profile Likelihood Shape 1")
+lines(c(-2,10),exp(-qchisq(0.95,df=1)/2)*c(1,1),col=2)
+
+plot(shape2,exp(-lp.shape2.plot), type="l", xlab="Profile Likelihood Shape 2")
+lines(c(-2,10),exp(-qchisq(0.95,df=1)/2)*c(1,1),col=2)
+
+```
+
+What next?
+
+
+
+
+
+
+
+

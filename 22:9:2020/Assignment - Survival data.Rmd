@@ -1,0 +1,72 @@
+---
+title: "Assignment Survival Data"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+#Analysis of binary data
+
+###  Read the Logistic.txt into R.
+
+```{r}
+data <- read.delim("Logistic.txt",header = TRUE, sep = "", dec = ".")
+data$AIDS_no=data$n-data$AIDS_yes
+head(data,2) 
+```
+The data consist of patients being treated with AZT and the number of patients with AIDS, as well as patients not being treated with AZT and the number of patients having AIDS. It looks like more patients get AIDS if they are not treated with AZT.
+
+### Fitting data to binomial distribution (i.e. consider all data as coming from the same population)
+The log-likelihood of the binomial distribution is:
+$$l(\theta)=\sum_{k=0}^{n}k\cdot log(\theta)+(n-k)\cdot log(1-\theta)+c(n,k)$$
+where n is the number of patients, k is the number of patient with AIDS. Since it is consider as coming from the same population i.e. follow the same distibution, the data is fitted to one binomial distribution.
+
+```{r}
+
+#Formulating the likelihood function
+binomial.log.likelihood = function(x,size,theta){
+  -(sum(dbinom(x=x,size=size,prob=theta, log=TRUE)))}
+
+(theta.opt=optimize(binomial.log.likelihood, c(0.01,0.99),x=sum(data$AIDS_yes),size=sum(data$n))$minimum)
+
+```
+
+### Fit the Binomial separately to the two distributions and test if there is a difference between the groups.
+
+```{r}
+
+(theta_AZT_yes.opt=optimize(binomial.log.likelihood, c(0.01,0.99),x=data$AIDS_yes[1],size=data$n[1])$minimum)
+(theta_AZT_no.opt=optimize(binomial.log.likelihood, c(0.01,0.99),x=data$AIDS_yes[2],size=data$n[2])$minimum)
+```
+
+
+The null hypothesis is that the two distributions are equal meaning that if AZT_yes follows $B(m,\pi_x)$ and AZT_no follows $B(n,\pi_y)$ $\pi_x=\pi_y$.
+```{r}
+x=data$AIDS_yes[1]
+y=data$AIDS_no[1]
+m=sum(data$AIDS_yes)
+n=sum(data$AIDS_no)
+N=m+n
+t=x+y
+
+#The standard test of equality of proportions is the famous chi-squared test
+(chi.squared.test=N*(x*(n-y)-y*(m-x))^2/(m*n*t*(N-t)))
+
+(pchisq(chi.squared.test, df=1, lower.tail=FALSE))
+```
+With a p-value of 0.008816159 we have strong evidence against the null hypothesis meaning that the two groups does not follow the same distribution.
+
+To proceed with a likelihood analysis, the number of people with AIDS (X) in the group treated with AZT is $B(m,\pi_x)$ and independently the number of people with AIDS (Y) in the second group is $B(n,\pi_y)$.
+
+On observing x and y the joint likelihood of $(\pi_x,\pi_y)$:
+$$L(\pi_x, \pi_y)=\pi_x^x*(1-\pi_x)^{m-x}\pi_y^y(1-\pi_y)^{n-y}$$
+```{r}
+log((x/(m-x))/(y/(n-y)))
+```
+
+
+
+
+
+
+
