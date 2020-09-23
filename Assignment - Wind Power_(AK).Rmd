@@ -175,7 +175,7 @@ $$AIC=2k-2ln(\hat{L})$$
 where L is the maximum value for the likelihood function for the model. 
 ```{r}
 # Maximum value of the likelihood function for the model
-(AIC.beta =2*2-2*log(-Beta.likelihood(opt.shape1,opt.shape2)))
+(AIC.beta =2*2-2*(-Beta.likelihood(opt.shape1,opt.shape2)))
 ```
 
 
@@ -243,7 +243,7 @@ Calculating AIC for the gamma fit.
 ```{r}
 # Maximum value of the likelihood function for the model
 k = 2 #Number of parameters
-(AIC.gamma =2*k-2*log(-Gamma.likelihood(opt.gamma.shape,opt.gamma.rate)))
+(AIC.gamma =2*k-2*(-Gamma.likelihood(opt.gamma.shape,opt.gamma.rate)))
 ```
 #### Fitting a log-normal distribution to the data.
 
@@ -304,7 +304,7 @@ Calculate AIC for log-normal distribution.
 ```{r}
 # Maximum value of the likelihood function for the model
 k=2
-(AIC.LogNormal =2*k-2*log(-LogNormal.likelihood(opt.LogNormal.meanlog,opt.LogNormal.sdlog)))
+(AIC.LogNormal =2*k-2(-LogNormal.likelihood(opt.LogNormal.meanlog,opt.LogNormal.sdlog)))
 ```
 
 
