@@ -34,7 +34,7 @@ normal.likelihood=function(mu,sigma2){
 
 
 ```{r}
-#Profile likelihood for shape1 
+#Profile likelihood for mu 
 mu=seq(1, 10,by=0.0001)
 sigma2=seq(0.01, 5,by=0.01)
 
@@ -67,11 +67,64 @@ lp.sigma2= function(sigma2){
   optimise(fun.tmp,c(0.001,10), sigma2=sigma2)$objective
 }
 
-(opt.mu=optimise(lp.sigma2, c(0.001,10))$minimum)
+(opt.sigma2=optimise(lp.sigma2, c(0.001,10))$minimum)
+```
+
+```{r}
+normal.likelihood(opt.mu,opt.sigma2)
+```
+
+```{r}
+x=data$SLV
+h<-hist(x, xlab="Power Obs Norm",
+   main="Histogram with Normal Curve")
+xfit<-seq(min(x),max(x),length=40)
+yfit<-dnorm(xfit,opt.mu,opt.sigma2)
+yfit <- yfit*diff(h$mids[1:2])*length(x)
+lines(xfit, yfit, col="blue", lwd=2)
+```
+AIC function:
+```{r}
+AIC=function(nll,k){
+  2*k-2*(-nll)
+}
+
+
+(AIC.normal=AIC(normal.likelihood(opt.mu,opt.sigma2),2))
 ```
 
 
 #### b) Hypothesize a model that could fit the data better (Hint: consider tail probabilities), and compare with the normal model estimated above
 
-A model that considers the tail probabilities is a Cauchy model.
+A model that considers the tail probabilities is a t-distribution with $v$ degrees of freedom, if $v=1$ we obtain the cauchy model, while $v \rightarrow \infinity$ gives the normal distribution
+```{r}
+mean
+```
 
+```{r}
+library(metRology)
+t.likelihood=function(params){
+  -sum(dt.scaled(x=data$SLV, df=params[1], mean = params[2], sd = params[3], log = TRUE))}
+```
+
+```{r}
+(opt.t=nlminb(c(1,1,1),t.likelihood))
+```
+
+```{r}
+x=data$SLV
+h<-hist(x, xlab="Power Obs Norm",
+   main="Histogram with t-curve Curve")
+xfit<-seq(min(x),max(x),length=40)
+yfit<-dt.scaled(xfit, df=opt.t$par[1],mean = opt.t$par[2],sd =opt.t$par[3])
+yfit <- yfit*diff(h$mids[1:2])*length(x)
+lines(xfit, yfit, col="blue", lwd=2)
+```
+
+```{r}
+(AIC.t=AIC(t.likelihood(opt.t$par),3))
+```
+
+#### c) represent the final model (i.e. relevant keynumbers for the estimates)
+
+ confidence intervaller på parameterne etc.. 
