@@ -75,45 +75,59 @@ $$\eta=\log \frac{\pi_{y}}{1-\pi_{y}}$$
 With $\eta$ the joint likelihood function for $\theta$ and $\eta$ can be found:
 
 $$L(\theta, \eta)=e^{\theta x} e^{\eta(x+y)}\left(1+e^{\theta+\eta}\right)^{-m}\left(1+e^{\eta}\right)^{-n}$$
-This joint likelihood function can be used to find the profile likelihood for $\theta$.
-
+The MLE for this likelihood function is:
+$$\hat{\theta}=log(\frac{x/(m-x)}{y/(n-y)})$$
+Calculate optimal theta for the joint likelihood
 ```{r}
-
-#calculate eta
-eta = log(theta_AZT_no.opt/(1- theta_AZT_no.opt))
-
-joint.likelihood = function(theta,eta){
-  -sum(exp(theta_AZT_yes.opt)*exp(eta*(x+y))*(1+exp(theta+eta))^(-m)*(1+exp(eta)^(-n)))
-}
+(that= log(x/(m-x)*(n-y)/y))
+se2<- 1/x + 1/(m-x) + 1/y + 1/(n-y)
+se<- sqrt(se2)
 
 ```
 
-Profile likelihood for the joint likelihood function. 
+$\hat{\theta}}=-0.721766$
+Plot the joint likelihood
 ```{r}
-(optimize(joint.likelihood,c(0.01,1000),eta=eta)$minimum)
+ehat<- log(y/(n-y))
+  #print(c(that,ehat))
+  cat('theta-hat=',that,',  se=',se,'\n')
+
+# plots
+par(mfrow=c(1,1))
+th<- seq(that-2*se,that+3*se,len=30)
+et<- seq(ehat-4,ehat+2,len=30)
+
+fun1<- function(theta,eta){
+      a <- exp(theta+eta)
+      b<- exp(eta)
+      x*theta + (x+y)*eta - m*log(1+a) - n*log(1+b)
+      }
+
+ll<- outer(th,et,'fun1')
+like<- exp(ll-max(ll))
+
+lik1<- apply(like,1,max)
+plot(th,lik1,type='n',xlab=expression(theta),
+     ylab='Likelihood')
+  lines(th,lik1)
+  abline(h=.15,lwd=.4)
+  abline(v=0)
+  title(expression('(b) Profile likelihood'))
+
 ```
 
 
+The null hypothesis is $H_0: \theta=0$. Since $\theta$ is significantly different from zero, the null-hypothesis is rejected and it is concluded that the groups are significantly different from each other. This means that there is a difference in if a patient receives treament with AZT or not. 
+
+
+### Estimate parameters in the model (p0 probability of AIDS in control group, p1 probability of AIDS in treatment group) and report a confidence interval for the parameter describing the dif- ference, compare with the result above.
+
+The formulas look like a binomial model. This binomial model has the log-likelihood
+$$ $$
 ```{r}
-#Profile likelihood for theta
-theta=seq(0.1, 4,by=0.01)
-eta=seq(0.1, 4,by=0.01)
 
-lp.theta= function(theta){
-  ## Function for inner optimization:
-  fun.tmp<- function(theta, eta){
-    joint.likelihood(theta, eta)
-  }
-  # Find the profile likelihood
-  optimise(fun.tmp,c(0.1,10), theta=theta)$objective
-}
-
-(opt.theta=optimise(lp.theta, c(0.1,10))$minimum)
+#fit.glm =glm(y~x, family=binomial)
 ```
-
-
-
-
 
 
 

@@ -170,7 +170,7 @@ yfit<-dbeta(xfit,opt.shape1,opt.shape2)
 yfit <- yfit*diff(h$mids[1:2])*length(x)
 lines(xfit, yfit, col="blue", lwd=2)
 ```
-AIC is calculated using the formular:
+AIC is calculated using the formula:
 $$AIC=2k-2ln(\hat{L})$$
 where L is the maximum value for the likelihood function for the model. 
 ```{r}
@@ -304,12 +304,74 @@ Calculate AIC for log-normal distribution.
 ```{r}
 # Maximum value of the likelihood function for the model
 k=2
-(AIC.LogNormal =2*k-2(-LogNormal.likelihood(opt.LogNormal.meanlog,opt.LogNormal.sdlog)))
+(AIC.LogNormal =2*k-2*(-LogNormal.likelihood(opt.LogNormal.meanlog,opt.LogNormal.sdlog)))
 ```
 
 
+#
+Compare AIC for the three models:
+```{r}
+```
 
 
+#### Fit transformations
+
+##### Box Cox
+Box Cox transfomation $$Y_{\lambda}=\frac{y^{\lambda}-1}{\lambda}$$
+```{r}
+#library(MASS)
+lambda <- seq(-0.5,0.5,by=0.01)
+boxcox.lambda=boxcox(lm(data$pow.obs.norm~1),lambda=lambda)
+
+## box-cox transformation
+bc.trans <- function(lambda,y){
+    y.l <- (y^lambda-1)/lambda
+    
+    if(lambda==0){y.l <- log(y)}
+    return(y.l)}
+
+## profile likelihood for lambda
+lp.lambda <- function(lambda,y){
+    n <- length(y)
+    y.l <- bc.trans(lambda ,y)
+    sigmasq <- 1/n * sum((y.l-mean(y.l))^2)
+    -n/2 * log(sigmasq) + (lambda-1)*sum(log(y))}
+
+
+lambda <- seq(-0.5,0.5,by=0.01)
+    
+(opt.lambda=optimize(lp.lambda,c(-2,2),y=data$pow.obs,maximum=TRUE))
+    
+```
+
+```{r}
+par(mfrow=c(1,2))
+qqnorm(bc.trans(opt.lambda$maximum,data$pow.obs.norm),main="Distribution after boxcox transformation")
+qqline(bc.trans(opt.lambda$maximum,data$pow.obs.norm))
+qqnorm(data$pow.obs.norm, pch = 1, frame = TRUE, main="Distribution before transformation")
+qqline(data$pow.obs.norm, col = "steelblue")
+```
+
+
+##### Transformation 1
+$$Y^{(\lambda)}=\frac{1}{\lambda}log(\frac{y^{\lambda}}{y^{\lambda}-1}),  \quad \lambda>0$$
+
+```{r}
+trans1 <- function(lambda,y){
+    y.l <- 1/lambda*log((y^lambda)/(1-y^lambda))
+    return(y.l)}
+
+## profile likelihood for lambda
+lp.lambda1 <- function(lambda,y){
+    n <- length(y)
+    y.l <- trans1(lambda ,y)
+    sigmasq <- 1/n * sum((y.l-mean(y.l))^2)
+    -n/2 * log(sigmasq) + (lambda-1)*sum(log(y))}  #Sidste del er profile likelihood for coxbox, skal findes for den selv.
+
+lambda <- seq(0,2,by=0.01)
+    
+(opt.lambda1=optimize(lp.lambda1,c(0,5),y=data$pow.obs.norm,maximum=TRUE))
+```
 
 
 
