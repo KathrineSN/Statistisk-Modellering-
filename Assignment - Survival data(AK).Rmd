@@ -129,5 +129,52 @@ $$ $$
 #fit.glm =glm(y~x, family=binomial)
 ```
 
+#Analysis of the survival time data
+
+```{r}
+
+#Load data
+data.time <- read.delim("actg320.txt",header = TRUE, sep = "", dec = ".")
+head(data.time,2) 
+```
+
+```{r}
+#Count number of patient without treatment and without AIDS
+(sum(data.time$tx == 0 & data.time$event == 0))
+#Count number of patient without treatment and AIDS
+(sum(data.time$tx == 0 & data.time$event == 1))
+#Count number of patient with treatment and without AIDS
+(sum(data.time$tx == 1 & data.time$event == 0))
+# Count number of patient with treatment and AIDS
+(sum(data.time$tx == 1 & data.time$event == 1))
+
+#Calculating proportions
+
+#No aids out of people without treatment
+(sum(data.time$tx == 0 & data.time$event == 0))/sum(data.time$tx == 0)
+(sum(data.time$tx == 0 & data.time$event == 1))/sum(data.time$tx == 0)
+(sum(data.time$tx == 1 & data.time$event == 0))/sum(data.time$tx == 1)
+(sum(data.time$tx == 1 & data.time$event == 1))/sum(data.time$tx == 1)
+```
+Fit an exponential distribution to all the data. 
+
+```{r}
+exp.likelihood=function(rate){-sum(dexp(x=data.time$time, rate=rate, log=TRUE))}
+
+
+(nlminb(start=0.5,objective = exp.likelihood,lower=0)$par)
+#(optimize(exp.likelihood,c(0, 100),maximum=TRUE)$maximum)
+
+```
+
+Fit an exponential distribution to the group that received treatment. 
+
+```{r}
+exp.likelihood=function(rate){-sum(dexp(x=data.time$time[data.time$tx==0], rate=rate, log=TRUE))}
+
+
+(nlminb(start=0.5,objective = exp.likelihood,lower=0)$par)
+#(optimize(exp.likelihood,c(0, 100),maximum=TRUE)$maximum)
+```
 
 
