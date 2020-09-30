@@ -19,7 +19,7 @@ The data consist of patients being treated with AZT and the number of patients w
 ### Fitting data to binomial distribution (i.e. consider all data as coming from the same population)
 The log-likelihood of the binomial distribution is:
 $$l(\theta)=\sum_{k=0}^{n}k\cdot log(\theta)+(n-k)\cdot log(1-\theta)+c(n,k)$$
-where n is the number of patients, k is the number of patient with AIDS. Since it is consider as coming from the same population i.e. follow the same distibution, the data is fitted to one binomial distribution.
+where n is the number of patients, k is the number of patient with AIDS. Since it is considered as coming from the same population i.e. follow the same distribution, the data is fitted to one binomial distribution.
 
 ```{r}
 
@@ -37,7 +37,7 @@ binomial.log.likelihood = function(x,size,theta){
 #Theta for patients treated with AZT. This is the probability of having AIDS when treated with AZT. 
 (theta_AZT_yes.opt=optimize(binomial.log.likelihood, c(0.01,0.99),x=data$AIDS_yes[1],size=data$n[1])$minimum)
 
-#Theta for patients treated without AZT. This is the probability of having AIDS without treament. 
+#Theta for patients treated without AZT. This is the probability of having AIDS without treatment. 
 (theta_AZT_no.opt=optimize(binomial.log.likelihood, c(0.01,0.99),x=data$AIDS_yes[2],size=data$n[2])$minimum)
 ```
 
@@ -56,7 +56,7 @@ t=x+y
 
 (pchisq(chi.squared.test, df=1, lower.tail=FALSE))
 ```
-With a p-value of 0.008816159 we have strong evidence against the null hypothesis meaning that the two groups does not follow the same distribution.
+With a p-value of 0.008816159 we have strong evidence against the null hypothesis meaning that the two groups do not follow the same distribution.
 
 To proceed with a likelihood analysis, the number of people with AIDS (X) in the group treated with AZT is $B(m,\pi_x)$ and independently the number of people with AIDS (Y)  in the second group is $B(n,\pi_y)$.
 
@@ -113,6 +113,8 @@ plot(th,lik1,type='n',xlab=expression(theta),
   abline(h=.15,lwd=.4)
   abline(v=0)
   title(expression('(b) Profile likelihood'))
+  
+
 
 ```
 
@@ -122,14 +124,101 @@ The null hypothesis is $H_0: \theta=0$. Since $\theta$ is significantly differen
 
 ### Estimate parameters in the model (p0 probability of AIDS in control group, p1 probability of AIDS in treatment group) and report a confidence interval for the parameter describing the dif- ference, compare with the result above.
 
-The formulas look like a binomial model. This binomial model has the log-likelihood
-$$ $$
-```{r}
+The parameters $\beta_0$ and $\beta_1$ can be estimated with the logistic regression model. Here $p_0$ denotes the probability of success (i.e. getting AIDS) in the control treatment and $p_1$ denotes the probability of succes in the new treatment. 
 
-#fit.glm =glm(y~x, family=binomial)
+$$p_{0}=\frac{e^{\beta_{0}}}{1+e^{\beta_{0}}}, \quad p_{1}=\frac{e^{\beta_{0}+\beta_{1}}}{1+e^{\beta_{0}+\beta_{1}}}$$
+In the above $\beta_1$ describes the difference between the treatments. Thus if $\beta_1 = 0$ then there is no difference between the two treatments.
+The likelihood for the logistic regression can be written as:
+
+$$L(\beta_0, \beta_1) = \Pi_i p_i^{y_i}(1-p_i)^{1-y_i}$$
+Here $y_i$ is the succes in treatment i. We have that $i=0$ control treatment, $i=1$ test treatment.
+The log-likelighood is given as
+$$logL(\beta_0, \beta_1) = \sum_i \left[(\beta_0 + \beta_1 \cdot treatment_i)y_i - log(1 + exp(\beta_0 + \beta_1 \cdot treatment_i)) \right]$$
+```{r}
+# Hjælp mig lige med at forstå det her!?!
+logL_partial <- function(b0, b1, data, AZT = TRUE){
+    y = if (AZT) {data[1,2]} else {data[2,2]} %>% as.numeric()
+    n = if (AZT) {data[1,3]} else {data[2,3]} %>% as.numeric()
+    false = n-y
+    
+    y*((b0 + b1 * AZT) * 1 - log(1+exp(b0+b1*AZT))) + false*((b0 + b1 * AZT) * 0 - log(1+exp(b0+b1*AZT)))
+}
+
+logL <- function(theta, data){
+     - (logL_partial(theta[1], theta[2],data, F) + logL_partial(theta[1],theta[2],data, T))
+}
+
+
+opt <- nlminb(c(0, 0), logL, lower = c(-Inf,-Inf), data = log_data)
+
+p0 <- exp(opt$par[1])/(1+exp(opt$par[1]))
+p1 <- exp(opt$par[1] + opt$par[2])/(1+exp(opt$par[1] + opt$par[2]))
+
+
+
+
+
+logL_b1 <- function(theta, b1, data){
+      -(logL_partial(theta[1], b1,data, F) + logL_partial(theta[1],b1,data, T))
+}
+
+profile_b1 <- function(b1, data){
+  opt <- nlminb(c(0), logL_b1, lower = c(-Inf), data = log_data, b1 = b1)
+  # optimize(logL)
+  b0 <- opt$par
+  -logL_b1(c(b0),b1,data)
+}
+
+
+b1 <- seq(-5,5,0.01)
+alpha <- 0.05
+c <- exp(-1/2*qchisq(1-alpha,1))
+p = c()
+for (i in 1:length(b1)){
+  p[i] = exp(profile_b1(b1[i], log_data))
+}
+
+MLE_b1 <- optimize(profile_b1, c(-5,5), data = log_data, maximum = T)$maximum
+
+plot(b1, p/max(p), 'l')
+abline(c, 0)
+abline(v = MLE_b1)
+
+
+
+a_b1 <- b1[p/max(p) > c]
+CI_b1 <- c(min(a_b1), max(a_b1))
+
+
+cat("The maximum likelihood estimates of p0 and p1 are: p0 = ", p0, " p1 = ", p1, "\n")
+cat("The maximum profile likelihood estimate of b1 is:  ", MLE_b1, "\n")
+cat("With confidence intervals: ", CI_b1, "\n")
+```
+The confidence interval does not cover 0 which means that there is a significant difference between the two treatments
+
+```{r}
+#Our estimate of the two parameters
+#Probability of AIDS in control group p0
+(theta_AZT_no.opt)
+
+#Probability of AIDS in treatment group p1
+(theta_AZT_yes.opt)
+
+ll<- outer(th,et,'fun1')
+like<- exp(ll-max(ll))
+contour(th,et,like,level=c(.1,.3,.5,.7,.9),
+        xlab=expression(theta),
+        ylab=expression(eta))
+  title(expression('(a) Likelihood contour'))
+  abline(v=that,h=ehat,lwd=.4)
+
+
+#fit.glm =glm(y~x, family=binomia
 ```
 
 #Analysis of the survival time data
+
+### Read the data act320.txt into R. 
 
 ```{r}
 
@@ -137,6 +226,8 @@ $$ $$
 data.time <- read.delim("actg320.txt",header = TRUE, sep = "", dec = ".")
 head(data.time,2) 
 ```
+### How many patients got AIDS or dies in the two treatment groups?
+### What is the proportion of patients that got AIDS or died in the two groups?
 
 ```{r}
 #Count number of patient without treatment and without AIDS
@@ -156,18 +247,18 @@ head(data.time,2)
 (sum(data.time$tx == 1 & data.time$event == 0))/sum(data.time$tx == 1)
 (sum(data.time$tx == 1 & data.time$event == 1))/sum(data.time$tx == 1)
 ```
-Fit an exponential distribution to all the data. 
+### Fitting an exponential distribution to all the data. 
 
 ```{r}
 exp.likelihood=function(rate){-sum(dexp(x=data.time$time, rate=rate, log=TRUE))}
 
 
-(nlminb(start=0.5,objective = exp.likelihood,lower=0)$par)
+(opt1 = nlminb(start=0.5,objective = exp.likelihood,lower=0)$par)
 #(optimize(exp.likelihood,c(0, 100),maximum=TRUE)$maximum)
 
 ```
 
-Fit an exponential distribution to the group that received treatment. 
+Fit an exponential distribution to the group that received control treatment. 
 
 ```{r}
 exp.likelihood=function(rate){-sum(dexp(x=data.time$time[data.time$tx==0], rate=rate, log=TRUE))}
@@ -176,5 +267,32 @@ exp.likelihood=function(rate){-sum(dexp(x=data.time$time[data.time$tx==0], rate=
 (nlminb(start=0.5,objective = exp.likelihood,lower=0)$par)
 #(optimize(exp.likelihood,c(0, 100),maximum=TRUE)$maximum)
 ```
+Fit an exponential distribution to the group that received the new treatment
+
+```{r}
+exp.likelihood=function(rate){-sum(dexp(x=data.time$time[data.time$tx==1], rate=rate, log=TRUE))}
+
+
+(nlminb(start=0.5,objective = exp.likelihood,lower=0)$par)
+```
+### Compare likelihoods of the three models above
+# Comparing using AIC score?
+
+```{r}
+k = 1
+
+(AIC.exp.all =2*k-2*(-exp.likelihood(opt1)))
+```
+
+
+
+
+### Formulate a model where one parameter indicate the treatment effect, find the MLE and compare with result from above
+
+
+
+
+
+
 
 
