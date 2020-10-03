@@ -86,7 +86,7 @@ se_AZT_no <- 1/sqrt(I_AZT_no)
 
 ```
 
-Now the parameters and their corresponding CI are found. 
+**Test if there is a difference between the two grops**
 
 The null hypothesis is that the two distributions are equal meaning that if AZT_yes follows $B(m,\pi_x)$ and AZT_no follows $B(n,\pi_y)$ $\pi_x=\pi_y$.
 ```{r}
@@ -104,6 +104,12 @@ t=x+y
 ```
 With a p-value of 0.008816159 we have strong evidence against the null hypothesis meaning that the two groups do not follow the same distribution.
 
+The null hypothesis is $H_0: \theta=0$. Since $\theta$ is significantly different from zero, the null-hypothesis is rejected and it is concluded that the groups are significantly different from each other. This means that there is a difference in if a patient receives treament with AZT or not. 
+
+
+-------------------------------------------
+**I (Piriya) think this part should be deleted.**
+
 To proceed with a likelihood analysis, the number of people with AIDS (X) in the group treated with AZT is $B(m,\pi_x)$ and independently the number of people with AIDS (Y)  in the second group is $B(n,\pi_y)$.
 
 On observing x and y the joint likelihood of $(\pi_x,\pi_y)$:
@@ -114,7 +120,11 @@ $$\theta=\log \frac{\pi_{x} /\left(1-\pi_{x}\right)}{\pi_{y} /\left(1-\pi_{y}\ri
 ```{r}
 (theta.compare = log((theta_AZT_yes.opt/(1-theta_AZT_yes.opt))/(theta_AZT_no.opt/(1- theta_AZT_no.opt))))
 
+
+(log((x/(m-x))/(y-(n-y))))
+
 ```
+
 To make a profile likelihood function for $\theta$ as stated above, the eta is calculated:
 
 $$\eta=\log \frac{\pi_{y}}{1-\pi_{y}}$$
@@ -123,13 +133,7 @@ With $\eta$ the joint likelihood function for $\theta$ and $\eta$ can be found:
 $$L(\theta, \eta)=e^{\theta x} e^{\eta(x+y)}\left(1+e^{\theta+\eta}\right)^{-m}\left(1+e^{\eta}\right)^{-n}$$
 The MLE for this likelihood function is:
 $$\hat{\theta}=log(\frac{x/(m-x)}{y/(n-y)})$$
-Calculate optimal theta for the joint likelihood
-```{r}
-(that= log(x/(m-x)*(n-y)/y))
-se2<- 1/x + 1/(m-x) + 1/y + 1/(n-y)
-se<- sqrt(se2)
 
-```
 
 $\hat{\theta}}=-0.721766$
 Plot the joint likelihood
@@ -163,8 +167,7 @@ plot(th,lik1,type='n',xlab=expression(theta),
 
 
 ```
-The null hypothesis is $H_0: \theta=0$. Since $\theta$ is significantly different from zero, the null-hypothesis is rejected and it is concluded that the groups are significantly different from each other. This means that there is a difference in if a patient receives treament with AZT or not. 
-
+-----------------
 
 ### Estimate parameters in the model (p0 probability of AIDS in control group, p1 probability of AIDS in treatment group) and report a confidence interval for the parameter describing the dif- ference, compare with the result above.
 
@@ -286,7 +289,7 @@ exp.likelihood=function(rate){
 
 ```
 
-Fit an exponential distribution to each group. 
+**Fit an exponential distribution to each group.**
 
 ```{r}
 
