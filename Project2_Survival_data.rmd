@@ -1,0 +1,301 @@
+---
+title: 'Project2: Survival data'
+output:
+  html_document:
+    theme: united
+    toc: yes
+    toc_collapsed: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+  word_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<!-- # Packages -->
+
+```{r Packages, include=FALSE}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(GGally)
+library(magrittr)
+```
+
+
+# Data
+
+## Load
+```{r Data load}
+act_data <- read.delim("../Data/actg320.txt", header = T, sep = "\t")
+log_data <-  read.delim("../Data/Logistic.txt", header = T, sep = "\t") %>% 
+  bind_rows(data.frame(AZT = "Total", AIDS_yes = sum(.$AIDS_yes), n= sum(.$n)))
+
+```
+
+## Summaries
+
+### Logistic data
+
+```{r Summary log}
+summary(log_data)
+```
+
+### ACT data
+
+```{r Summary ACT}
+summary(act_data)
+```
+
+
+
+## Plot
+
+
+
+```{r Pair plots}
+#pairplot_act  <- ggpairs(act_data)
+#ggsave("Plots/pairplot_act.png", pairplot_act)
+```
+
+# Analysis of the binary data
+
+## Binomial fit - all
+
+We summarise the data into one group - total number of AIDS cases and total number of patients.
+Afterwards we fit the binomial distribution to the full (total) dataset. The binomial distribution has the density:
+$$p_{\theta}(k) = \left(\begin{array}{c} n\\ k\end{array}\right)\theta^k(1-\theta)^{n-k}$$
+With $n$ being the total number of patients and $k$ the total number of patients with aids.
+Hence we get the likelihood:
+$$L(\theta) = \left(\begin{array}{c} n\\ k\end{array}\right)\theta^k(1-\theta)^{n-k}$$
+
+MLE for $\theta$ is estimated numerically, buut: $MLE = \frac{k}{n}$
+Confidence intervals are estimated using the likelihood interval method
+$$CI: \left[ \theta, \frac{L(\theta)}{L(\hat{\theta})} > c \right]$$
+with $c = exp(-\frac{1}{2} \chi_{1,(1-\alpha)}^2) $ - with $\chi_1^2$ being $\chi^2$ distribution with 1 degree of freedom.
+
+```{r Binomial fit all}
+data <- as.numeric(log_data[3,2:3])
+binomial <- function(data, theta){
+    k <- data[1]
+    n <- data[2]
+    choose(n,k) * theta^k *(1-theta)^(n-k)
+}
+
+theta <- seq(0,1,0.001)
+MLE <- data[1]/data[2]
+c <- exp(-1/2*qchisq(1-0.05,1))
+
+plot(theta, binomial(data, theta)/max(binomial(data, theta)), "l")
+abline(c,0)
+a <- theta[binomial(data,theta)/max(binomial(data,theta)) > c]
+CI <- c(min(a), max(a))
+cat("Maximum Likelihood estimate: ", MLE, "\n")
+cat("Likelihood Confidence intervals: ", CI)
+
+```
+## Binomial fit seperately
+Data is divided into 2 groups: a control group (without AZT) and a test group (with AZT).
+A binomial distribution is fitted to each - as in previous question.
+
+
+
+```{r Binomial fit seperately }
+AZT_yes <- as.numeric(log_data[1,2:3])
+AZT_no <- as.numeric(log_data[2,2:3])
+
+theta <- seq(0,1,0.00001)
+par(mfrow=c(1,2))
+alpha <- 0.05
+c <- exp(-1/2*qchisq(1-alpha,1))
+plot(theta, binomial(AZT_yes, theta)/max(binomial(AZT_yes, theta)), "l")
+abline(c, 0)
+plot(theta, binomial(AZT_no, theta)/max(binomial(AZT_no, theta)), "l")
+abline(c, 0)
+
+MLE_yes <- optimize(binomial, c(0,1), data = AZT_yes, maximum = TRUE)$maximum
+MLE_no <-  optimize(binomial, c(0,1), data = AZT_no, maximum = TRUE)$maximum
+
+a_yes <- theta[binomial(AZT_yes,theta)/max(binomial(AZT_yes,theta)) > c]
+CI_yes <- c(min(a_yes), max(a_yes))
+
+a_no <- theta[binomial(AZT_no,theta)/max(binomial(AZT_no,theta)) > c]
+CI_no <- c(min(a_no), max(a_no))
+
+CI_yes
+CI_no
+```
+We notice a slight overlap in the 95 \% confidence intervals, indicating no difference (on a 5 \& significance level) in the succes probabilities ('succes' = you have AIDS).
+
+## Parameter estimation (logistic)
+Estimate the parameters in the model (logistic model) with parameters $\beta_0$ and $\beta_1$
+
+With a logistic model we get the succes probability for the control group $p_0$ and for the test group $p_1$:
+$$p_{0}=\frac{e^{\beta_{0}}}{1+e^{\beta_{0}}}, \quad p_{1}=\frac{e^{\beta_{0}+\beta_{1}}}{1+e^{\beta_{0}+\beta_{1}}}$$
+The parameter $b_1$ is the parameter describing the difference in succes probabilities ie. if $\beta_1 = 0$ no difference.
+We can write the likelihood function for the logsitic distribution:
+$$L(\beta_0, \beta_1) = \Pi_i p_i^{y_i}(1-p_i)^{1-y_i}$$
+with $y_i$ denoting succes in category i. $i=0$ control group, $i=1$ test group.
+The log likelihood for this is
+$$logL(\beta_0, \beta_1) = \sum_i \left[(\beta_0 + \beta_1 \cdot group_i)y_i - log(1 + exp(\beta_0 + \beta_1 \cdot group_i)) \right]$$
+```{r Parameter estimation (logistic)}
+logL_partial <- function(b0, b1, data, AZT = TRUE){
+    y = if (AZT) {data[1,2]} else {data[2,2]} %>% as.numeric()
+    n = if (AZT) {data[1,3]} else {data[2,3]} %>% as.numeric()
+    false = n-y
+    
+    y*((b0 + b1 * AZT) * 1 - log(1+exp(b0+b1*AZT))) + false*((b0 + b1 * AZT) * 0 - log(1+exp(b0+b1*AZT)))
+}
+
+logL <- function(theta, data){
+     - (logL_partial(theta[1], theta[2],data, F) + logL_partial(theta[1],theta[2],data, T))
+}
+
+
+opt <- nlminb(c(0, 0), logL, lower = c(-Inf,-Inf), data = log_data)
+
+p0 <- exp(opt$par[1])/(1+exp(opt$par[1]))
+p1 <- exp(opt$par[1] + opt$par[2])/(1+exp(opt$par[1] + opt$par[2]))
+
+
+
+
+
+logL_b1 <- function(theta, b1, data){
+      -(logL_partial(theta[1], b1,data, F) + logL_partial(theta[1],b1,data, T))
+}
+
+profile_b1 <- function(b1, data){
+  opt <- nlminb(c(0), logL_b1, lower = c(-Inf), data = log_data, b1 = b1)
+  # optimize(logL)
+  b0 <- opt$par
+  -logL_b1(c(b0),b1,data)
+}
+
+
+b1 <- seq(-5,5,0.01)
+alpha <- 0.05
+c <- exp(-1/2*qchisq(1-alpha,1))
+p = c()
+for (i in 1:length(b1)){
+  p[i] = exp(profile_b1(b1[i], log_data))
+}
+
+MLE_b1 <- optimize(profile_b1, c(-5,5), data = log_data, maximum = T)$maximum
+
+plot(b1, p/max(p), 'l')
+abline(c, 0)
+abline(v = MLE_b1)
+
+
+
+a_b1 <- b1[p/max(p) > c]
+CI_b1 <- c(min(a_b1), max(a_b1))
+
+
+cat("The maximum likelihood estimates of p0 and p1 are: p0 = ", p0, " p1 = ", p1, "\n")
+cat("The maximum profile likelihood estimate of b1 is:  ", MLE_b1, "\n")
+cat("With confidence intervals: ", CI_b1, "\n")
+```
+The 95% confidence interval does not include 0. The difference is significant.
+
+
+
+# Analysis of the survival time data
+
+## Summary statistics
+
+The table below shows the proportions of the different groups
+
+```{r Summary statistics}
+act_data <- act_data %>% 
+  select(time, event, tx)
+
+summary_table <- table(act_data$event, act_data$tx) %>% 
+  rbind("Total" = colSums(.)) %>% 
+  cbind("Total" = rowSums(.)) 
+names(attributes(summary_table)$dimnames) <- c("Event", "Treatment")
+
+cat("Summary table:\n")
+summary_table
+
+# summary_table %>% xtable::xtable()
+
+
+
+```
+
+## Exponential distribution
+
+The variable 'event' describes wheter or not the patient has gotten AIDS (1) or not (0). However, some patients left the study, or the study was terminated before the patients had developed AIDS. Hence for the healthy patients event = 0 the time of event is longer than the time reported.
+Therefore, we have to work with 2 likelihood functions: $L_{event = 1}(\theta)$ and $L_{event = 0}(\theta)$.
+$L_{event = 1}(\theta)$ is the usual likelihood function: $L_{event = 1} = \Pi_i f_{\theta} (x_i)$.
+In the latter case we have to use the survival function $g(x) = 1 - F(x) = 1 - P(X\leq x_i)$ instead of the density. $L_{event = 0}(\theta) = \Pi_i g_{\theta}(x_i) = \Pi_i ( 1 - P(X<x_i))$.
+The full likelihood is hence $L(\theta) = L_{event = 0}(\theta) L_{event = 1}(\theta)$
+
+
+### All data
+
+```{r Exp fit - all data}
+nll <- function(theta, data){
+  l1 <- act_data %>% 
+    filter(event == 1) %>% 
+    pull(time) %>% 
+    dexp(rate = theta, log = T)  %>% 
+    sum()
+  l2 <- act_data %>% 
+    filter(event == 0) %>% 
+    pull(time) %>% 
+    (function (x) 1-pexp(x, rate = theta))() %>% 
+    log() %>% 
+    sum()
+ -l1-l2
+}
+
+theta <- seq(0, 1e-3, 1e-5)
+MLE_rate <- optimise(nll, c(0, 1e-3), data = act_data)$minimum
+
+c <- exp(-1/2*qchisq(1-alpha,1))
+
+plot(theta, sapply(theta, nll, data = act_data), "l")
+abline(v = MLE_rate)
+abline(1/c, 0)
+
+
+
+
+
+# a_b1 <- b1[p/max(p) > c]
+# CI_b1 <- c(min(a_b1), max(a_b1))
+
+```
+
+
+```{r Fit supposed solution}
+d <- act_data
+## likelihood function for exponential distribution with out differenceing on treatment
+nll <- function(theta){
+  -sum(log(dexp(d[d$"event" == 1, ]$time, rate = theta))) -
+    sum(log(1-pexp(d[d$"event" == 0, ]$time, rate = theta)))
+}
+theta <- seq(0, 0.001, by = 0.00001)
+plot(theta, sapply(theta, nll), type = 'l')
+rate <- nlminb(0.001, nll, lower = 0)
+opt <- optimise(nll, c(0, 0.001))
+1/opt$minimum
+
+## Likelihood function for two parameter model
+nll <- function(theta){
+  -sum(log(dexp(d["event" == 1 & "tx" == 0]$time, rate = exp(-theta[1])))) -
+    sum(log(1-pexp(d["event" == 0 & "tx" == 0]$time, rate = exp(-theta[1]))))-
+    sum(log(dexp(d["event" == 1 & "tx" == 1]$time, rate = exp(-theta[1]-theta[2])))) -
+    sum(log(1-pexp(d["event" == 0 & "tx" == 1]$time, rate = exp(-theta[1]-theta[2]))))
+}
+
+rate.2 <- optim(c(7, 10), nll, hessian = T)
+```
+
