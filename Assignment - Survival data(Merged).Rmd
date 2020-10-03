@@ -13,6 +13,10 @@ output:
 data <- read.delim("Logistic.txt",header = TRUE, sep = "", dec = ".")
 data$AIDS_no=data$n-data$AIDS_yes
 head(data,2) 
+
+n <- sum(data[,3]) #Number of patient #n 
+k <- sum(data[,2]) #Number of patients with AIDS #Sucesses #k
+theta <- k/n #Probability that you have Aids
 ```
 The data consist of patients being treated with AZT and the number of patients with AIDS, as well as patients not being treated with AZT and the number of patients having AIDS. It looks like more patients get AIDS if they are not treated with AZT.
 
@@ -24,23 +28,65 @@ where n is the number of patients, k is the number of patient with AIDS. Since i
 ```{r}
 
 #Formulating the likelihood function
-binomial.log.likelihood = function(x,size,theta){
-  -(sum(dbinom(x=x,size=size,prob=theta, log=TRUE)))}
+binomial.log.likelihood = function(theta,success,size){
+  -(sum(dbinom(x=success,size=size,prob=theta, log=TRUE)))}
 
-(theta.opt=optimize(binomial.log.likelihood, c(0.01,0.99),x=sum(data$AIDS_yes),size=sum(data$n))$minimum)
+(theta.opt=optimize(binomial.log.likelihood, c(0.01,0.99),success=sum(data$AIDS_yes),size=sum(data$n))$minimum)
 
+(nlminb(start=0.5,objective=binomial.log.likelihood,lower=0,success=k,size=n)$par)
 ```
 
 ### Fit the Binomial separately to the two distributions and test if there is a difference between the groups.
 
 ```{r}
 #Theta for patients treated with AZT. This is the probability of having AIDS when treated with AZT. 
-(theta_AZT_yes.opt=optimize(binomial.log.likelihood, c(0.01,0.99),x=data$AIDS_yes[1],size=data$n[1])$minimum)
+#(theta_AZT_yes.opt=optimize(binomial.log.likelihood, c(0.01,0.99),x=data$AIDS_yes[1],size=data$n[1])$minimum)
 
-#Theta for patients treated without AZT. This is the probability of having AIDS without treatment. 
-(theta_AZT_no.opt=optimize(binomial.log.likelihood, c(0.01,0.99),x=data$AIDS_yes[2],size=data$n[2])$minimum)
+(theta_AZT_yes.opt=nlminb(start=0.5,binomial.log.likelihood,lower=0,success=data$AIDS_yes[1],size=data$n[1])$par)
+
+(theta_AZT_no.opt=nlminb(start=0.5,binomial.log.likelihood,lower=0,success=data$AIDS_yes[2],size=data$n[2])$par)
+
+#Theta for patients treated without AZT. This is the probability of having AIDS without treament. 
+#(theta_AZT_no.opt=optimize(binomial.log.likelihood, c(0.01,0.99),x=data$AIDS_yes[2],size=data$n[2])$minimum)
+```
+As expected, the probability for getting AIDS is lower when treated with AZT. 
+
+
+**Finding the confidence interval for the probabilities.** 
+
+
+```{r}
+k1 <- data$AIDS_yes[1] #ATZ_yes
+k2 <- data$AIDS_yes[2] #ATZ_no
+n1 <- data$n[1]
+n2 <- data$n[2]
+p1 <- k1/n1
+p2 <- k2/n2
+p <- k/n
 ```
 
+
+```{r}
+library(numDeriv)
+I <- hessian(binomial.log.likelihood,theta,success=k,size=n)
+I_AZT_yes <- hessian(binomial.log.likelihood,theta_AZT_yes.opt,success=k1,size=n1)
+I_AZT_no <- hessian(binomial.log.likelihood,theta_AZT_no.opt,success=k2,size=n2)
+
+#The standard error 
+se <- 1/sqrt(I)
+se_AZT_yes <- 1/sqrt(I_AZT_yes)
+se_AZT_no <- 1/sqrt(I_AZT_no)
+
+
+
+#confidence intervallet
+(p+c(-1,1)*qnorm(0.975)*se/sqrt(n))
+(p1+c(-1,1)*qnorm(0.975)*se_AZT_yes/sqrt(n1))
+(p2+c(-1,1)*qnorm(0.975)*se_AZT_no/sqrt(n2))
+
+```
+
+Now the parameters and their corresponding CI are found. 
 
 The null hypothesis is that the two distributions are equal meaning that if AZT_yes follows $B(m,\pi_x)$ and AZT_no follows $B(n,\pi_y)$ $\pi_x=\pi_y$.
 ```{r}
@@ -117,8 +163,6 @@ plot(th,lik1,type='n',xlab=expression(theta),
 
 
 ```
-
-
 The null hypothesis is $H_0: \theta=0$. Since $\theta$ is significantly different from zero, the null-hypothesis is rejected and it is concluded that the groups are significantly different from each other. This means that there is a difference in if a patient receives treament with AZT or not. 
 
 
@@ -288,11 +332,56 @@ opt.exp <- nlminb(start=c(0.001,0.005),objective=nll.exp,lower=c(-Inf,-Inf))
 
 ```{r}
 
+#Der er noget galt her!!!!!
 #Making a confidence interval
 
 I <- hessian(nll.exp,opt.exp$par)
 se <- 1/sqrt(I)
-(opt.exp$par+c(-1,1)*qnorm(0.975)*se/sqrt(n))
+
+(opt.exp$par[2]+c(-1,1)*qnorm(0.975)*se/sqrt(n))
 ```
 
+It can be seen that the confidence interval does not cover zero which means that the two treatment groups are significantly different from each other.
+
+### Implement the profile likelihood function 
+
+```{r}
+nll.b1 <- function(rate,b1){
+  
+  val1 <- -sum(dexp(x=data.time$time[data.time$event==1],rate=rate[1]+b1*data.time$tx[data.time$event==1],log=TRUE))
+  
+  val2 <- -sum(pexp(q=data.time$time[data.time$event==0],rate=rate[1]+b1*data.time$tx[data.time$event==0],lower.tail=F,log=TRUE))
+  
+  val1+val2
+}
+
+profile.b1 <- function(b1){
+  opt <- nlminb(start=c(0.001),objective=nll.exp,lower=c(-Inf),b1=b1)
+  b0 <-opt$par
+  
+  -nll.b1(c(b0),b1)
+}
+```
+
+
+```{r}
+b1 <- seq(-0.0005,0.0005,0.00001)
+
+
+n_b1 = length(b1)
+p = rep(NaN,n_b1)
+
+# for (i in 1:length(b1)) {
+#    p[i] = exp(profile.b1(b1[i]))
+#  }
+# 
+# plot(b1,p/max(p),'l')
+
+n_b1 = length(b1)
+profile.b1.plot = rep(NaN,n_b1)
+for (i in 1:length(b1)){
+  profile.b1.plot[i] = profile.b1(b1[i])
+}
+  plot(b1,profile.b1.plot,type='l')
+```
 
