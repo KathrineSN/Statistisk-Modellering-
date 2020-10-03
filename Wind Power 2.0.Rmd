@@ -1,0 +1,508 @@
+---
+title: Assignment Wind Power
+output: 
+  pdf_document:
+    fig_width: 8
+    fig_height: 4
+  html_notebook: default
+
+linestretch: "`r (lstr=1.25)`"
+fontsize: 11pt
+---
+
+# Descriptive statistics 
+
+## 1. Read the data tuno.txt into R.
+The data is read, and the first few lines of the code is shown.
+```{r}
+data <- read.delim("tuno.txt",header = TRUE, sep = " ", dec = ".")
+head(data,6)
+```
+
+
+## 2. Make a graphical presentation of data or parts of the data, and present some summary statistics.
+
+### Summary statistics:
+Summary Statitics of Power Observations, Wind Speed and Wind Diretion is shown below.
+```{r}
+summary(data[c(0,4:6)],digits = 2)
+```
+
+Furthermore, a pairs plot is created to get an idea of what the data look like.
+```{r}
+library("ggplot2")                     # Load ggplot2 package
+library("GGally")  
+
+ggpairs(data[c(0,4:6)]) 
+```
+There is a correlation between average daily power production and predicted wind speed. This makes sense as more wind gives more power. 
+
+### Normalize the power production, wind speed and wind direction before modelling:
+The data is normalized before modelling, as the models require data in the interval [0,1].
+```{r}
+normalize <- function(x) {
+  return ((x+0.01 - min(x)) / (max(x) - min(x)+0.04))}
+
+data$pow.obs.norm<-normalize(data$pow.obs)
+data$ws30.norm<-normalize(data$ws30)
+data$wd30.norm<-normalize(data$wd30)
+
+head(data,6)
+
+```
+# Fitting different distritbutions to the data
+A function is created for each distribution that is fitted to the data. The function can then be called using different data sets. The functions returns the MLE for the parameters in the model and the 95 \% confidence intervals. The models are compared using AIC.
+
+## Fitting a beta distribution
+
+The likelihood function for the wind data, can be defined as a sum of the log density functions $$l(\theta)=\sum_{i=1}^{n}log(p_{\theta}(x_{i}))$$
+
+where $p_{\theta}$ in this case is the beta density function
+given as:
+$$f(x) = \frac{(x-a)^{p-1}(b-x)^{q-1}}{B(p,q) (b-a)^{p+q-1}}
+\hspace{.3in} a \le x \le b; p, q > 0$$
+
+where p and q are the shape parameters, a and b are the lower and upper bounds, respectively, of the distribution, and B(p,q) is the beta function. The beta function has the formula
+$$B(\alpha,\beta) = \int_{0}^{1} {t^{\alpha-1}(1-t)^{\beta-1}dt}$$
+The optimal value of the two shape parameters must be found. This can be done using profile likelihood.
+Let $(\theta, \delta)$ be the full parameter and $\theta$ the parameter of interest. Given the joint likelihood $L(\theta, \delta)$ the profile likelihood of $\theta$ is 
+$$L(\theta)=max_{\delta}L(\theta, \delta)$$
+Where the maximization is performed at fixed value of $\theta$.
+
+However, we will just do it quickly using the optimizer nlminb.
+
+```{r}
+library(numDeriv)
+
+beta.function = function(dat){
+# Define likelihood function:
+Beta.likelihood=function(params,dat){ -sum(dbeta(x=dat,shape1=params[1], shape2=params[2], log=TRUE))}
+# Find the optimal parameters using nlimnb:
+opt=nlminb(c(0.01,0.01),Beta.likelihood, dat=dat)
+# Find the Fisher information:
+H=hessian(Beta.likelihood,opt$par, dat=dat)
+se=sqrt(diag(solve(H)))
+
+t.quan=qt(p = 0.975, df=length(dat)-2)
+
+CI1=opt$par[1]+c(-1,1)*se[1]*t.quan
+CI2=opt$par[2]+c(-1,1)*se[2]*t.quan
+
+return(list("opt"=opt,"CI1"=CI1, "CI2"=CI2, "se"=se))
+}
+```
+
+
+## Fitting a gamma distribution
+
+The density function for a gamma distribution is: 
+$$f(x) = \frac{(\frac{x-\mu}{\beta})^{\gamma - 1}\exp{(-\frac{x-\mu}
+{\beta}})} {\beta\Gamma(\gamma)}  \hspace{.2in}  x \ge \mu; \gamma,
+\beta > 0$$
+
+```{r}
+
+gamma.function=function(dat){
+# Define likelihood function:
+Gamma.likelihood=function(params, dat){ -sum(dgamma(x=dat,shape=params[1], rate=params[2], log=TRUE))}
+
+# Find the optimal parameters using nlimnb:
+opt=nlminb(c(0.01,0.01),Gamma.likelihood, dat=dat)
+# Find the Fisher information:
+H=hessian(Gamma.likelihood,opt$par, dat=dat)
+se=sqrt(diag(solve(H)))
+
+t.quan=qt(p = 0.975, df=length(dat)-2)
+
+CI1=opt$par[1]+c(-1,1)*se[1]*t.quan
+CI2=opt$par[2]+c(-1,1)*se[2]*t.quan
+
+return(list("opt"=opt,"CI1"=CI1, "CI2"=CI2, "se"=se))
+}
+```
+
+
+## Fitting a log-normal distribution
+
+The density function for a log-normal distribution is: 
+$$f(x)=\frac{1}{x \sigma \sqrt{2 \pi}} \exp \left(-\frac{(\ln x-\mu)^{2}}{2 \sigma^{2}}\right)$$
+
+```{r}
+
+log.normal.function=function(dat){
+# Define likelihood function:
+LogNormal.likelihood=function(params,dat){ -sum(dlnorm(x=dat,meanlog=params[1], sdlog=params[2], log=TRUE))}
+
+# Find the optimal parameters using nlimnb:
+opt=nlminb(c(0.01,0.01),LogNormal.likelihood, dat=dat)
+# Find the Fisher information:
+H=hessian(LogNormal.likelihood,opt$par, dat=dat)
+se=sqrt(diag(solve(H)))
+
+t.quan=qt(p = 0.975, df=length(dat)-2)
+
+CI1=opt$par[1]+c(-1,1)*se[1]*t.quan
+CI2=opt$par[2]+c(-1,1)*se[2]*t.quan
+
+return(list("opt"=opt,"CI1"=CI1, "CI2"=CI2, "se"=se))
+}
+```
+
+
+
+## Fit transformations
+Different transformations will be applied to the power obs data to test if the model performance of the 3 models above can be improved. Before transforming the data thr optimal lambda most be found for each transformation. This is done below. A qq-plot is created for each transformation so that it is possible to se how the transformation affects the data.
+
+##### Box Cox 
+Box Cox transformation $$Y_{\lambda}=\frac{y^{\lambda}-1}{\lambda}$$
+```{r, warning=FALSE}
+library(MASS)
+#boxcox.lambda=boxcox(lm(data$pow.obs.norm~1),lambda=lambda)
+
+## box-cox transformation
+bc.trans <- function(lambda,y){
+    y.l <- (y^lambda-1)/lambda
+    
+    if(lambda==0){y.l <- log(y)}
+    return(y.l)}
+
+## profile likelihood for lambda
+lp.lambda <- function(lambda,y){
+    n <- length(y)
+    y.l <- bc.trans(lambda ,y)
+    sigmasq <- 1/n * sum((y.l-mean(y.l))^2)
+    -n/2 * log(sigmasq) + (lambda-1)*sum(log(y))}
+
+(opt.lambda.boxcox=optimize(lp.lambda,c(-2,2),y=data$pow.obs,maximum=TRUE))
+
+```
+```{r}
+par(mfrow=c(1,2))
+qqnorm(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)),main="Distribution after boxcox transformation")
+qqline(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))
+qqnorm(data$pow.obs.norm, pch = 1, frame = TRUE, main="Distribution before transformation")
+qqline(data$pow.obs.norm, col = "steelblue")
+```
+
+
+## Transformation 1:
+Now to the first transformation mentioned in the assigment:
+$$Y^{(\lambda)}=\frac{1}{\lambda}log(\frac{y^{\lambda}}{y^{\lambda}-1}),  \quad \lambda>0$$
+We will use change of variables to find the profile likelihoods. The change of variables is defined as: 
+$$ Y=g(X)$$
+$$ f_{X}(x)=f_{Y}(y)\cdot|\frac{dg}{dx}|$$
+This is applied to transformation 1:
+$$ \frac{dY^{\lambda}}{dY}=\frac{d}{dY}\frac{1}{\lambda}log(\frac{y^{\lambda}}{y^{\lambda}-1})=\frac{-1}{(y\cdot(-1 + y^{\lambda})}$$
+The profile likelihood is then found by multiplying the above with a part of the normal distribution:
+$$lp(y)=\frac{-n}{2} \cdot log(\sigma^{2}) + \sum\frac{-1}{(y\cdot(-1 + y^{\lambda}))}$$
+
+
+
+```{r, warning=FALSE}
+trans1 <- function(lambda,y){
+    y.l <- 1/lambda*log((y^lambda)/(1-y^lambda))
+    return(y.l)}
+
+## profile likelihood for lambda
+lp.lambda1 <- function(lambda,y){
+    n <- length(y)
+    y.l <- trans1(lambda ,y)
+    sigmasq <- 1/n * sum((y.l-mean(y.l))^2)
+    -n/2 * log(sigmasq) + sum(-1/(y*(-1 + y^lambda)))}
+
+(opt.lambda.trans1=nlminb(c(0.001),lp.lambda1,y=data$pow.obs.norm))
+
+```
+```{r, warning=FALSE}
+par(mfrow=c(1,2))
+qqnorm(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)),main="Distribution after transformation 1")
+qqline(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))
+qqnorm(data$pow.obs.norm, pch = 1, frame = TRUE, main="Distribution before transformation")
+qqline(data$pow.obs.norm, col = "steelblue")
+```
+
+##### Transformation 2
+The second transformation mentioned in the assigment:
+$$Y^{(\lambda)}=2 \cdot log(\frac{y^{\lambda}}{(1-y)^{1-\lambda}}),  \quad \lambda \in (0,1)$$
+The approach for finding the profile likelihood function is the same as for transformation 1.
+
+We will use change of variables to find the profile likelihoods (slide 25 lecture 5)
+
+```{r, warning=FALSE}
+trans2 <- function(lambda,y){
+    y.l <- 2*log((y^lambda)/(1-y)^(1-lambda))
+    return(y.l)}
+
+## profile likelihood for lambda
+lp.lambda2 <- function(lambda,y){
+    n <- length(y)
+    y.l <- trans1(lambda ,y)
+    sigmasq <- 1/n * sum((y.l-mean(y.l))^2)
+    -n/2 * log(sigmasq) + sum(((4*lambda - 2)*y - 2*lambda)/(y*(-1 + y)))}
+    
+(opt.lambda.trans2=nlminb(c(0.000001),lp.lambda2,y=data$pow.obs.norm))
+
+```
+
+```{r}
+par(mfrow=c(1,2))
+qqnorm(normalize(trans1(opt.lambda.trans2$par,data$pow.obs.norm)),main="Distribution after transformation 2")
+qqline(normalize(trans1(opt.lambda.trans2$par,data$pow.obs.norm)))
+qqnorm(data$pow.obs.norm, pch = 1, frame = TRUE, main="Distribution before transformation")
+qqline(data$pow.obs.norm, col = "steelblue")
+```
+
+## Fitting all distributions to the data:
+The models will be compared using AIC. AIC is calculated using the formula:
+$$AIC=2k-2ln(\hat{L})$$
+where L is the maximum value for the likelihood function for the model. (The likelihood functions defined are negative log likelihoods, so remember to insert (-L)!)
+
+```{r}
+AIC=function(k,L){2*k-2*L}
+```
+
+The table below shows the AIC for all models created. The lower the AIC the better.
+```{r, echo=FALSE}
+library(kableExtra)
+results =matrix(NA,ncol=4, nrow=6)
+colnames(results) = c("Data","AIC Beta Distribution", "AIC Gamma Distribution", "AIC Log-Normal Distribution")
+results[1:6,1]=c("Power Obs", "Boxcox Power Obs", "Transformation 1 Power Obs", "Transformation 2 Power Obs", "Wind Speed", "Wind direction")
+
+
+results[1,2] =round(AIC(2,-beta.function(data$pow.obs.norm)$opt$objective))
+results[2,2] =round(AIC(2,-beta.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$opt$objective))
+results[3,2] =round(AIC(2,-beta.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$opt$objective))
+results[4,2] =round(AIC(2,-beta.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$opt$objective))
+results[5,2] =round(AIC(2,-beta.function(data$ws30.norm)$opt$objective))
+results[6,2] =round(AIC(2,-beta.function(data$wd30.norm)$opt$objective))
+
+results[1,3] =round(AIC(2,-gamma.function(data$pow.obs.norm)$opt$objective))
+results[2,3] =round(AIC(2,-gamma.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$opt$objective))
+results[3,3] =round(AIC(2,-gamma.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$opt$objective))
+results[4,3] =round(AIC(2,-gamma.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$opt$objective))
+results[5,3] =round(AIC(2,-gamma.function(data$ws30.norm)$opt$objective))
+results[6,3] =round(AIC(2,-gamma.function(data$wd30.norm)$opt$objective))
+
+
+results[1,4] =round(AIC(2,-log.normal.function(data$pow.obs.norm)$opt$objective))
+results[2,4] =round(AIC(2,-log.normal.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$opt$objective))
+results[3,4] =round(AIC(2,-log.normal.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$opt$objective))
+results[4,4] =round(AIC(2,-log.normal.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$opt$objective))
+results[5,4] =round(AIC(2,-log.normal.function(data$ws30.norm)$opt$objective))
+results[6,4] =round(AIC(2,-log.normal.function(data$wd30.norm)$opt$objective))
+
+results %>%kbl() %>%kable_styling(full_width = FALSE)
+```
+The best model fitting the power observation is to use transformation 2 and then the log normal distribution. If no transformation is made to data the beta model is best. The best model for wind speed is the gamma model, and the best model for wind direction is the beta model.
+
+The table below shows the MLE coefficients for the parameters for all models created using the beta distribution. The 95\% confidence interval is included for each parameter.
+
+```{r, echo=FALSE}
+results2 =matrix(NA,ncol=7, nrow=6)
+colnames(results2) = c("Beta Distribution for"," Optimal Shape 1", "Optimal Shape 2", "Lower CI Shape 1", "Upper CI Shape 1", "Lower CI Shape 2", "Upper CI Shape 2")
+results2[1:6,1]=c("Power Obs", "Boxcox Power Obs", "Transformation 1 Power Obs", "Transformation 2 Power Obs", "Wind Speed", "Wind direction")
+
+
+results2[1,2] =round(beta.function(data$pow.obs.norm)$opt$par[1],2)
+results2[1,3] =round(beta.function(data$pow.obs.norm)$opt$par[2],2)
+results2[1,4] =round(beta.function(data$pow.obs.norm)$CI1[1],2)
+results2[1,5] =round(beta.function(data$pow.obs.norm)$CI1[2],2)
+results2[1,6] =round(beta.function(data$pow.obs.norm)$CI2[1],2)
+results2[1,7] =round(beta.function(data$pow.obs.norm)$CI2[2],2)
+
+results2[2,2] =round(beta.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$opt$par[1],2)
+results2[2,3] =round(beta.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$opt$par[2],2)
+results2[2,4] =round(beta.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$CI1[1],2)
+results2[2,5] =round(beta.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$CI1[2],2)
+results2[2,6] =round(beta.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$CI2[1],2)
+results2[2,7] =round(beta.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$CI2[2],2)
+
+results2[3,2] =round(beta.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$opt$par[1],2)
+results2[3,3] =round(beta.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$opt$par[2],2)
+results2[3,4] =round(beta.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$CI1[1],2)
+results2[3,5] =round(beta.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$CI1[2],2)
+results2[3,6] =round(beta.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$CI2[1],2)
+results2[3,7] =round(beta.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$CI2[2],2)
+
+results2[4,2] =round(beta.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$opt$par[1],2)
+results2[4,3] =round(beta.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$opt$par[2],2)
+results2[4,4] =round(beta.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$CI1[1],2)
+results2[4,5] =round(beta.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$CI1[2],2)
+results2[4,6] =round(beta.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$CI2[1],2)
+results2[4,7] =round(beta.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$CI2[2],2)
+
+results2[5,2] =round(beta.function(data$ws30.norm)$opt$par[1],2)
+results2[5,3] =round(beta.function(data$ws30.norm)$opt$par[2],2)
+results2[5,4] =round(beta.function(data$ws30.norm)$CI1[1],2)
+results2[5,5] =round(beta.function(data$ws30.norm)$CI1[2],2)
+results2[5,6] =round(beta.function(data$ws30.norm)$CI2[1],2)
+results2[5,7] =round(beta.function(data$ws30.norm)$CI2[2],2)
+
+results2[6,2] =round(beta.function(data$wd30.norm)$opt$par[1],2)
+results2[6,3] =round(beta.function(data$wd30.norm)$opt$par[2],2)
+results2[6,4] =round(beta.function(data$wd30.norm)$CI1[1],2)
+results2[6,5] =round(beta.function(data$wd30.norm)$CI1[2],2)
+results2[6,6] =round(beta.function(data$wd30.norm)$CI2[1],2)
+results2[6,7] =round(beta.function(data$wd30.norm)$CI2[2],2)
+
+
+
+
+results2 %>%kbl() %>%kable_styling(full_width = FALSE)
+```
+
+
+The table below shows the MLE coefficients for the parameters for all models created using the gamma distribution. The 95\% confidence interval is included for each parameter.
+
+
+```{r, echo=FALSE}
+results3 =matrix(NA,ncol=7, nrow=6)
+colnames(results3) = c("Gamma Distribution for"," Optimal Shape", "Optimal Rate", "Lower CI Shape", "Upper CI Shape", "Lower CI Rate", "Upper CI Rate")
+results3[1:6,1]=c("Power Obs", "Boxcox Power Obs", "Transformation 1 Power Obs", "Transformation 2 Power Obs", "Wind Speed", "Wind direction")
+
+
+results3[1,2] =round(gamma.function(data$pow.obs.norm)$opt$par[1],2)
+results3[1,3] =round(gamma.function(data$pow.obs.norm)$opt$par[2],2)
+results3[1,4] =round(gamma.function(data$pow.obs.norm)$CI1[1],2)
+results3[1,5] =round(gamma.function(data$pow.obs.norm)$CI1[2],2)
+results3[1,6] =round(gamma.function(data$pow.obs.norm)$CI2[1],2)
+results3[1,7] =round(gamma.function(data$pow.obs.norm)$CI2[2],2)
+
+results3[2,2] =round(gamma.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$opt$par[1],2)
+results3[2,3] =round(gamma.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$opt$par[2],2)
+results3[2,4] =round(gamma.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$CI1[1],2)
+results3[2,5] =round(gamma.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$CI1[2],2)
+results3[2,6] =round(gamma.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$CI2[1],2)
+results3[2,7] =round(gamma.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$CI2[2],2)
+
+results3[3,2] =round(gamma.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$opt$par[1],2)
+results3[3,3] =round(gamma.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$opt$par[2],2)
+results3[3,4] =round(gamma.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$CI1[1],2)
+results3[3,5] =round(gamma.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$CI1[2],2)
+results3[3,6] =round(gamma.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$CI2[1],2)
+results3[3,7] =round(gamma.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$CI2[2],2)
+
+results3[4,2] =round(gamma.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$opt$par[1],2)
+results3[4,3] =round(gamma.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$opt$par[2],2)
+results3[4,4] =round(gamma.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$CI1[1],2)
+results3[4,5] =round(gamma.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$CI1[2],2)
+results3[4,6] =round(gamma.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$CI2[1],2)
+results3[4,7] =round(gamma.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$CI2[2],2)
+
+results3[5,2] =round(gamma.function(data$ws30.norm)$opt$par[1],2)
+results3[5,3] =round(gamma.function(data$ws30.norm)$opt$par[2],2)
+results3[5,4] =round(gamma.function(data$ws30.norm)$CI1[1],2)
+results3[5,5] =round(gamma.function(data$ws30.norm)$CI1[2],2)
+results3[5,6] =round(gamma.function(data$ws30.norm)$CI2[1],2)
+results3[5,7] =round(gamma.function(data$ws30.norm)$CI2[2],2)
+
+results3[6,2] =round(gamma.function(data$wd30.norm)$opt$par[1],2)
+results3[6,3] =round(gamma.function(data$wd30.norm)$opt$par[2],2)
+results3[6,4] =round(gamma.function(data$wd30.norm)$CI1[1],2)
+results3[6,5] =round(gamma.function(data$wd30.norm)$CI1[2],2)
+results3[6,6] =round(gamma.function(data$wd30.norm)$CI2[1],2)
+results3[6,7] =round(gamma.function(data$wd30.norm)$CI2[2],2)
+
+
+
+
+results3 %>%kbl() %>%kable_styling(full_width = FALSE)
+```
+
+The table below shows the MLE coefficients for the parameters for all models created using the log normal distribution. The 95\% confidence interval is included for each parameter.
+```{r, echo=FALSE}
+results4 =matrix(NA,ncol=7, nrow=6)
+colnames(results4) = c("Log Normal Distribution for"," Optimal Mean Log", "Optimal Sd Log", "Lower CI Mean Log", "Upper CI Mean Log", "Lower CI Sd Log", "Upper CI Sd Log")
+results4[1:6,1]=c("Power Obs", "Boxcox Power Obs", "Transformation 1 Power Obs", "Transformation 2 Power Obs", "Wind Speed", "Wind direction")
+
+
+results4[1,2] =round(log.normal.function(data$pow.obs.norm)$opt$par[1],2)
+results4[1,3] =round(log.normal.function(data$pow.obs.norm)$opt$par[2],2)
+results4[1,4] =round(log.normal.function(data$pow.obs.norm)$CI1[1],2)
+results4[1,5] =round(log.normal.function(data$pow.obs.norm)$CI1[2],2)
+results4[1,6] =round(log.normal.function(data$pow.obs.norm)$CI2[1],2)
+results4[1,7] =round(log.normal.function(data$pow.obs.norm)$CI2[2],2)
+
+results4[2,2] =round(log.normal.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$opt$par[1],2)
+results4[2,3] =round(log.normal.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$opt$par[2],2)
+results4[2,4] =round(log.normal.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$CI1[1],2)
+results4[2,5] =round(log.normal.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$CI1[2],2)
+results4[2,6] =round(log.normal.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$CI2[1],2)
+results4[2,7] =round(log.normal.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$CI2[2],2)
+
+results4[3,2] =round(log.normal.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$opt$par[1],2)
+results4[3,3] =round(log.normal.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$opt$par[2],2)
+results4[3,4] =round(log.normal.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$CI1[1],2)
+results4[3,5] =round(log.normal.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$CI1[2],2)
+results4[3,6] =round(log.normal.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$CI2[1],2)
+results4[3,7] =round(log.normal.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$CI2[2],2)
+
+results4[4,2] =round(log.normal.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$opt$par[1],2)
+results4[4,3] =round(log.normal.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$opt$par[2],2)
+results4[4,4] =round(log.normal.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$CI1[1],2)
+results4[4,5] =round(log.normal.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$CI1[2],2)
+results4[4,6] =round(log.normal.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$CI2[1],2)
+results4[4,7] =round(log.normal.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$CI2[2],2)
+
+results4[5,2] =round(log.normal.function(data$ws30.norm)$opt$par[1],2)
+results4[5,3] =round(log.normal.function(data$ws30.norm)$opt$par[2],2)
+results4[5,4] =round(log.normal.function(data$ws30.norm)$CI1[1],2)
+results4[5,5] =round(log.normal.function(data$ws30.norm)$CI1[2],2)
+results4[5,6] =round(log.normal.function(data$ws30.norm)$CI2[1],2)
+results4[5,7] =round(log.normal.function(data$ws30.norm)$CI2[2],2)
+
+results4[6,2] =round(log.normal.function(data$wd30.norm)$opt$par[1],2)
+results4[6,3] =round(log.normal.function(data$wd30.norm)$opt$par[2],2)
+results4[6,4] =round(log.normal.function(data$wd30.norm)$CI1[1],2)
+results4[6,5] =round(log.normal.function(data$wd30.norm)$CI1[2],2)
+results4[6,6] =round(log.normal.function(data$wd30.norm)$CI2[1],2)
+results4[6,7] =round(log.normal.function(data$wd30.norm)$CI2[2],2)
+
+
+
+
+results4 %>%kbl() %>%kable_styling(full_width = FALSE)
+```
+## Plotting the best models:
+```{r}
+x <- normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm))
+h<-hist(x, xlab="Power Obs Transformation 2",
+   main="Histogram Log Normal Power Obs Transformation 2")
+xfit<-seq(min(x),max(x),length=40)
+yfit<-dlnorm(xfit,log.normal.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$opt$par[1],log.normal.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$opt$par[2])
+yfit <- yfit*diff(h$mids[1:2])*length(x)
+lines(xfit, yfit, col="blue", lwd=2)
+```
+
+```{r}
+x <- normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm))
+h<-hist(x, xlab="Power Obs Transformation 2",
+   main="Histogram Gamma Power Obs Transformation 2")
+xfit<-seq(min(x),max(x),length=40)
+yfit<-dgamma(xfit,gamma.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$opt$par[1],gamma.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$opt$par[2])
+yfit <- yfit*diff(h$mids[1:2])*length(x)
+lines(xfit, yfit, col="blue", lwd=2)
+```
+
+
+```{r}
+
+x <- data$ws30.norm
+h<-hist(x, xlab="Wind Speed",
+   main="Histogram Gamma Wind Speed"
+   )
+xfit<-seq(min(x),max(x),length=40)
+yfit<-dgamma(xfit,gamma.function(data$ws30.norm)$opt$par[1],gamma.function(data$ws30.norm)$opt$par[2])
+yfit <- yfit*diff(h$mids[1:2])*length(x)
+lines(xfit, yfit, col="blue", lwd=2)
+```
+
+```{r}
+
+x <- data$wd30.norm
+h<-hist(x, xlab="Wind Direction", main="Histogram Beta for Wind Direction")
+xfit<-seq(min(x),max(x),length=40)
+yfit<-dbeta(xfit,beta.function(data$wd30.norm)$opt$par[1],beta.function(data$wd30.norm)$opt$par[2])
+yfit <- yfit*diff(h$mids[1:2])*length(x)
+lines(xfit, yfit, col="blue", lwd=2)
+```
