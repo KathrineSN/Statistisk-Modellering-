@@ -135,36 +135,36 @@ Here $y_i$ is the succes in treatment i. We have that $i=0$ control treatment, $
 The log-likelighood is given as
 $$logL(\beta_0, \beta_1) = \sum_i \left[(\beta_0 + \beta_1 \cdot treatment_i)y_i - log(1 + exp(\beta_0 + \beta_1 \cdot treatment_i)) \right]$$
 ```{r}
-# Hjælp mig lige med at forstå det her!?!
+library(magrittr)
+log_data = data
 logL_partial <- function(b0, b1, data, AZT = TRUE){
-    y = if (AZT) {data[1,2]} else {data[2,2]} %>% as.numeric() #Success # Patients with Aids
-    n = if (AZT) {data[1,3]} else {data[2,3]} %>% as.numeric() #Number of patients
-    false = n-y #Patients without AIDS
-    #cat(false)
+    y = if (AZT) {data[1,2]} else {data[2,2]} %>% as.numeric()
+    n = if (AZT) {data[1,3]} else {data[2,3]} %>% as.numeric()
+    false = n-y
     
     y*((b0 + b1 * AZT) * 1 - log(1+exp(b0+b1*AZT))) + false*((b0 + b1 * AZT) * 0 - log(1+exp(b0+b1*AZT)))
 }
-
 
 logL <- function(theta, data){
      - (logL_partial(theta[1], theta[2],data, F) + logL_partial(theta[1],theta[2],data, T))
 }
 
-#Optimising b0 and b0
-opt <- nlminb(c(0, 0), logL, lower = c(-Inf,-Inf), data = data)
 
-#Estimating p0 and p1
+opt <- nlminb(c(0, 0), logL, lower = c(-Inf,-Inf), data = log_data)
+
 p0 <- exp(opt$par[1])/(1+exp(opt$par[1]))
 p1 <- exp(opt$par[1] + opt$par[2])/(1+exp(opt$par[1] + opt$par[2]))
 
 
-#Implementing profile likelihood
+
+
+
 logL_b1 <- function(theta, b1, data){
       -(logL_partial(theta[1], b1,data, F) + logL_partial(theta[1],b1,data, T))
 }
 
 profile_b1 <- function(b1, data){
-  opt <- nlminb(c(0), logL_b1, lower = c(-Inf), data = data, b1 = b1)
+  opt <- nlminb(c(0), logL_b1, lower = c(-Inf), data = log_data, b1 = b1)
   # optimize(logL)
   b0 <- opt$par
   -logL_b1(c(b0),b1,data)
@@ -176,10 +176,10 @@ alpha <- 0.05
 c <- exp(-1/2*qchisq(1-alpha,1))
 p = c()
 for (i in 1:length(b1)){
-  p[i] = exp(profile_b1(b1[i], data))
+  p[i] = exp(profile_b1(b1[i], log_data))
 }
 
-MLE_b1 <- optimize(profile_b1, c(-5,5), data = data, maximum = T)$maximum
+MLE_b1 <- optimize(profile_b1, c(-5,5), data = log_data, maximum = T)$maximum
 
 plot(b1, p/max(p), 'l')
 abline(c, 0)
@@ -194,9 +194,7 @@ CI_b1 <- c(min(a_b1), max(a_b1))
 cat("The maximum likelihood estimates of p0 and p1 are: p0 = ", p0, " p1 = ", p1, "\n")
 cat("The maximum profile likelihood estimate of b1 is:  ", MLE_b1, "\n")
 cat("With confidence intervals: ", CI_b1, "\n")
-
 ```
-The confidence interval does not cover 0 which means that there is a significant difference between the two treatments as seen in the previous question. Also, b1 is different from 0 meaning that the two treatments are different from each other.
 
 
 #Analysis of the survival time data
@@ -230,52 +228,71 @@ head(data.time,2)
 (sum(data.time$tx == 1 & data.time$event == 0))/sum(data.time$tx == 1)
 (sum(data.time$tx == 1 & data.time$event == 1))/sum(data.time$tx == 1)
 ```
-### Fitting an exponential distribution to all the data. 
+### Fit an exponential distribution to all the data. 
 
 ```{r}
-exp.likelihood=function(rate){-sum(dexp(x=data.time$time, rate=rate, log=TRUE))}
+exp.likelihood=function(rate){
+  -sum(dexp(x=data.time$time[data.time$event==1], rate=rate, log=TRUE))- sum(pexp(q=data.time$time[data.time$event==0], lower.tail = FALSE, rate=rate, log=TRUE))
+  }
 
 
-(opt1 = nlminb(start=0.5,objective = exp.likelihood,lower=0)$par)
+(nlminb(start=0.5,objective = exp.likelihood,lower=0)$par)
+(nlminb(start=0.5,objective = exp.likelihood,lower=0)$objective)
 #(optimize(exp.likelihood,c(0, 100),maximum=TRUE)$maximum)
 
 ```
 
-Fit an exponential distribution to the group that received control treatment. 
+Fit an exponential distribution to each group. 
 
 ```{r}
-exp.likelihood=function(rate){-sum(dexp(x=data.time$time[data.time$tx==0], rate=rate, log=TRUE))}
+
+exp.likelihood_no_treat=function(rate){
+  -sum(dexp(x=data.time$time[data.time$event==1 & data.time$tx == 0], rate=rate, log=TRUE))- sum(pexp(q=data.time$time[data.time$event==0 & data.time$tx == 0], lower.tail = FALSE, rate=rate, log=TRUE))
+}
+
+(nlminb(start=0.5,objective = exp.likelihood_no_treat,lower=0)$par)
+(nlminb(start=0.5,objective = exp.likelihood_no_treat,lower=0)$objective)
 
 
-(nlminb(start=0.5,objective = exp.likelihood,lower=0)$par)
-#(optimize(exp.likelihood,c(0, 100),maximum=TRUE)$maximum)
+
+exp.likelihood_with_treat=function(rate){
+  -sum(dexp(x=data.time$time[data.time$event==1 & data.time$tx == 1], rate=rate, log=TRUE))- sum(pexp(q=data.time$time[data.time$event==0 & data.time$tx == 1], lower.tail = FALSE, rate=rate, log=TRUE))
+}
+
+(nlminb(start=0.5,objective = exp.likelihood_with_treat,lower=0)$par)
+(nlminb(start=0.5,objective = exp.likelihood_with_treat,lower=0)$objective )
 ```
-Fit an exponential distribution to the group that received the new treatment
+It can be seen that the model fits the data better when the data is separated into the two treatment groups. 
+
+### Formulate af model where one parameter indicate the treatment effect
 
 ```{r}
-exp.likelihood=function(rate){-sum(dexp(x=data.time$time[data.time$tx==1], rate=rate, log=TRUE))}
+# Implement negative log likelihood function
+
+nll.exp <- function(rate){
+  
+  val1 <- -sum(dexp(x=data.time$time[data.time$event==1],rate=rate[1]+rate[2]*data.time$tx[data.time$event==1],log=TRUE))
+  
+  val2 <- -sum(pexp(q=data.time$time[data.time$event==0],rate=rate[1]+rate[2]*data.time$tx[data.time$event==0],lower.tail=F,log=TRUE))
+  
+  val1+val2
+}
+
+opt.exp <- nlminb(start=c(0.001,0.005),objective=nll.exp,lower=c(-Inf,-Inf))
+(opt.exp$par[2])
 
 
-(nlminb(start=0.5,objective = exp.likelihood,lower=0)$par)
 ```
-### Compare likelihoods of the three models above
-# Comparing using AIC score?
+
+### Making the Wald confidence interval
 
 ```{r}
-k = 1
 
-(AIC.exp.all =2*k-2*(-exp.likelihood(opt1)))
+#Making a confidence interval
+
+I <- hessian(nll.exp,opt.exp$par)
+se <- 1/sqrt(I)
+(opt.exp$par+c(-1,1)*qnorm(0.975)*se/sqrt(n))
 ```
-
-
-
-
-### Formulate a model where one parameter indicate the treatment effect, find the MLE and compare with result from above
-
-
-
-
-
-
 
 

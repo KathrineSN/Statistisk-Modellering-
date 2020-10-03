@@ -319,7 +319,7 @@ Compare AIC for the three models:
 ##### Box Cox
 Box Cox transfomation $$Y_{\lambda}=\frac{y^{\lambda}-1}{\lambda}$$
 ```{r}
-#library(MASS)
+library(MASS)
 lambda <- seq(-0.5,0.5,by=0.01)
 boxcox.lambda=boxcox(lm(data$pow.obs.norm~1),lambda=lambda)
 
