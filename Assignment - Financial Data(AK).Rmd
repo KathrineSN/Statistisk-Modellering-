@@ -37,10 +37,8 @@ opt=nlminb(c(0.001,0.001),normal.likelihood, dat=dat)
 H=hessian(normal.likelihood,opt$par, dat=dat)
 se=sqrt(diag(solve(H)))
 
-t.quan=qt(p = 0.975, df=length(dat)-2)
-
-CI1=opt$par[1]+c(-1,1)*se[1]*t.quan
-CI2=opt$par[2]+c(-1,1)*se[2]*t.quan
+CI1=opt$par[1]+c(-1,1)*se[1]*qnorm(0.975)
+CI2=opt$par[2]+c(-1,1)*se[2]*qnorm(0.975)
 
 return(list("opt"=opt,"CI1"=CI1, "CI2"=CI2, "se"=se))
 }
@@ -80,11 +78,9 @@ opt=nlminb(c(1,0.001,0.001),t.likelihood, dat=dat)
 H=hessian(t.likelihood,opt$par, dat=dat)
 se=sqrt(diag(solve(H)))
 
-t.quan=qt(p = 0.975, df=length(dat)-3)
-
-CI1=opt$par[1]+c(-1,1)*se[1]*t.quan
-CI2=opt$par[2]+c(-1,1)*se[2]*t.quan
-CI3=opt$par[3]+c(-1,1)*se[3]*t.quan
+CI1=opt$par[1]+c(-1,1)*se[1]*qnorm(0.975)
+CI2=opt$par[2]+c(-1,1)*se[2]*qnorm(0.975)
+CI3=opt$par[3]+c(-1,1)*se[3]*qnorm(0.975)
 
 
 return(list("opt"=opt,"CI1"=CI1, "CI2"=CI2,"CI3"=CI3, "se"=se))
@@ -115,7 +111,7 @@ The table below shows the relevant key numbers for both models.
 library(kableExtra)
 results =matrix(NA,ncol=11, nrow=2)
 colnames(results) = c("","AIC", "DF", "Mean", "Sd", "CI lower DF","CI upper DF","CI lower Mean","CI upper Mean","CI lower Sd","CI upper Sd")
-results[1:2,1]=c("Normal Distribution", "t - Cistribution")
+results[1:2,1]=c("Normal Distribution", "t - Distribution")
 
 
 results[1,2] =round(AIC(normal.function(data$SLV)$opt$objective,2))

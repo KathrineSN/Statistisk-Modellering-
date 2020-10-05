@@ -83,10 +83,8 @@ opt=nlminb(c(0.01,0.01),Beta.likelihood, dat=dat)
 H=hessian(Beta.likelihood,opt$par, dat=dat)
 se=sqrt(diag(solve(H)))
 
-t.quan=qt(p = 0.975, df=length(dat)-2)
-
-CI1=opt$par[1]+c(-1,1)*se[1]*t.quan
-CI2=opt$par[2]+c(-1,1)*se[2]*t.quan
+CI1=opt$par[1]+c(-1,1)*se[1]*qnorm(0.975)
+CI2=opt$par[2]+c(-1,1)*se[2]*qnorm(0.975)
 
 return(list("opt"=opt,"CI1"=CI1, "CI2"=CI2, "se"=se))
 }
@@ -112,10 +110,8 @@ opt=nlminb(c(0.01,0.01),Gamma.likelihood, dat=dat)
 H=hessian(Gamma.likelihood,opt$par, dat=dat)
 se=sqrt(diag(solve(H)))
 
-t.quan=qt(p = 0.975, df=length(dat)-2)
-
-CI1=opt$par[1]+c(-1,1)*se[1]*t.quan
-CI2=opt$par[2]+c(-1,1)*se[2]*t.quan
+CI1=opt$par[1]+c(-1,1)*se[1]*qnorm(0.975)
+CI2=opt$par[2]+c(-1,1)*se[2]*qnorm(0.975)
 
 return(list("opt"=opt,"CI1"=CI1, "CI2"=CI2, "se"=se))
 }
@@ -139,10 +135,8 @@ opt=nlminb(c(0.01,0.01),LogNormal.likelihood, dat=dat)
 H=hessian(LogNormal.likelihood,opt$par, dat=dat)
 se=sqrt(diag(solve(H)))
 
-t.quan=qt(p = 0.975, df=length(dat)-2)
-
-CI1=opt$par[1]+c(-1,1)*se[1]*t.quan
-CI2=opt$par[2]+c(-1,1)*se[2]*t.quan
+CI1=opt$par[1]+c(-1,1)*se[1]*qnorm(0.975)
+CI2=opt$par[2]+c(-1,1)*se[2]*qnorm(0.975)
 
 return(list("opt"=opt,"CI1"=CI1, "CI2"=CI2, "se"=se))
 }
@@ -151,7 +145,7 @@ return(list("opt"=opt,"CI1"=CI1, "CI2"=CI2, "se"=se))
 
 
 ## Fit transformations
-Different transformations will be applied to the power obs data to test if the model performance of the 3 models above can be improved. Before transforming the data thr optimal lambda most be found for each transformation. This is done below. A qq-plot is created for each transformation so that it is possible to se how the transformation affects the data.
+Different transformations will be applied to the power obs data to test if the model performance of the 3 models above can be improved. Before transforming the data the optimal lambda most be found for each transformation. This is done below. A qq-plot is created for each transformation so that it is possible to se how the transformation affects the data.
 
 ##### Box Cox 
 Box Cox transformation $$Y_{\lambda}=\frac{y^{\lambda}-1}{\lambda}$$
@@ -176,6 +170,8 @@ lp.lambda <- function(lambda,y){
 (opt.lambda.boxcox=optimize(lp.lambda,c(-2,2),y=data$pow.obs,maximum=TRUE))
 
 ```
+
+
 ```{r}
 par(mfrow=c(1,2))
 qqnorm(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)),main="Distribution after boxcox transformation")

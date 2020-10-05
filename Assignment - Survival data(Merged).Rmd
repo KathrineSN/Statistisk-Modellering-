@@ -31,7 +31,7 @@ where n is the number of patients, k is the number of patient with AIDS. Since i
 binomial.log.likelihood = function(theta,success,size){
   -(sum(dbinom(x=success,size=size,prob=theta, log=TRUE)))}
 
-(theta.opt=optimize(binomial.log.likelihood, c(0.01,0.99),success=sum(data$AIDS_yes),size=sum(data$n))$minimum)
+#(theta.opt=optimize(binomial.log.likelihood, c(0.01,0.99),success=sum(data$AIDS_yes),size=sum(data$n))$minimum)
 
 (nlminb(start=0.5,objective=binomial.log.likelihood,lower=0,success=k,size=n)$par)
 ```
@@ -39,15 +39,17 @@ binomial.log.likelihood = function(theta,success,size){
 ### Fit the Binomial separately to the two distributions and test if there is a difference between the groups.
 
 ```{r}
-#Theta for patients treated with AZT. This is the probability of having AIDS when treated with AZT. 
-#(theta_AZT_yes.opt=optimize(binomial.log.likelihood, c(0.01,0.99),x=data$AIDS_yes[1],size=data$n[1])$minimum)
 
+#(theta_AZT_yes.opt=optimize(binomial.log.likelihood, c(0.01,0.99),x=data$AIDS_yes[1],size=data$n[1])$minimum)
+#(theta_AZT_no.opt=optimize(binomial.log.likelihood, c(0.01,0.99),x=data$AIDS_yes[2],size=data$n[2])$minimum)
+
+
+#Theta for patients treated with AZT. This is the probability of having AIDS when treated with AZT. 
 (theta_AZT_yes.opt=nlminb(start=0.5,binomial.log.likelihood,lower=0,success=data$AIDS_yes[1],size=data$n[1])$par)
 
+#Theta for patients treated without AZT. This is the probability of having AIDS without treament. 
 (theta_AZT_no.opt=nlminb(start=0.5,binomial.log.likelihood,lower=0,success=data$AIDS_yes[2],size=data$n[2])$par)
 
-#Theta for patients treated without AZT. This is the probability of having AIDS without treament. 
-#(theta_AZT_no.opt=optimize(binomial.log.likelihood, c(0.01,0.99),x=data$AIDS_yes[2],size=data$n[2])$minimum)
 ```
 As expected, the probability for getting AIDS is lower when treated with AZT. 
 
@@ -104,11 +106,11 @@ t=x+y
 ```
 With a p-value of 0.008816159 we have strong evidence against the null hypothesis meaning that the two groups do not follow the same distribution.
 
-The null hypothesis is $H_0: \theta=0$. Since $\theta$ is significantly different from zero, the null-hypothesis is rejected and it is concluded that the groups are significantly different from each other. This means that there is a difference in if a patient receives treament with AZT or not. 
+The null hypothesis is $H_0: \theta=0$. Since $\theta$ is significantly different from zero, the null-hypothesis is rejected and it is concluded that the groups are significantly different from each other. This means that there is a difference in if a patient receives treatment with AZT or not. 
 
 
 -------------------------------------------
-**I (Piriya) think this part should be deleted.**
+**I (Piriya) think this part should be deleted.** ** Then delete it (AK)**
 
 To proceed with a likelihood analysis, the number of people with AIDS (X) in the group treated with AZT is $B(m,\pi_x)$ and independently the number of people with AIDS (Y)  in the second group is $B(n,\pi_y)$.
 
@@ -169,7 +171,7 @@ plot(th,lik1,type='n',xlab=expression(theta),
 ```
 -----------------
 
-### Estimate parameters in the model (p0 probability of AIDS in control group, p1 probability of AIDS in treatment group) and report a confidence interval for the parameter describing the dif- ference, compare with the result above.
+### Estimate parameters in the model (p0 probability of AIDS in control group, p1 probability of AIDS in treatment group) and report a confidence interval for the parameter describing the difference, compare with the result above.
 
 The parameters $\beta_0$ and $\beta_1$ can be estimated with the logistic regression model. Here $p_0$ denotes the probability of success (i.e. getting AIDS) in the control treatment and $p_1$ denotes the probability of succes in the new treatment. 
 
@@ -201,8 +203,6 @@ opt <- nlminb(c(0, 0), logL, lower = c(-Inf,-Inf), data = log_data)
 
 p0 <- exp(opt$par[1])/(1+exp(opt$par[1]))
 p1 <- exp(opt$par[1] + opt$par[2])/(1+exp(opt$par[1] + opt$par[2]))
-
-
 
 
 
