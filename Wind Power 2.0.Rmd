@@ -174,8 +174,8 @@ lp.lambda <- function(lambda,y){
 
 ```{r}
 par(mfrow=c(1,2))
-qqnorm(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)),main="Distribution after boxcox transformation")
-qqline(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))
+qqnorm(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs)),main="Distribution after boxcox transformation")
+qqline(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.)))
 qqnorm(data$pow.obs.norm, pch = 1, frame = TRUE, main="Distribution before transformation")
 qqline(data$pow.obs.norm, col = "steelblue")
 ```
@@ -232,7 +232,7 @@ trans2 <- function(lambda,y){
 ## profile likelihood for lambda
 lp.lambda2 <- function(lambda,y){
     n <- length(y)
-    y.l <- trans1(lambda ,y)
+    y.l <- trans2(lambda ,y)
     sigmasq <- 1/n * sum((y.l-mean(y.l))^2)
     -n/2 * log(sigmasq) + sum(((4*lambda - 2)*y - 2*lambda)/(y*(-1 + y)))}
     
@@ -242,8 +242,8 @@ lp.lambda2 <- function(lambda,y){
 
 ```{r}
 par(mfrow=c(1,2))
-qqnorm(normalize(trans1(opt.lambda.trans2$par,data$pow.obs.norm)),main="Distribution after transformation 2")
-qqline(normalize(trans1(opt.lambda.trans2$par,data$pow.obs.norm)))
+qqnorm(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)),main="Distribution after transformation 2")
+qqline(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))
 qqnorm(data$pow.obs.norm, pch = 1, frame = TRUE, main="Distribution before transformation")
 qqline(data$pow.obs.norm, col = "steelblue")
 ```
