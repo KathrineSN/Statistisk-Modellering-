@@ -1754,96 +1754,193 @@ summary {
 <h3>Read the Logistic.txt into R.</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YSA8LSByZWFkLmRlbGltKFwiTG9naXN0aWMudHh0XCIsaGVhZGVyID0gVFJVRSwgc2VwID0gXCJcIiwgZGVjID0gXCIuXCIpXG5kYXRhJEFJRFNfbm89ZGF0YSRuLWRhdGEkQUlEU195ZXNcbmhlYWQoZGF0YSwyKSBcbmBgYCJ9 -->
-<pre class="r"><code>data &lt;- read.delim(&quot;Logistic.txt&quot;,header = TRUE, sep = &quot;&quot;, dec = &quot;.&quot;)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZGF0YSA8LSByZWFkLmRlbGltKFxcTG9naXN0aWMudHh0XFwsaGVhZGVyID0gVFJVRSwgc2VwID0gXFxcXCwgZGVjID0gXFwuXFwpXG5kYXRhJEFJRFNfbm89ZGF0YSRuLWRhdGEkQUlEU195ZXNcbmhlYWQoZGF0YSwyKSBcbmBgYFxuYGBgclxuXG5uIDwtIHN1bShkYXRhWywzXSkgI051bWJlciBvZiBwYXRpZW50ICNuIFxuayA8LSBzdW0oZGF0YVssMl0pICNOdW1iZXIgb2YgcGF0aWVudHMgd2l0aCBBSURTICNTdWNlc3NlcyAja1xudGhldGEgPC0gcy9uICNQcm9iYWJpbGl0eSB0aGF0IHlvdSBoYXZlIEFpZHNcbmBgYFxuYGBgIn0= -->
+<pre class="r"><code>```r
+data &lt;- read.delim(\Logistic.txt\,header = TRUE, sep = \\, dec = \.\)
 data$AIDS_no=data$n-data$AIDS_yes
 head(data,2) </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6MiwibmNvbCI6NH0sInJkZiI6Ikg0c0lBQUFBQUFBQUJsMVF3VTdETUF4MTBuUmpsVUNUT1BFUHJJS2hmY0RFTGx3UVlod0dGeFM2QWhYRm1kcE1nTVJQOEJlSWp4eTRyVDJOSEp5OFo4ZCt6N21lTGM2U1JRSUFFUmpRRU1VRW9YZCtkVHFlakFHTUpxYW9NbWp1ZDNwMVNNQlFEQ2swRjZMYnZHYW9MeDJkKzIwUjRJamllSWYvVUh6djhDK0t6MEFsUnZ0SzR6b0ZJd3JUdXh1R2U5T0wyZnorWTZ1b2tFRy9MYUFMNWcwcTk1YktUQkZXM2YxZk9DdHRMY0tTVEpiVzIvU3hvbjVpbTZDbDcxYStjRWhOdXZtWE9HaFdWWkFZcnJGeHNoeGx6MnQ4R1UxT0dnVzJvOWdlVzl0aTAybnFYNTRWODZ4ZWprOEY1bUsrdEE5NXllU0FWbTQzVGxkVmdWNVdvV3lkZXVldHZFc3lWMHFtWFE0MmY5eWMxZVFRQWdBQSJ9 -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["AZT"],"name":[1],"type":["chr"],"align":["left"]},{"label":["AIDS_yes"],"name":[2],"type":["int"],"align":["right"]},{"label":["n"],"name":[3],"type":["int"],"align":["right"]},{"label":["AIDS_no"],"name":[4],"type":["int"],"align":["right"]}],"data":[{"1":"Yes","2":"25","3":"170","4":"145","_rn_":"1"},{"1":"No","2":"44","3":"168","4":"124","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10],"total":[4]},"rows":{"min":[10],"max":[10],"total":[2]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5uIDwtIHN1bShkYXRhWywzXSkgI051bWJlciBvZiBwYXRpZW50ICNuIFxuayA8LSBzdW0oZGF0YVssMl0pICNOdW1iZXIgb2YgcGF0aWVudHMgd2l0aCBBSURTICNTdWNlc3NlcyAja1xudGhldGEgPC0gcy9uICNQcm9iYWJpbGl0eSB0aGF0IHlvdSBoYXZlIEFpZHNcbmBgYCJ9 -->
 <pre class="r"><code>
 n &lt;- sum(data[,3]) #Number of patient #n 
 k &lt;- sum(data[,2]) #Number of patients with AIDS #Sucesses #k
 theta &lt;- s/n #Probability that you have Aids</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>The data consist of patients being treated with AZT and the number of patients with AIDS, as well as patients not being treated with AZT and the number of patients having AIDS. It looks like more patients get AIDS if they are not treated with AZT.</p>
-</div>
-<div id="fitting-data-to-binomial-distribution-i.e.-consider-all-data-as-coming-from-the-same-population" class="section level3">
-<h3>Fitting data to binomial distribution (i.e. consider all data as coming from the same population)</h3>
-<p>The log-likelihood of the binomial distribution is: <span class="math display">\[l(\theta)=\sum_{k=0}^{n}k\cdot log(\theta)+(n-k)\cdot log(1-\theta)+c(n,k)\]</span> where n is the number of patients, k is the number of patient with AIDS. Since it is considered as coming from the same population i.e. follow the same distibution, the data is fitted to one binomial distribution.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG4jRm9ybXVsYXRpbmcgdGhlIGxpa2VsaWhvb2QgZnVuY3Rpb25cbmJpbm9taWFsLmxvZy5saWtlbGlob29kID0gZnVuY3Rpb24odGhldGEsc3VjY2VzcyxzaXplKXtcbiAgLShzdW0oZGJpbm9tKHg9c3VjY2VzcyxzaXplPXNpemUscHJvYj10aGV0YSwgbG9nPVRSVUUpKSl9XG5cbih0aGV0YS5vcHQ9b3B0aW1pemUoYmlub21pYWwubG9nLmxpa2VsaWhvb2QsIGMoMC4wMSwwLjk5KSxzdWNjZXNzPXN1bShkYXRhJEFJRFNfeWVzKSxzaXplPXN1bShkYXRhJG4pKSRtaW5pbXVtKVxuYGBgIn0= -->
-<pre class="r"><code>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjoiZGF0YS5mcmFtZSIsIm5yb3ciOjIsIm5jb2wiOjR9LCJyZGYiOiJINHNJQUFBQUFBQUFCbDFRd1U3RE1BeDEwblJqbFVDVE9QRVBySUtoZmNERUxsd1FZaHdHRnhTNkFoWEZtZHBNZ01SUDhCZUlqeHk0clQyTkhKeThaOGQrejdtZUxjNlNSUUlBRVJqUUVNVUVvWGQrZFRxZWpBR01KcWFvTW1qdWQzcDFTTUJRRENrMEY2TGJ2R2FvTHgyZCsyMFI0SWppZUlmL1VIenY4QytLejBBbFJ2dEs0em9GSXdyVHV4dUdlOU9MMmZ6K1k2dW9rRUcvTGFBTDVnMHE5NWJLVEJGVzNmMWZPQ3R0TGNLU1RKYlcyL1N4b241aW02Q2w3MWErY0VoTnV2bVhPR2hXVlpBWXJyRnhzaHhsejJ0OEdVMU9HZ1cybzlnZVc5dGkwMm5xWDU0Vjg2eGVqazhGNW1LK3RBOTV5ZVNBVm00M1RsZFZnVjVXb1d5ZGV1ZXR2RXN5VjBxbVhRNDJmOXljMWVRUUFnQUEifQ== --&gt;
+
+&lt;div data-pagedtable=&quot;false&quot;&gt;
+  &lt;script data-pagedtable-source type=&quot;application/json&quot;&gt;
+{&quot;columns&quot;:[{&quot;label&quot;:[&quot;&quot;],&quot;name&quot;:[&quot;_rn_&quot;],&quot;type&quot;:[&quot;&quot;],&quot;align&quot;:[&quot;left&quot;]},{&quot;label&quot;:[&quot;AZT&quot;],&quot;name&quot;:[1],&quot;type&quot;:[&quot;chr&quot;],&quot;align&quot;:[&quot;left&quot;]},{&quot;label&quot;:[&quot;AIDS_yes&quot;],&quot;name&quot;:[2],&quot;type&quot;:[&quot;int&quot;],&quot;align&quot;:[&quot;right&quot;]},{&quot;label&quot;:[&quot;n&quot;],&quot;name&quot;:[3],&quot;type&quot;:[&quot;int&quot;],&quot;align&quot;:[&quot;right&quot;]},{&quot;label&quot;:[&quot;AIDS_no&quot;],&quot;name&quot;:[4],&quot;type&quot;:[&quot;int&quot;],&quot;align&quot;:[&quot;right&quot;]}],&quot;data&quot;:[{&quot;1&quot;:&quot;Yes&quot;,&quot;2&quot;:&quot;25&quot;,&quot;3&quot;:&quot;170&quot;,&quot;4&quot;:&quot;145&quot;,&quot;_rn_&quot;:&quot;1&quot;},{&quot;1&quot;:&quot;No&quot;,&quot;2&quot;:&quot;44&quot;,&quot;3&quot;:&quot;168&quot;,&quot;4&quot;:&quot;124&quot;,&quot;_rn_&quot;:&quot;2&quot;}],&quot;options&quot;:{&quot;columns&quot;:{&quot;min&quot;:{},&quot;max&quot;:[10],&quot;total&quot;:[4]},&quot;rows&quot;:{&quot;min&quot;:[10],&quot;max&quot;:[10],&quot;total&quot;:[2]},&quot;pages&quot;:{}}}
+  &lt;/script&gt;
+&lt;/div&gt;
+
+&lt;!-- rnb-frame-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+The data consist of patients being treated with AZT and the number of patients with AIDS, as well as patients not being treated with AZT and the number of patients having AIDS. It looks like more patients get AIDS if they are not treated with AZT.
+
+### Fitting data to binomial distribution (i.e. consider all data as coming from the same population)
+The log-likelihood of the binomial distribution is:
+$$l(\theta)=\sum_{k=0}^{n}k\cdot log(\theta)+(n-k)\cdot log(1-\theta)+c(n,k)$$
+where n is the number of patients, k is the number of patient with AIDS. Since it is considered as coming from the same population i.e. follow the same distibution, the data is fitted to one binomial distribution.
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuXG4jRm9ybXVsYXRpbmcgdGhlIGxpa2VsaWhvb2QgZnVuY3Rpb25cbmJpbm9taWFsLmxvZy5saWtlbGlob29kID0gZnVuY3Rpb24odGhldGEsc3VjY2VzcyxzaXplKXtcbiAgLShzdW0oZGJpbm9tKHg9c3VjY2VzcyxzaXplPXNpemUscHJvYj10aGV0YSwgbG9nPVRSVUUpKSl9XG5cbih0aGV0YS5vcHQ9b3B0aW1pemUoYmlub21pYWwubG9nLmxpa2VsaWhvb2QsIGMoMC4wMSwwLjk5KSxzdWNjZXNzPXN1bShkYXRhJEFJRFNfeWVzKSxzaXplPXN1bShkYXRhJG4pKSRtaW5pbXVtKVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+
 #Formulating the likelihood function
 binomial.log.likelihood = function(theta,success,size){
   -(sum(dbinom(x=success,size=size,prob=theta, log=TRUE)))}
 
 (theta.opt=optimize(binomial.log.likelihood, c(0.01,0.99),success=sum(data$AIDS_yes),size=sum(data$n))$minimum)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMjA0MTQ3MlxuIn0= -->
-<pre><code>[1] 0.2041472</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuKG5sbWluYihzdGFydD0wLjUsb2JqZWN0aXZlPWJpbm9taWFsLmxvZy5saWtlbGlob29kLGxvd2VyPTAsc3VjY2Vzcz1rLHNpemU9bikkcGFyKVxuYGBgIn0= -->
-<pre class="r"><code>(nlminb(start=0.5,objective=binomial.log.likelihood,lower=0,success=k,size=n)$par)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMjA0MTQyXG4ifQ== -->
-<pre><code>[1] 0.204142</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="fit-the-binomial-separately-to-the-two-distributions-and-test-if-there-is-a-difference-between-the-groups." class="section level3">
-<h3>Fit the Binomial separately to the two distributions and test if there is a difference between the groups.</h3>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI1RoZXRhIGZvciBwYXRpZW50cyB0cmVhdGVkIHdpdGggQVpULiBUaGlzIGlzIHRoZSBwcm9iYWJpbGl0eSBvZiBoYXZpbmcgQUlEUyB3aGVuIHRyZWF0ZWQgd2l0aCBBWlQuIFxuIyh0aGV0YV9BWlRfeWVzLm9wdD1vcHRpbWl6ZShiaW5vbWlhbC5sb2cubGlrZWxpaG9vZCwgYygwLjAxLDAuOTkpLHg9ZGF0YSRBSURTX3llc1sxXSxzaXplPWRhdGEkblsxXSkkbWluaW11bSlcblxuKHRoZXRhX0FaVF95ZXMub3B0PW5sbWluYihzdGFydD0wLjUsYmlub21pYWwubG9nLmxpa2VsaWhvb2QsbG93ZXI9MCxzdWNjZXNzPWRhdGEkQUlEU195ZXNbMV0sc2l6ZT1kYXRhJG5bMV0pJHBhcilcbmBgYCJ9 -->
-<pre class="r"><code>#Theta for patients treated with AZT. This is the probability of having AIDS when treated with AZT. 
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMjA0MTQ3MlxuIn0= --&gt;
+</code></pre>
+<p>[1] 0.2041472</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuKG5sbWluYihzdGFydD0wLjUsb2JqZWN0aXZlPWJpbm9taWFsLmxvZy5saWtlbGlob29kLGxvd2VyPTAsc3VjY2Vzcz1rLHNpemU9bikkcGFyKVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+(nlminb(start=0.5,objective=binomial.log.likelihood,lower=0,success=k,size=n)$par)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMjA0MTQyXG4ifQ== --&gt;
+</code></pre>
+<p>[1] 0.204142</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+### Fit the Binomial separately to the two distributions and test if there is a difference between the groups.
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI1RoZXRhIGZvciBwYXRpZW50cyB0cmVhdGVkIHdpdGggQVpULiBUaGlzIGlzIHRoZSBwcm9iYWJpbGl0eSBvZiBoYXZpbmcgQUlEUyB3aGVuIHRyZWF0ZWQgd2l0aCBBWlQuIFxuIyh0aGV0YV9BWlRfeWVzLm9wdD1vcHRpbWl6ZShiaW5vbWlhbC5sb2cubGlrZWxpaG9vZCwgYygwLjAxLDAuOTkpLHg9ZGF0YSRBSURTX3llc1sxXSxzaXplPWRhdGEkblsxXSkkbWluaW11bSlcblxuKHRoZXRhX0FaVF95ZXMub3B0PW5sbWluYihzdGFydD0wLjUsYmlub21pYWwubG9nLmxpa2VsaWhvb2QsbG93ZXI9MCxzdWNjZXNzPWRhdGEkQUlEU195ZXNbMV0sc2l6ZT1kYXRhJG5bMV0pJHBhcilcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+#Theta for patients treated with AZT. This is the probability of having AIDS when treated with AZT. 
 #(theta_AZT_yes.opt=optimize(binomial.log.likelihood, c(0.01,0.99),x=data$AIDS_yes[1],size=data$n[1])$minimum)
 
 (theta_AZT_yes.opt=nlminb(start=0.5,binomial.log.likelihood,lower=0,success=data$AIDS_yes[1],size=data$n[1])$par)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMTQ3MDU4OFxuIn0= -->
-<pre><code>[1] 0.1470588</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuKHRoZXRhX0FaVF9uby5vcHQ9bmxtaW5iKHN0YXJ0PTAuNSxiaW5vbWlhbC5sb2cubGlrZWxpaG9vZCxsb3dlcj0wLHN1Y2Nlc3M9ZGF0YSRBSURTX3llc1syXSxzaXplPWRhdGEkblsyXSkkcGFyKVxuYGBgIn0= -->
-<pre class="r"><code>(theta_AZT_no.opt=nlminb(start=0.5,binomial.log.likelihood,lower=0,success=data$AIDS_yes[2],size=data$n[2])$par)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMjYxOTA0OFxuIn0= -->
-<pre><code>[1] 0.2619048</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI1RoZXRhIGZvciBwYXRpZW50cyB0cmVhdGVkIHdpdGhvdXQgQVpULiBUaGlzIGlzIHRoZSBwcm9iYWJpbGl0eSBvZiBoYXZpbmcgQUlEUyB3aXRob3V0IHRyZWFtZW50LiBcbiModGhldGFfQVpUX25vLm9wdD1vcHRpbWl6ZShiaW5vbWlhbC5sb2cubGlrZWxpaG9vZCwgYygwLjAxLDAuOTkpLHg9ZGF0YSRBSURTX3llc1syXSxzaXplPWRhdGEkblsyXSkkbWluaW11bSlcbmBgYCJ9 -->
-<pre class="r"><code>#Theta for patients treated without AZT. This is the probability of having AIDS without treament. 
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMTQ3MDU4OFxuIn0= --&gt;
+</code></pre>
+<p>[1] 0.1470588</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuKHRoZXRhX0FaVF9uby5vcHQ9bmxtaW5iKHN0YXJ0PTAuNSxiaW5vbWlhbC5sb2cubGlrZWxpaG9vZCxsb3dlcj0wLHN1Y2Nlc3M9ZGF0YSRBSURTX3llc1syXSxzaXplPWRhdGEkblsyXSkkcGFyKVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+(theta_AZT_no.opt=nlminb(start=0.5,binomial.log.likelihood,lower=0,success=data$AIDS_yes[2],size=data$n[2])$par)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMjYxOTA0OFxuIn0= --&gt;
+</code></pre>
+<p>[1] 0.2619048</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI1RoZXRhIGZvciBwYXRpZW50cyB0cmVhdGVkIHdpdGhvdXQgQVpULiBUaGlzIGlzIHRoZSBwcm9iYWJpbGl0eSBvZiBoYXZpbmcgQUlEUyB3aXRob3V0IHRyZWFtZW50LiBcbiModGhldGFfQVpUX25vLm9wdD1vcHRpbWl6ZShiaW5vbWlhbC5sb2cubGlrZWxpaG9vZCwgYygwLjAxLDAuOTkpLHg9ZGF0YSRBSURTX3llc1syXSxzaXplPWRhdGEkblsyXSkkbWluaW11bSlcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+#Theta for patients treated without AZT. This is the probability of having AIDS without treament. 
 #(theta_AZT_no.opt=optimize(binomial.log.likelihood, c(0.01,0.99),x=data$AIDS_yes[2],size=data$n[2])$minimum)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>As expected, the probability for getting AIDS is lower when treated with AZT.</p>
-<p><strong>Finding the confidence interval for the probabilities.</strong></p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuazEgPC0gZGF0YSRBSURTX3llc1sxXSAjQVRaX3llc1xuazIgPC0gZGF0YSRBSURTX3llc1syXSAjQVRaX25vXG5uMSA8LSBkYXRhJG5bMV1cbm4yIDwtIGRhdGEkblsyXVxucDEgPC0gazEvbjFcbnAyIDwtIGsyL24yXG5gYGAifQ== -->
-<pre class="r"><code>k1 &lt;- data$AIDS_yes[1] #ATZ_yes
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+As expected, the probability for getting AIDS is lower when treated with AZT. 
+
+
+**Finding the confidence interval for the probabilities.** 
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuazEgPC0gZGF0YSRBSURTX3llc1sxXSAjQVRaX3llc1xuazIgPC0gZGF0YSRBSURTX3llc1syXSAjQVRaX25vXG5uMSA8LSBkYXRhJG5bMV1cbm4yIDwtIGRhdGEkblsyXVxucDEgPC0gazEvbjFcbnAyIDwtIGsyL24yXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+k1 &lt;- data$AIDS_yes[1] #ATZ_yes
 k2 &lt;- data$AIDS_yes[2] #ATZ_no
 n1 &lt;- data$n[1]
 n2 &lt;- data$n[2]
 p1 &lt;- k1/n1
 p2 &lt;- k2/n2</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShudW1EZXJpdilcbkkgPC0gaGVzc2lhbihiaW5vbWlhbC5sb2cubGlrZWxpaG9vZCx0aGV0YSxzdWNjZXNzPWssc2l6ZT1uKVxuSV9BWlRfeWVzIDwtIGhlc3NpYW4oYmlub21pYWwubG9nLmxpa2VsaWhvb2QsdGhldGFfQVpUX3llcy5vcHQsc3VjY2Vzcz1rMSxzaXplPW4xKVxuSV9BWlRfbm8gPC0gaGVzc2lhbihiaW5vbWlhbC5sb2cubGlrZWxpaG9vZCx0aGV0YV9BWlRfbm8ub3B0LHN1Y2Nlc3M9azIsc2l6ZT1uMilcblxuI1RoZSBzdGFuZGFyZCBlcnJvciBcbnNlIDwtIDEvc3FydChJKVxuc2VfQVpUX3llcyA8LSAxL3NxcnQoSV9BWlRfeWVzKVxuc2VfQVpUX25vIDwtIDEvc3FydChJX0FaVF9ubylcblxuXG5cbiNjb25maWRlbmNlIGludGVydmFsbGV0XG4ocCtjKC0xLDEpKnFub3JtKDAuOTc1KSpzZS9zcXJ0KG4pKVxuYGBgIn0= -->
-<pre class="r"><code>library(numDeriv)
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxubGlicmFyeShudW1EZXJpdilcbkkgPC0gaGVzc2lhbihiaW5vbWlhbC5sb2cubGlrZWxpaG9vZCx0aGV0YSxzdWNjZXNzPWssc2l6ZT1uKVxuSV9BWlRfeWVzIDwtIGhlc3NpYW4oYmlub21pYWwubG9nLmxpa2VsaWhvb2QsdGhldGFfQVpUX3llcy5vcHQsc3VjY2Vzcz1rMSxzaXplPW4xKVxuSV9BWlRfbm8gPC0gaGVzc2lhbihiaW5vbWlhbC5sb2cubGlrZWxpaG9vZCx0aGV0YV9BWlRfbm8ub3B0LHN1Y2Nlc3M9azIsc2l6ZT1uMilcblxuI1RoZSBzdGFuZGFyZCBlcnJvciBcbnNlIDwtIDEvc3FydChJKVxuc2VfQVpUX3llcyA8LSAxL3NxcnQoSV9BWlRfeWVzKVxuc2VfQVpUX25vIDwtIDEvc3FydChJX0FaVF9ubylcblxuXG5cbiNjb25maWRlbmNlIGludGVydmFsbGV0XG4ocCtjKC0xLDEpKnFub3JtKDAuOTc1KSpzZS9zcXJ0KG4pKVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+library(numDeriv)
 I &lt;- hessian(binomial.log.likelihood,theta,success=k,size=n)
 I_AZT_yes &lt;- hessian(binomial.log.likelihood,theta_AZT_yes.opt,success=k1,size=n1)
 I_AZT_no &lt;- hessian(binomial.log.likelihood,theta_AZT_no.opt,success=k2,size=n2)
@@ -1857,42 +1954,69 @@ se_AZT_no &lt;- 1/sqrt(I_AZT_no)
 
 #confidence intervallet
 (p+c(-1,1)*qnorm(0.975)*se/sqrt(n))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVjeWNsaW5nIGFycmF5IG9mIGxlbmd0aCAxIGluIHZlY3Rvci1hcnJheSBhcml0aG1ldGljIGlzIGRlcHJlY2F0ZWQuXG4gIFVzZSBjKCkgb3IgYXMudmVjdG9yKCkgaW5zdGVhZC5cbiJ9 -->
-<pre><code>Recycling array of length 1 in vector-array arithmetic is deprecated.
-  Use c() or as.vector() instead.</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMjAxODA0NyAwLjIwNjQ3OTNcbiJ9 -->
-<pre><code>[1] 0.2018047 0.2064793</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuKHAxK2MoLTEsMSkqcW5vcm0oMC45NzUpKnNlX0FaVF95ZXMvc3FydChuMSkpXG5gYGAifQ== -->
-<pre class="r"><code>(p1+c(-1,1)*qnorm(0.975)*se_AZT_yes/sqrt(n1))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVjeWNsaW5nIGFycmF5IG9mIGxlbmd0aCAxIGluIHZlY3Rvci1hcnJheSBhcml0aG1ldGljIGlzIGRlcHJlY2F0ZWQuXG4gIFVzZSBjKCkgb3IgYXMudmVjdG9yKCkgaW5zdGVhZC5cbiJ9 -->
-<pre><code>Recycling array of length 1 in vector-array arithmetic is deprecated.
-  Use c() or as.vector() instead.</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMTQyOTc1NiAwLjE1MTE0MjFcbiJ9 -->
-<pre><code>[1] 0.1429756 0.1511421</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuKHAyK2MoLTEsMSkqcW5vcm0oMC45NzUpKnNlX0FaVF9uby9zcXJ0KG4yKSlcbmBgYCJ9 -->
-<pre class="r"><code>(p2+c(-1,1)*qnorm(0.975)*se_AZT_no/sqrt(n2))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVjeWNsaW5nIGFycmF5IG9mIGxlbmd0aCAxIGluIHZlY3Rvci1hcnJheSBhcml0aG1ldGljIGlzIGRlcHJlY2F0ZWQuXG4gIFVzZSBjKCkgb3IgYXMudmVjdG9yKCkgaW5zdGVhZC5cbiJ9 -->
-<pre><code>Recycling array of length 1 in vector-array arithmetic is deprecated.
-  Use c() or as.vector() instead.</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMjU2Nzc1NCAwLjI2NzAzNDJcbiJ9 -->
-<pre><code>[1] 0.2567754 0.2670342</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Now the parameters and their corresponding CI are found.</p>
-<p>The null hypothesis is that the two distributions are equal meaning that if AZT_yes follows <span class="math inline">\(B(m,\pi_x)\)</span> and AZT_no follows <span class="math inline">\(B(n,\pi_y)\)</span> <span class="math inline">\(\pi_x=\pi_y\)</span>.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxueD1kYXRhJEFJRFNfeWVzWzFdXG55PWRhdGEkQUlEU19ub1sxXVxubT1zdW0oZGF0YSRBSURTX3llcylcbm49c3VtKGRhdGEkQUlEU19ubylcbk49bStuXG50PXgreVxuXG4jVGhlIHN0YW5kYXJkIHRlc3Qgb2YgZXF1YWxpdHkgb2YgcHJvcG9ydGlvbnMgaXMgdGhlIGZhbW91cyBjaGktc3F1YXJlZCB0ZXN0XG4oY2hpLnNxdWFyZWQudGVzdD1OKih4KihuLXkpLXkqKG0teCkpXjIvKG0qbip0KihOLXQpKSlcbmBgYCJ9 -->
-<pre class="r"><code>x=data$AIDS_yes[1]
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiUmVjeWNsaW5nIGFycmF5IG9mIGxlbmd0aCAxIGluIHZlY3Rvci1hcnJheSBhcml0aG1ldGljIGlzIGRlcHJlY2F0ZWQuXG4gIFVzZSBjKCkgb3IgYXMudmVjdG9yKCkgaW5zdGVhZC5cblsxXSAwLjIwMTgwNDcgMC4yMDY0NzkzXG4ifQ== --&gt;
+</code></pre>
+<p>Recycling array of length 1 in vector-array arithmetic is deprecated. Use c() or as.vector() instead. [1] 0.2018047 0.2064793</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuKHAxK2MoLTEsMSkqcW5vcm0oMC45NzUpKnNlX0FaVF95ZXMvc3FydChuMSkpXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+(p1+c(-1,1)*qnorm(0.975)*se_AZT_yes/sqrt(n1))</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiUmVjeWNsaW5nIGFycmF5IG9mIGxlbmd0aCAxIGluIHZlY3Rvci1hcnJheSBhcml0aG1ldGljIGlzIGRlcHJlY2F0ZWQuXG4gIFVzZSBjKCkgb3IgYXMudmVjdG9yKCkgaW5zdGVhZC5cblsxXSAwLjE0Mjk3NTYgMC4xNTExNDIxXG4ifQ== --&gt;
+</code></pre>
+<p>Recycling array of length 1 in vector-array arithmetic is deprecated. Use c() or as.vector() instead. [1] 0.1429756 0.1511421</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuKHAyK2MoLTEsMSkqcW5vcm0oMC45NzUpKnNlX0FaVF9uby9zcXJ0KG4yKSlcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+(p2+c(-1,1)*qnorm(0.975)*se_AZT_no/sqrt(n2))</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiUmVjeWNsaW5nIGFycmF5IG9mIGxlbmd0aCAxIGluIHZlY3Rvci1hcnJheSBhcml0aG1ldGljIGlzIGRlcHJlY2F0ZWQuXG4gIFVzZSBjKCkgb3IgYXMudmVjdG9yKCkgaW5zdGVhZC5cblsxXSAwLjI1Njc3NTQgMC4yNjcwMzQyXG4ifQ== --&gt;
+</code></pre>
+<p>Recycling array of length 1 in vector-array arithmetic is deprecated. Use c() or as.vector() instead. [1] 0.2567754 0.2670342</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+Now the parameters and their corresponding CI are found. 
+
+The null hypothesis is that the two distributions are equal meaning that if AZT_yes follows $B(m,\pi_x)$ and AZT_no follows $B(n,\pi_y)$ $\pi_x=\pi_y$.
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxueD1kYXRhJEFJRFNfeWVzWzFdXG55PWRhdGEkQUlEU19ub1sxXVxubT1zdW0oZGF0YSRBSURTX3llcylcbm49c3VtKGRhdGEkQUlEU19ubylcbk49bStuXG50PXgreVxuXG4jVGhlIHN0YW5kYXJkIHRlc3Qgb2YgZXF1YWxpdHkgb2YgcHJvcG9ydGlvbnMgaXMgdGhlIGZhbW91cyBjaGktc3F1YXJlZCB0ZXN0XG4oY2hpLnNxdWFyZWQudGVzdD1OKih4KihuLXkpLXkqKG0teCkpXjIvKG0qbip0KihOLXQpKSlcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+x=data$AIDS_yes[1]
 y=data$AIDS_no[1]
 m=sum(data$AIDS_yes)
 n=sum(data$AIDS_no)
@@ -1901,46 +2025,110 @@ t=x+y
 
 #The standard test of equality of proportions is the famous chi-squared test
 (chi.squared.test=N*(x*(n-y)-y*(m-x))^2/(m*n*t*(N-t)))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDYuODU5Njk1XG4ifQ== -->
-<pre><code>[1] 6.859695</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuKHBjaGlzcShjaGkuc3F1YXJlZC50ZXN0LCBkZj0xLCBsb3dlci50YWlsPUZBTFNFKSlcbmBgYCJ9 -->
-<pre class="r"><code>(pchisq(chi.squared.test, df=1, lower.tail=FALSE))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDA4ODE2MTU5XG4ifQ== -->
-<pre><code>[1] 0.008816159</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>With a p-value of 0.008816159 we have strong evidence against the null hypothesis meaning that the two groups does not follow the same distribution.</p>
-<p>To proceed with a likelihood analysis, the number of people with AIDS (X) in the group treated with AZT is <span class="math inline">\(B(m,\pi_x)\)</span> and independently the number of people with AIDS (Y) in the second group is <span class="math inline">\(B(n,\pi_y)\)</span>.</p>
-<p>On observing x and y the joint likelihood of <span class="math inline">\((\pi_x,\pi_y)\)</span>: <span class="math display">\[L(\pi_x, \pi_y)=\pi_x^x*(1-\pi_x)^{m-x}\pi_y^y(1-\pi_y)^{n-y}\]</span></p>
-<p>The log odds-ratio is defined by: <span class="math display">\[\theta=\log \frac{\pi_{x} /\left(1-\pi_{x}\right)}{\pi_{y} /\left(1-\pi_{y}\right)}\]</span></p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuKHRoZXRhLmNvbXBhcmUgPSBsb2coKHRoZXRhX0FaVF95ZXMub3B0LygxLXRoZXRhX0FaVF95ZXMub3B0KSkvKHRoZXRhX0FaVF9uby5vcHQvKDEtIHRoZXRhX0FaVF9uby5vcHQpKSkpXG5gYGAifQ== -->
-<pre class="r"><code>(theta.compare = log((theta_AZT_yes.opt/(1-theta_AZT_yes.opt))/(theta_AZT_no.opt/(1- theta_AZT_no.opt))))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIC0wLjcyMTc2NlxuIn0= -->
-<pre><code>[1] -0.721766</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuKGxvZygoeC8obS14KSkvKHktKG4teSkpKSlcbmBgYCJ9 -->
-<pre class="r"><code>(log((x/(m-x))/(y-(n-y))))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIC0zLjYwOTgzNlxuIn0= -->
-<pre><code>[1] -3.609836</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>The null hypothesis is <span class="math inline">\(H_0: \theta=0\)</span>. Since <span class="math inline">\(\theta\)</span> is significantly different from zero, the null-hypothesis is rejected and it is concluded that the groups are significantly different from each other. This means that there is a difference in if a patient receives treament with AZT or not.</p>
-</div>
-<div id="estimate-parameters-in-the-model-p0-probability-of-aids-in-control-group-p1-probability-of-aids-in-treatment-group-and-report-a-confidence-interval-for-the-parameter-describing-the-dif--ference-compare-with-the-result-above." class="section level3">
-<h3>Estimate parameters in the model (p0 probability of AIDS in control group, p1 probability of AIDS in treatment group) and report a confidence interval for the parameter describing the dif- ference, compare with the result above.</h3>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5rMSA8LSBkYXRhJEFJRFNfeWVzWzFdICNBVFpfeWVzXG5rMiA8LSBkYXRhJEFJRFNfeWVzWzJdICNBVFpfbm9cbm4xIDwtIGRhdGEkblsxXVxubjIgPC0gZGF0YSRuWzJdXG5cbiNOZWdhdGl2ZSBsb2ctbGlrZWxpaG9vZCBmdW5jdGlvbiBcblxubG9nTCA8LSBmdW5jdGlvbih0aGV0YSl7XG4gIFxuICBiMCA8LSB0aGV0YVsxXVxuICBiMSA8LSB0aGV0YVsyXVxuICBcbiBrMiooKGIwICtiMSowKS1sb2coMStleHAoYjArYjEqMCkpKSsobjItazIpKigoYjArYjEqMCktbG9nKDErZXhwKGIwK2IxKjApKSkrazEqKChiMCArYjEqMSktbG9nKDErZXhwKGIwK2IxKjEpKSkrKG4xLWsxKSooKGIwK2IxKjApLWxvZygxK2V4cChiMCtiMSoxKSkpXG4gIFxufVxuXG5vcHQgPC0gbmxtaW5iKGMoMCwwKSxvYmplY3RpdmUgPSBsb2dMLGxvd2VyPWMoLUluZiwtSW5mKSlcblxuYGBgIn0= -->
-<pre class="r"><code>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDYuODU5Njk1XG4ifQ== --&gt;
+</code></pre>
+<p>[1] 6.859695</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuKHBjaGlzcShjaGkuc3F1YXJlZC50ZXN0LCBkZj0xLCBsb3dlci50YWlsPUZBTFNFKSlcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+(pchisq(chi.squared.test, df=1, lower.tail=FALSE))</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDA4ODE2MTU5XG4ifQ== --&gt;
+</code></pre>
+<p>[1] 0.008816159</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+With a p-value of 0.008816159 we have strong evidence against the null hypothesis meaning that the two groups does not follow the same distribution.
+
+To proceed with a likelihood analysis, the number of people with AIDS (X) in the group treated with AZT is $B(m,\pi_x)$ and independently the number of people with AIDS (Y)  in the second group is $B(n,\pi_y)$.
+
+On observing x and y the joint likelihood of $(\pi_x,\pi_y)$:
+$$L(\pi_x, \pi_y)=\pi_x^x*(1-\pi_x)^{m-x}\pi_y^y(1-\pi_y)^{n-y}$$
+
+The log odds-ratio is defined by:
+$$\theta=\log \frac{\pi_{x} /\left(1-\pi_{x}\right)}{\pi_{y} /\left(1-\pi_{y}\right)}$$
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuKHRoZXRhLmNvbXBhcmUgPSBsb2coKHRoZXRhX0FaVF95ZXMub3B0LygxLXRoZXRhX0FaVF95ZXMub3B0KSkvKHRoZXRhX0FaVF9uby5vcHQvKDEtIHRoZXRhX0FaVF9uby5vcHQpKSkpXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+(theta.compare = log((theta_AZT_yes.opt/(1-theta_AZT_yes.opt))/(theta_AZT_no.opt/(1- theta_AZT_no.opt))))</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIC0wLjcyMTc2NlxuIn0= --&gt;
+</code></pre>
+<p>[1] -0.721766</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuKGxvZygoeC8obS14KSkvKHktKG4teSkpKSlcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+(log((x/(m-x))/(y-(n-y))))</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIC0zLjYwOTgzNlxuIn0= --&gt;
+</code></pre>
+<p>[1] -3.609836</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+The null hypothesis is $H_0: \theta=0$. Since $\theta$ is significantly different from zero, the null-hypothesis is rejected and it is concluded that the groups are significantly different from each other. This means that there is a difference in if a patient receives treament with AZT or not. 
+
+
+### Estimate parameters in the model (p0 probability of AIDS in control group, p1 probability of AIDS in treatment group) and report a confidence interval for the parameter describing the dif- ference, compare with the result above.
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuXG5rMSA8LSBkYXRhJEFJRFNfeWVzWzFdICNBVFpfeWVzXG5rMiA8LSBkYXRhJEFJRFNfeWVzWzJdICNBVFpfbm9cbm4xIDwtIGRhdGEkblsxXVxubjIgPC0gZGF0YSRuWzJdXG5cbiNOZWdhdGl2ZSBsb2ctbGlrZWxpaG9vZCBmdW5jdGlvbiBcblxubG9nTCA8LSBmdW5jdGlvbih0aGV0YSl7XG4gIFxuICBiMCA8LSB0aGV0YVsxXVxuICBiMSA8LSB0aGV0YVsyXVxuICBcbiBrMiooKGIwICtiMSowKS1sb2coMStleHAoYjArYjEqMCkpKSsobjItazIpKigoYjArYjEqMCktbG9nKDErZXhwKGIwK2IxKjApKSkrazEqKChiMCArYjEqMSktbG9nKDErZXhwKGIwK2IxKjEpKSkrKG4xLWsxKSooKGIwK2IxKjApLWxvZygxK2V4cChiMCtiMSoxKSkpXG4gIFxufVxuXG5vcHQgPC0gbmxtaW5iKGMoMCwwKSxvYmplY3RpdmUgPSBsb2dMLGxvd2VyPWMoLUluZiwtSW5mKSlcblxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+
 k1 &lt;- data$AIDS_yes[1] #ATZ_yes
 k2 &lt;- data$AIDS_yes[2] #ATZ_no
 n1 &lt;- data$n[1]
@@ -1959,169 +2147,364 @@ logL &lt;- function(theta){
 
 opt &lt;- nlminb(c(0,0),objective = logL,lower=c(-Inf,-Inf))
 </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>The formulas look like a binomial model. This binomial model has the log-likelihood <span class="math display">\[ \]</span></p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG4jZml0LmdsbSA9Z2xtKHl+eCwgZmFtaWx5PWJpbm9taWFsKVxuYGBgIn0= -->
-<pre class="r"><code>
-#fit.glm =glm(y~x, family=binomial)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>#Analysis of the survival time data</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG4jTG9hZCBkYXRhXG5kYXRhLnRpbWUgPC0gcmVhZC5kZWxpbShcImFjdGczMjAudHh0XCIsaGVhZGVyID0gVFJVRSwgc2VwID0gXCJcIiwgZGVjID0gXCIuXCIpXG5oZWFkKGRhdGEudGltZSwyKSBcbmBgYCJ9 -->
-<pre class="r"><code>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+#Analysis of the survival time data
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuXG4jTG9hZCBkYXRhXG5kYXRhLnRpbWUgPC0gcmVhZC5kZWxpbShcXGFjdGczMjAudHh0XFwsaGVhZGVyID0gVFJVRSwgc2VwID0gXFxcXCwgZGVjID0gXFwuXFwpXG5oZWFkKGRhdGEudGltZSwyKSBcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+
 #Load data
-data.time &lt;- read.delim(&quot;actg320.txt&quot;,header = TRUE, sep = &quot;&quot;, dec = &quot;.&quot;)
+data.time &lt;- read.delim(\actg320.txt\,header = TRUE, sep = \\, dec = \.\)
 head(data.time,2) </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6MiwibmNvbCI6OX0sInJkZiI6Ikg0c0lBQUFBQUFBQUJuVlJ3VzRDSVJCbDJWMk5KRFVtL1lBMnZidUp0aDU2TTJrL29Pbko5SWFBdW5FRncyTHJaL1VIK211Mnc4SVlKU25KaFBlR2VmQm1lSDlkUExJRkk0VGtwQ0NVNUNWQTBudDVtMHhuVTBJS0NpeURrNEhmajFCMUM4Q1RHNGh3R0hia1A1QzZ1K0M0L3VPcFB1VVM0Z05pNlBsYzNYZmkrZkk3dmVjaHhKWGhVdk9kYWdHTU90TWhTV3NaVWVIcW5jSlM5YW0wd3hKM2pDaHZGY0tlNVVLNURiSXR0OXFzc0V6SUo0UjhyUkliQTJ1K0tyU1M5SG50VnpTOFJiK1laSkk3WHEwczZJR2RFa25mN0YxdE5JaW8vNWt5RVdjMlNZd08yanVSWTdFNTZPMTQ5dXhmaUhheWFPL3lDN0x3M2Y1TitodnZLbkVHU3E5cmZaNWd3NWVxaVdRSUxYY2RWM3RibitmS0lOdFd6amlPZFV5WUJqTmRjK1QwQjdHMDBOcVNBZ0FBIn0= -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["id"],"name":[1],"type":["int"],"align":["right"]},{"label":["time"],"name":[2],"type":["int"],"align":["right"]},{"label":["event"],"name":[3],"type":["int"],"align":["right"]},{"label":["tx"],"name":[4],"type":["int"],"align":["right"]},{"label":["sex"],"name":[5],"type":["int"],"align":["right"]},{"label":["raceth"],"name":[6],"type":["int"],"align":["right"]},{"label":["karnof"],"name":[7],"type":["int"],"align":["right"]},{"label":["cd4"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["age"],"name":[9],"type":["int"],"align":["right"]}],"data":[{"1":"1","2":"189","3":"0","4":"0","5":"1","6":"1","7":"100","8":"169.0","9":"34","_rn_":"1"},{"1":"2","2":"287","3":"0","4":"0","5":"2","6":"2","7":"90","8":"149.5","9":"34","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10],"total":[9]},"rows":{"min":[10],"max":[10],"total":[2]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI0NvdW50IG51bWJlciBvZiBwYXRpZW50IHdpdGhvdXQgdHJlYXRtZW50IGFuZCB3aXRob3V0IEFJRFNcbihzdW0oZGF0YS50aW1lJHR4ID09IDAgJiBkYXRhLnRpbWUkZXZlbnQgPT0gMCkpXG5gYGAifQ== -->
-<pre class="r"><code>#Count number of patient without treatment and without AIDS
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjoiZGF0YS5mcmFtZSIsIm5yb3ciOjIsIm5jb2wiOjl9LCJyZGYiOiJINHNJQUFBQUFBQUFCblZSd1c0Q0lSQmwyVjJOSkRVbS9ZQTJ2YnVKdGg1Nk0yay9vT25KOUlhQXVuRUZ3MkxyWi9VSCttdTJ3OElZSlNuSmhQZUdlZkJtZUg5ZFBMSUZJNFRrcENDVTVDVkEwbnQ1bTB4blUwSUtDaXlEazRIZmoxQjFDOENURzRod0dIYmtQNUM2dStDNC91T3BQdVVTNGdOaTZQbGMzWGZpK2ZJN3ZlY2h4SlhoVXZPZGFnR01PdE1oU1dzWlVlSHFuY0pTOWFtMHd4SjNqQ2h2RmNLZTVVSzVEYkl0dDlxc3NFeklKNFI4clJJYkEydStLclNTOUhudFZ6UzhSYitZWkpJN1hxMHM2SUdkRWtuZjdGMXROSWlvLzVreUVXYzJTWXdPMmp1Ulk3RTU2TzE0OXV4ZmlIYXlhTy95QzdMdzNmNU4raHZ2S25FR1NxOXJmWjVndzVlcWlXUUlMWGNkVjN0Ym4rZktJTnRXemppT2RVeVlCak5kYytUMEI3RzAwTnFTQWdBQSJ9 --&gt;
+
+&lt;div data-pagedtable=&quot;false&quot;&gt;
+  &lt;script data-pagedtable-source type=&quot;application/json&quot;&gt;
+{&quot;columns&quot;:[{&quot;label&quot;:[&quot;&quot;],&quot;name&quot;:[&quot;_rn_&quot;],&quot;type&quot;:[&quot;&quot;],&quot;align&quot;:[&quot;left&quot;]},{&quot;label&quot;:[&quot;id&quot;],&quot;name&quot;:[1],&quot;type&quot;:[&quot;int&quot;],&quot;align&quot;:[&quot;right&quot;]},{&quot;label&quot;:[&quot;time&quot;],&quot;name&quot;:[2],&quot;type&quot;:[&quot;int&quot;],&quot;align&quot;:[&quot;right&quot;]},{&quot;label&quot;:[&quot;event&quot;],&quot;name&quot;:[3],&quot;type&quot;:[&quot;int&quot;],&quot;align&quot;:[&quot;right&quot;]},{&quot;label&quot;:[&quot;tx&quot;],&quot;name&quot;:[4],&quot;type&quot;:[&quot;int&quot;],&quot;align&quot;:[&quot;right&quot;]},{&quot;label&quot;:[&quot;sex&quot;],&quot;name&quot;:[5],&quot;type&quot;:[&quot;int&quot;],&quot;align&quot;:[&quot;right&quot;]},{&quot;label&quot;:[&quot;raceth&quot;],&quot;name&quot;:[6],&quot;type&quot;:[&quot;int&quot;],&quot;align&quot;:[&quot;right&quot;]},{&quot;label&quot;:[&quot;karnof&quot;],&quot;name&quot;:[7],&quot;type&quot;:[&quot;int&quot;],&quot;align&quot;:[&quot;right&quot;]},{&quot;label&quot;:[&quot;cd4&quot;],&quot;name&quot;:[8],&quot;type&quot;:[&quot;dbl&quot;],&quot;align&quot;:[&quot;right&quot;]},{&quot;label&quot;:[&quot;age&quot;],&quot;name&quot;:[9],&quot;type&quot;:[&quot;int&quot;],&quot;align&quot;:[&quot;right&quot;]}],&quot;data&quot;:[{&quot;1&quot;:&quot;1&quot;,&quot;2&quot;:&quot;189&quot;,&quot;3&quot;:&quot;0&quot;,&quot;4&quot;:&quot;0&quot;,&quot;5&quot;:&quot;1&quot;,&quot;6&quot;:&quot;1&quot;,&quot;7&quot;:&quot;100&quot;,&quot;8&quot;:&quot;169.0&quot;,&quot;9&quot;:&quot;34&quot;,&quot;_rn_&quot;:&quot;1&quot;},{&quot;1&quot;:&quot;2&quot;,&quot;2&quot;:&quot;287&quot;,&quot;3&quot;:&quot;0&quot;,&quot;4&quot;:&quot;0&quot;,&quot;5&quot;:&quot;2&quot;,&quot;6&quot;:&quot;2&quot;,&quot;7&quot;:&quot;90&quot;,&quot;8&quot;:&quot;149.5&quot;,&quot;9&quot;:&quot;34&quot;,&quot;_rn_&quot;:&quot;2&quot;}],&quot;options&quot;:{&quot;columns&quot;:{&quot;min&quot;:{},&quot;max&quot;:[10],&quot;total&quot;:[9]},&quot;rows&quot;:{&quot;min&quot;:[10],&quot;max&quot;:[10],&quot;total&quot;:[2]},&quot;pages&quot;:{}}}
+  &lt;/script&gt;
+&lt;/div&gt;
+
+&lt;!-- rnb-frame-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI0NvdW50IG51bWJlciBvZiBwYXRpZW50IHdpdGhvdXQgdHJlYXRtZW50IGFuZCB3aXRob3V0IEFJRFNcbihzdW0oZGF0YS50aW1lJHR4ID09IDAgJiBkYXRhLnRpbWUkZXZlbnQgPT0gMCkpXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+#Count number of patient without treatment and without AIDS
 (sum(data.time$tx == 0 &amp; data.time$event == 0))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDUxNFxuIn0= -->
-<pre><code>[1] 514</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI0NvdW50IG51bWJlciBvZiBwYXRpZW50IHdpdGhvdXQgdHJlYXRtZW50IGFuZCBBSURTXG4oc3VtKGRhdGEudGltZSR0eCA9PSAwICYgZGF0YS50aW1lJGV2ZW50ID09IDEpKVxuYGBgIn0= -->
-<pre class="r"><code>#Count number of patient without treatment and AIDS
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDUxNFxuIn0= --&gt;
+</code></pre>
+<p>[1] 514</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI0NvdW50IG51bWJlciBvZiBwYXRpZW50IHdpdGhvdXQgdHJlYXRtZW50IGFuZCBBSURTXG4oc3VtKGRhdGEudGltZSR0eCA9PSAwICYgZGF0YS50aW1lJGV2ZW50ID09IDEpKVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+#Count number of patient without treatment and AIDS
 (sum(data.time$tx == 0 &amp; data.time$event == 1))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDYzXG4ifQ== -->
-<pre><code>[1] 63</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI0NvdW50IG51bWJlciBvZiBwYXRpZW50IHdpdGggdHJlYXRtZW50IGFuZCB3aXRob3V0IEFJRFNcbihzdW0oZGF0YS50aW1lJHR4ID09IDEgJiBkYXRhLnRpbWUkZXZlbnQgPT0gMCkpXG5gYGAifQ== -->
-<pre class="r"><code>#Count number of patient with treatment and without AIDS
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDYzXG4ifQ== --&gt;
+</code></pre>
+<p>[1] 63</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI0NvdW50IG51bWJlciBvZiBwYXRpZW50IHdpdGggdHJlYXRtZW50IGFuZCB3aXRob3V0IEFJRFNcbihzdW0oZGF0YS50aW1lJHR4ID09IDEgJiBkYXRhLnRpbWUkZXZlbnQgPT0gMCkpXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+#Count number of patient with treatment and without AIDS
 (sum(data.time$tx == 1 &amp; data.time$event == 0))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDU0MVxuIn0= -->
-<pre><code>[1] 541</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBDb3VudCBudW1iZXIgb2YgcGF0aWVudCB3aXRoIHRyZWF0bWVudCBhbmQgQUlEU1xuKHN1bShkYXRhLnRpbWUkdHggPT0gMSAmIGRhdGEudGltZSRldmVudCA9PSAxKSlcbmBgYCJ9 -->
-<pre class="r"><code># Count number of patient with treatment and AIDS
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDU0MVxuIn0= --&gt;
+</code></pre>
+<p>[1] 541</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyBDb3VudCBudW1iZXIgb2YgcGF0aWVudCB3aXRoIHRyZWF0bWVudCBhbmQgQUlEU1xuKHN1bShkYXRhLnRpbWUkdHggPT0gMSAmIGRhdGEudGltZSRldmVudCA9PSAxKSlcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+# Count number of patient with treatment and AIDS
 (sum(data.time$tx == 1 &amp; data.time$event == 1))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDMzXG4ifQ== -->
-<pre><code>[1] 33</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI0NhbGN1bGF0aW5nIHByb3BvcnRpb25zXG5cbiNObyBhaWRzIG91dCBvZiBwZW9wbGUgd2l0aG91dCB0cmVhdG1lbnRcbihzdW0oZGF0YS50aW1lJHR4ID09IDAgJiBkYXRhLnRpbWUkZXZlbnQgPT0gMCkpL3N1bShkYXRhLnRpbWUkdHggPT0gMClcbmBgYCJ9 -->
-<pre class="r"><code>#Calculating proportions
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDMzXG4ifQ== --&gt;
+</code></pre>
+<p>[1] 33</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI0NhbGN1bGF0aW5nIHByb3BvcnRpb25zXG5cbiNObyBhaWRzIG91dCBvZiBwZW9wbGUgd2l0aG91dCB0cmVhdG1lbnRcbihzdW0oZGF0YS50aW1lJHR4ID09IDAgJiBkYXRhLnRpbWUkZXZlbnQgPT0gMCkpL3N1bShkYXRhLnRpbWUkdHggPT0gMClcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+#Calculating proportions
 
 #No aids out of people without treatment
 (sum(data.time$tx == 0 &amp; data.time$event == 0))/sum(data.time$tx == 0)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuODkwODE0NlxuIn0= -->
-<pre><code>[1] 0.8908146</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuKHN1bShkYXRhLnRpbWUkdHggPT0gMCAmIGRhdGEudGltZSRldmVudCA9PSAxKSkvc3VtKGRhdGEudGltZSR0eCA9PSAwKVxuYGBgIn0= -->
-<pre class="r"><code>(sum(data.time$tx == 0 &amp; data.time$event == 1))/sum(data.time$tx == 0)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMTA5MTg1NFxuIn0= -->
-<pre><code>[1] 0.1091854</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuKHN1bShkYXRhLnRpbWUkdHggPT0gMSAmIGRhdGEudGltZSRldmVudCA9PSAwKSkvc3VtKGRhdGEudGltZSR0eCA9PSAxKVxuYGBgIn0= -->
-<pre class="r"><code>(sum(data.time$tx == 1 &amp; data.time$event == 0))/sum(data.time$tx == 1)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuOTQyNTA4N1xuIn0= -->
-<pre><code>[1] 0.9425087</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuKHN1bShkYXRhLnRpbWUkdHggPT0gMSAmIGRhdGEudGltZSRldmVudCA9PSAxKSkvc3VtKGRhdGEudGltZSR0eCA9PSAxKVxuYGBgIn0= -->
-<pre class="r"><code>(sum(data.time$tx == 1 &amp; data.time$event == 1))/sum(data.time$tx == 1)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDU3NDkxMjlcbiJ9 -->
-<pre><code>[1] 0.05749129</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="fit-an-exponential-distribution-to-all-the-data." class="section level3">
-<h3>Fit an exponential distribution to all the data.</h3>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZXhwLmxpa2VsaWhvb2Q9ZnVuY3Rpb24ocmF0ZSl7XG4gIC1zdW0oZGV4cCh4PWRhdGEudGltZSR0aW1lW2RhdGEudGltZSRldmVudD09MV0sIHJhdGU9cmF0ZSwgbG9nPVRSVUUpKS0gc3VtKHBleHAocT1kYXRhLnRpbWUkdGltZVtkYXRhLnRpbWUkZXZlbnQ9PTBdLCBsb3dlci50YWlsID0gRkFMU0UsIHJhdGU9cmF0ZSwgbG9nPVRSVUUpKVxuICB9XG5cblxuKG5sbWluYihzdGFydD0wLjUsb2JqZWN0aXZlID0gZXhwLmxpa2VsaWhvb2QsbG93ZXI9MCkkcGFyKVxuYGBgIn0= -->
-<pre class="r"><code>exp.likelihood=function(rate){
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuODkwODE0NlxuIn0= --&gt;
+</code></pre>
+<p>[1] 0.8908146</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuKHN1bShkYXRhLnRpbWUkdHggPT0gMCAmIGRhdGEudGltZSRldmVudCA9PSAxKSkvc3VtKGRhdGEudGltZSR0eCA9PSAwKVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+(sum(data.time$tx == 0 &amp; data.time$event == 1))/sum(data.time$tx == 0)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMTA5MTg1NFxuIn0= --&gt;
+</code></pre>
+<p>[1] 0.1091854</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuKHN1bShkYXRhLnRpbWUkdHggPT0gMSAmIGRhdGEudGltZSRldmVudCA9PSAwKSkvc3VtKGRhdGEudGltZSR0eCA9PSAxKVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+(sum(data.time$tx == 1 &amp; data.time$event == 0))/sum(data.time$tx == 1)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuOTQyNTA4N1xuIn0= --&gt;
+</code></pre>
+<p>[1] 0.9425087</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuKHN1bShkYXRhLnRpbWUkdHggPT0gMSAmIGRhdGEudGltZSRldmVudCA9PSAxKSkvc3VtKGRhdGEudGltZSR0eCA9PSAxKVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+(sum(data.time$tx == 1 &amp; data.time$event == 1))/sum(data.time$tx == 1)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDU3NDkxMjlcbiJ9 --&gt;
+</code></pre>
+<p>[1] 0.05749129</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+### Fit an exponential distribution to all the data. 
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZXhwLmxpa2VsaWhvb2Q9ZnVuY3Rpb24ocmF0ZSl7XG4gIC1zdW0oZGV4cCh4PWRhdGEudGltZSR0aW1lW2RhdGEudGltZSRldmVudD09MV0sIHJhdGU9cmF0ZSwgbG9nPVRSVUUpKS0gc3VtKHBleHAocT1kYXRhLnRpbWUkdGltZVtkYXRhLnRpbWUkZXZlbnQ9PTBdLCBsb3dlci50YWlsID0gRkFMU0UsIHJhdGU9cmF0ZSwgbG9nPVRSVUUpKVxuICB9XG5cblxuKG5sbWluYihzdGFydD0wLjUsb2JqZWN0aXZlID0gZXhwLmxpa2VsaWhvb2QsbG93ZXI9MCkkcGFyKVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+exp.likelihood=function(rate){
   -sum(dexp(x=data.time$time[data.time$event==1], rate=rate, log=TRUE))- sum(pexp(q=data.time$time[data.time$event==0], lower.tail = FALSE, rate=rate, log=TRUE))
   }
 
 
 (nlminb(start=0.5,objective = exp.likelihood,lower=0)$par)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDAwMzYyMzQ0OFxuIn0= -->
-<pre><code>[1] 0.0003623448</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuKG5sbWluYihzdGFydD0wLjUsb2JqZWN0aXZlID0gZXhwLmxpa2VsaWhvb2QsbG93ZXI9MCkkb2JqZWN0aXZlKVxuYGBgIn0= -->
-<pre class="r"><code>(nlminb(start=0.5,objective = exp.likelihood,lower=0)$objective)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDg1Ni41OTk4XG4ifQ== -->
-<pre><code>[1] 856.5998</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyhvcHRpbWl6ZShleHAubGlrZWxpaG9vZCxjKDAsIDEwMCksbWF4aW11bT1UUlVFKSRtYXhpbXVtKVxuXG5gYGAifQ== -->
-<pre class="r"><code>#(optimize(exp.likelihood,c(0, 100),maximum=TRUE)$maximum)
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDAwMzYyMzQ0OFxuIn0= --&gt;
 </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Fit an exponential distribution to each group.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5leHAubGlrZWxpaG9vZF9ub190cmVhdD1mdW5jdGlvbihyYXRlKXtcbiAgLXN1bShkZXhwKHg9ZGF0YS50aW1lJHRpbWVbZGF0YS50aW1lJGV2ZW50PT0xICYgZGF0YS50aW1lJHR4ID09IDBdLCByYXRlPXJhdGUsIGxvZz1UUlVFKSktIHN1bShwZXhwKHE9ZGF0YS50aW1lJHRpbWVbZGF0YS50aW1lJGV2ZW50PT0wICYgZGF0YS50aW1lJHR4ID09IDBdLCBsb3dlci50YWlsID0gRkFMU0UsIHJhdGU9cmF0ZSwgbG9nPVRSVUUpKVxufVxuXG4obmxtaW5iKHN0YXJ0PTAuNSxvYmplY3RpdmUgPSBleHAubGlrZWxpaG9vZF9ub190cmVhdCxsb3dlcj0wKSRwYXIpXG5gYGAifQ== -->
-<pre class="r"><code>
+<p>[1] 0.0003623448</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuKG5sbWluYihzdGFydD0wLjUsb2JqZWN0aXZlID0gZXhwLmxpa2VsaWhvb2QsbG93ZXI9MCkkb2JqZWN0aXZlKVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+(nlminb(start=0.5,objective = exp.likelihood,lower=0)$objective)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDg1Ni41OTk4XG4ifQ== --&gt;
+</code></pre>
+<p>[1] 856.5998</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyhvcHRpbWl6ZShleHAubGlrZWxpaG9vZCxjKDAsIDEwMCksbWF4aW11bT1UUlVFKSRtYXhpbXVtKVxuXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+#(optimize(exp.likelihood,c(0, 100),maximum=TRUE)$maximum)
+</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+Fit an exponential distribution to each group. 
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuXG5leHAubGlrZWxpaG9vZF9ub190cmVhdD1mdW5jdGlvbihyYXRlKXtcbiAgLXN1bShkZXhwKHg9ZGF0YS50aW1lJHRpbWVbZGF0YS50aW1lJGV2ZW50PT0xICYgZGF0YS50aW1lJHR4ID09IDBdLCByYXRlPXJhdGUsIGxvZz1UUlVFKSktIHN1bShwZXhwKHE9ZGF0YS50aW1lJHRpbWVbZGF0YS50aW1lJGV2ZW50PT0wICYgZGF0YS50aW1lJHR4ID09IDBdLCBsb3dlci50YWlsID0gRkFMU0UsIHJhdGU9cmF0ZSwgbG9nPVRSVUUpKVxufVxuXG4obmxtaW5iKHN0YXJ0PTAuNSxvYmplY3RpdmUgPSBleHAubGlrZWxpaG9vZF9ub190cmVhdCxsb3dlcj0wKSRwYXIpXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+
 exp.likelihood_no_treat=function(rate){
   -sum(dexp(x=data.time$time[data.time$event==1 &amp; data.time$tx == 0], rate=rate, log=TRUE))- sum(pexp(q=data.time$time[data.time$event==0 &amp; data.time$tx == 0], lower.tail = FALSE, rate=rate, log=TRUE))
 }
 
 (nlminb(start=0.5,objective = exp.likelihood_no_treat,lower=0)$par)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDAwNDg4NDA2MlxuIn0= -->
-<pre><code>[1] 0.0004884062</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuKG5sbWluYihzdGFydD0wLjUsb2JqZWN0aXZlID0gZXhwLmxpa2VsaWhvb2Rfbm9fdHJlYXQsbG93ZXI9MCkkb2JqZWN0aXZlKVxuYGBgIn0= -->
-<pre class="r"><code>(nlminb(start=0.5,objective = exp.likelihood_no_treat,lower=0)$objective)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDU0My4zMzQ5XG4ifQ== -->
-<pre><code>[1] 543.3349</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZXhwLmxpa2VsaWhvb2Rfd2l0aF90cmVhdD1mdW5jdGlvbihyYXRlKXtcbiAgLXN1bShkZXhwKHg9ZGF0YS50aW1lJHRpbWVbZGF0YS50aW1lJGV2ZW50PT0xICYgZGF0YS50aW1lJHR4ID09IDFdLCByYXRlPXJhdGUsIGxvZz1UUlVFKSktIHN1bShwZXhwKHE9ZGF0YS50aW1lJHRpbWVbZGF0YS50aW1lJGV2ZW50PT0wICYgZGF0YS50aW1lJHR4ID09IDFdLCBsb3dlci50YWlsID0gRkFMU0UsIHJhdGU9cmF0ZSwgbG9nPVRSVUUpKVxufVxuXG4obmxtaW5iKHN0YXJ0PTAuNSxvYmplY3RpdmUgPSBleHAubGlrZWxpaG9vZF93aXRoX3RyZWF0LGxvd2VyPTApJHBhcilcbmBgYCJ9 -->
-<pre class="r"><code>exp.likelihood_with_treat=function(rate){
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDAwNDg4NDA2MlxuIn0= --&gt;
+</code></pre>
+<p>[1] 0.0004884062</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuKG5sbWluYihzdGFydD0wLjUsb2JqZWN0aXZlID0gZXhwLmxpa2VsaWhvb2Rfbm9fdHJlYXQsbG93ZXI9MCkkb2JqZWN0aXZlKVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+(nlminb(start=0.5,objective = exp.likelihood_no_treat,lower=0)$objective)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDU0My4zMzQ5XG4ifQ== --&gt;
+</code></pre>
+<p>[1] 543.3349</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZXhwLmxpa2VsaWhvb2Rfd2l0aF90cmVhdD1mdW5jdGlvbihyYXRlKXtcbiAgLXN1bShkZXhwKHg9ZGF0YS50aW1lJHRpbWVbZGF0YS50aW1lJGV2ZW50PT0xICYgZGF0YS50aW1lJHR4ID09IDFdLCByYXRlPXJhdGUsIGxvZz1UUlVFKSktIHN1bShwZXhwKHE9ZGF0YS50aW1lJHRpbWVbZGF0YS50aW1lJGV2ZW50PT0wICYgZGF0YS50aW1lJHR4ID09IDFdLCBsb3dlci50YWlsID0gRkFMU0UsIHJhdGU9cmF0ZSwgbG9nPVRSVUUpKVxufVxuXG4obmxtaW5iKHN0YXJ0PTAuNSxvYmplY3RpdmUgPSBleHAubGlrZWxpaG9vZF93aXRoX3RyZWF0LGxvd2VyPTApJHBhcilcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+exp.likelihood_with_treat=function(rate){
   -sum(dexp(x=data.time$time[data.time$event==1 &amp; data.time$tx == 1], rate=rate, log=TRUE))- sum(pexp(q=data.time$time[data.time$event==0 &amp; data.time$tx == 1], lower.tail = FALSE, rate=rate, log=TRUE))
 }
 
 (nlminb(start=0.5,objective = exp.likelihood_with_treat,lower=0)$par)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDAwMjQyNzM2M1xuIn0= -->
-<pre><code>[1] 0.0002427363</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuKG5sbWluYihzdGFydD0wLjUsb2JqZWN0aXZlID0gZXhwLmxpa2VsaWhvb2Rfd2l0aF90cmVhdCxsb3dlcj0wKSRvYmplY3RpdmUgKVxuYGBgIn0= -->
-<pre class="r"><code>(nlminb(start=0.5,objective = exp.likelihood_with_treat,lower=0)$objective )</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDMwNy42NzY3XG4ifQ== -->
-<pre><code>[1] 307.6767</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>It can be seen that the model fits the data better when the data is separated into the two treatment groups.</p>
-</div>
-<div id="formulate-af-model-where-one-parameter-indicate-the-treatment-effect" class="section level3">
-<h3>Formulate af model where one parameter indicate the treatment effect</h3>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBJbXBsZW1lbnQgbmVnYXRpdmUgbG9nIGxpa2VsaWhvb2QgZnVuY3Rpb25cblxubmxsLmV4cCA8LSBmdW5jdGlvbihyYXRlKXtcbiAgXG4gIHZhbDEgPC0gLXN1bShkZXhwKHg9ZGF0YS50aW1lJHRpbWVbZGF0YS50aW1lJGV2ZW50PT0xXSxyYXRlPXJhdGVbMV0rcmF0ZVsyXSpkYXRhLnRpbWUkdHhbZGF0YS50aW1lJGV2ZW50PT0xXSxsb2c9VFJVRSkpXG4gIFxuICB2YWwyIDwtIC1zdW0ocGV4cChxPWRhdGEudGltZSR0aW1lW2RhdGEudGltZSRldmVudD09MF0scmF0ZT1yYXRlWzFdK3JhdGVbMl0qZGF0YS50aW1lJHR4W2RhdGEudGltZSRldmVudD09MF0sbG93ZXIudGFpbD1GLGxvZz1UUlVFKSlcbiAgXG4gIHZhbDErdmFsMlxufVxuXG5vcHQuZXhwIDwtIG5sbWluYihzdGFydD1jKDAuMDAxLDAuMDA1KSxvYmplY3RpdmU9bmxsLmV4cCxsb3dlcj1jKC1JbmYsLUluZikpXG5gYGAifQ== -->
-<pre class="r"><code># Implement negative log likelihood function
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDAwMjQyNzM2M1xuIn0= --&gt;
+</code></pre>
+<p>[1] 0.0002427363</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuKG5sbWluYihzdGFydD0wLjUsb2JqZWN0aXZlID0gZXhwLmxpa2VsaWhvb2Rfd2l0aF90cmVhdCxsb3dlcj0wKSRvYmplY3RpdmUgKVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+(nlminb(start=0.5,objective = exp.likelihood_with_treat,lower=0)$objective )</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDMwNy42NzY3XG4ifQ== --&gt;
+</code></pre>
+<p>[1] 307.6767</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+It can be seen that the model fits the data better when the data is separated into the two treatment groups. 
+
+### Formulate af model where one parameter indicate the treatment effect
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyBJbXBsZW1lbnQgbmVnYXRpdmUgbG9nIGxpa2VsaWhvb2QgZnVuY3Rpb25cblxubmxsLmV4cCA8LSBmdW5jdGlvbihyYXRlKXtcbiAgXG4gIHZhbDEgPC0gLXN1bShkZXhwKHg9ZGF0YS50aW1lJHRpbWVbZGF0YS50aW1lJGV2ZW50PT0xXSxyYXRlPXJhdGVbMV0rcmF0ZVsyXSpkYXRhLnRpbWUkdHhbZGF0YS50aW1lJGV2ZW50PT0xXSxsb2c9VFJVRSkpXG4gIFxuICB2YWwyIDwtIC1zdW0ocGV4cChxPWRhdGEudGltZSR0aW1lW2RhdGEudGltZSRldmVudD09MF0scmF0ZT1yYXRlWzFdK3JhdGVbMl0qZGF0YS50aW1lJHR4W2RhdGEudGltZSRldmVudD09MF0sbG93ZXIudGFpbD1GLGxvZz1UUlVFKSlcbiAgXG4gIHZhbDErdmFsMlxufVxuXG5vcHQuZXhwIDwtIG5sbWluYihzdGFydD1jKDAuMDAxLDAuMDA1KSxvYmplY3RpdmU9bmxsLmV4cCxsb3dlcj1jKC1JbmYsLUluZikpXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+# Implement negative log likelihood function
 
 nll.exp &lt;- function(rate){
   
@@ -2133,34 +2516,56 @@ nll.exp &lt;- function(rate){
 }
 
 opt.exp &lt;- nlminb(start=c(0.001,0.005),objective=nll.exp,lower=c(-Inf,-Inf))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiTmFOcyBwcm9kdWNlZE5hTnMgcHJvZHVjZWROQS9OYU4gZnVuY3Rpb24gZXZhbHVhdGlvbk5hTnMgcHJvZHVjZWROYU5zIHByb2R1Y2VkTkEvTmFOIGZ1bmN0aW9uIGV2YWx1YXRpb25OYU5zIHByb2R1Y2VkTmFOcyBwcm9kdWNlZE5BL05hTiBmdW5jdGlvbiBldmFsdWF0aW9uTmFOcyBwcm9kdWNlZE5hTnMgcHJvZHVjZWROQS9OYU4gZnVuY3Rpb24gZXZhbHVhdGlvbk5hTnMgcHJvZHVjZWROYU5zIHByb2R1Y2VkTkEvTmFOIGZ1bmN0aW9uIGV2YWx1YXRpb25cbiJ9 -->
-<pre><code>NaNs producedNaNs producedNA/NaN function evaluationNaNs producedNaNs producedNA/NaN function evaluationNaNs producedNaNs producedNA/NaN function evaluationNaNs producedNaNs producedNA/NaN function evaluationNaNs producedNaNs producedNA/NaN function evaluation</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuKG9wdC5leHAkcGFyWzJdKVxuYGBgIn0= -->
-<pre class="r"><code>(opt.exp$par[2])</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIC0wLjAwMDI0NTY2OTlcbiJ9 -->
-<pre><code>[1] -0.0002456699</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI01ha2luZyBhIGNvbmZpZGVuY2UgaW50ZXJ2YWxcblxuSSA8LSBoZXNzaWFuKG5sbC5leHAsb3B0LmV4cCRwYXIpXG5zZSA8LSAxL3NxcnQoSSlcbihvcHQuZXhwJHBhcitjKC0xLDEpKnFub3JtKDAuOTc1KSpzZS9zcXJ0KG4pKVxuYGBgIn0= -->
-<pre class="r"><code>#Making a confidence interval
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiTmFOcyBwcm9kdWNlZE5hTnMgcHJvZHVjZWROQS9OYU4gZnVuY3Rpb24gZXZhbHVhdGlvbk5hTnMgcHJvZHVjZWROYU5zIHByb2R1Y2VkTkEvTmFOIGZ1bmN0aW9uIGV2YWx1YXRpb25OYU5zIHByb2R1Y2VkTmFOcyBwcm9kdWNlZE5BL05hTiBmdW5jdGlvbiBldmFsdWF0aW9uTmFOcyBwcm9kdWNlZE5hTnMgcHJvZHVjZWROQS9OYU4gZnVuY3Rpb24gZXZhbHVhdGlvbk5hTnMgcHJvZHVjZWROYU5zIHByb2R1Y2VkTkEvTmFOIGZ1bmN0aW9uIGV2YWx1YXRpb25cbiJ9 --&gt;
+</code></pre>
+<p>NaNs producedNaNs producedNA/NaN function evaluationNaNs producedNaNs producedNA/NaN function evaluationNaNs producedNaNs producedNA/NaN function evaluationNaNs producedNaNs producedNA/NaN function evaluationNaNs producedNaNs producedNA/NaN function evaluation</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuKG9wdC5leHAkcGFyWzJdKVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+(opt.exp$par[2])</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIC0wLjAwMDI0NTY2OTlcbiJ9 --&gt;
+</code></pre>
+<p>[1] -0.0002456699</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI01ha2luZyBhIGNvbmZpZGVuY2UgaW50ZXJ2YWxcblxuSSA8LSBoZXNzaWFuKG5sbC5leHAsb3B0LmV4cCRwYXIpXG5zZSA8LSAxL3NxcnQoSSlcbihvcHQuZXhwJHBhcitjKC0xLDEpKnFub3JtKDAuOTc1KSpzZS9zcXJ0KG4pKVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+#Making a confidence interval
 
 I &lt;- hessian(nll.exp,opt.exp$par)
 se &lt;- 1/sqrt(I)
 (opt.exp$par+c(-1,1)*qnorm(0.975)*se/sqrt(n))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICAgICBbLDFdICAgICAgICAgIFssMl1cblsxLF0gIDAuMDAwNDg0MjQzNiAgMC4wMDA0ODMzNTY2XG5bMixdIC0wLjAwMDI0MDYyMDQgLTAuMDAwMjQwNjIwNFxuIn0= -->
-<pre><code>              [,1]          [,2]
-[1,]  0.0004842436  0.0004833566
-[2,] -0.0002406204 -0.0002406204</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICAgICBbLDFdICAgICAgICAgIFssMl1cblsxLF0gIDAuMDAwNDg0MjQzNiAgMC4wMDA0ODMzNTY2XG5bMixdIC0wLjAwMDI0MDYyMDQgLTAuMDAwMjQwNjIwNFxuIn0= --&gt;
+</code></pre>
+<pre><code>          [,1]          [,2]</code></pre>
+<p>[1,] 0.0004842436 0.0004833566 [2,] -0.0002406204 -0.0002406204 ```</p>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkFzc2lnbm1lbnQgU3Vydml2YWwgRGF0YSINCm91dHB1dDoNCiAgcGRmX2RvY3VtZW50OiBkZWZhdWx0DQogIGh0bWxfbm90ZWJvb2s6IGRlZmF1bHQNCi0tLQ0KDQojQW5hbHlzaXMgb2YgYmluYXJ5IGRhdGENCg0KIyMjICBSZWFkIHRoZSBMb2dpc3RpYy50eHQgaW50byBSLg0KDQpgYGB7cn0NCmRhdGEgPC0gcmVhZC5kZWxpbSgiTG9naXN0aWMudHh0IixoZWFkZXIgPSBUUlVFLCBzZXAgPSAiIiwgZGVjID0gIi4iKQ0KZGF0YSRBSURTX25vPWRhdGEkbi1kYXRhJEFJRFNfeWVzDQpoZWFkKGRhdGEsMikgDQoNCm4gPC0gc3VtKGRhdGFbLDNdKSAjTnVtYmVyIG9mIHBhdGllbnQgI24gDQprIDwtIHN1bShkYXRhWywyXSkgI051bWJlciBvZiBwYXRpZW50cyB3aXRoIEFJRFMgI1N1Y2Vzc2VzICNrDQp0aGV0YSA8LSBzL24gI1Byb2JhYmlsaXR5IHRoYXQgeW91IGhhdmUgQWlkcw0KYGBgDQpUaGUgZGF0YSBjb25zaXN0IG9mIHBhdGllbnRzIGJlaW5nIHRyZWF0ZWQgd2l0aCBBWlQgYW5kIHRoZSBudW1iZXIgb2YgcGF0aWVudHMgd2l0aCBBSURTLCBhcyB3ZWxsIGFzIHBhdGllbnRzIG5vdCBiZWluZyB0cmVhdGVkIHdpdGggQVpUIGFuZCB0aGUgbnVtYmVyIG9mIHBhdGllbnRzIGhhdmluZyBBSURTLiBJdCBsb29rcyBsaWtlIG1vcmUgcGF0aWVudHMgZ2V0IEFJRFMgaWYgdGhleSBhcmUgbm90IHRyZWF0ZWQgd2l0aCBBWlQuDQoNCiMjIyBGaXR0aW5nIGRhdGEgdG8gYmlub21pYWwgZGlzdHJpYnV0aW9uIChpLmUuIGNvbnNpZGVyIGFsbCBkYXRhIGFzIGNvbWluZyBmcm9tIHRoZSBzYW1lIHBvcHVsYXRpb24pDQpUaGUgbG9nLWxpa2VsaWhvb2Qgb2YgdGhlIGJpbm9taWFsIGRpc3RyaWJ1dGlvbiBpczoNCiQkbChcdGhldGEpPVxzdW1fe2s9MH1ee259a1xjZG90IGxvZyhcdGhldGEpKyhuLWspXGNkb3QgbG9nKDEtXHRoZXRhKStjKG4saykkJA0Kd2hlcmUgbiBpcyB0aGUgbnVtYmVyIG9mIHBhdGllbnRzLCBrIGlzIHRoZSBudW1iZXIgb2YgcGF0aWVudCB3aXRoIEFJRFMuIFNpbmNlIGl0IGlzIGNvbnNpZGVyZWQgYXMgY29taW5nIGZyb20gdGhlIHNhbWUgcG9wdWxhdGlvbiBpLmUuIGZvbGxvdyB0aGUgc2FtZSBkaXN0aWJ1dGlvbiwgdGhlIGRhdGEgaXMgZml0dGVkIHRvIG9uZSBiaW5vbWlhbCBkaXN0cmlidXRpb24uDQoNCmBgYHtyfQ0KDQojRm9ybXVsYXRpbmcgdGhlIGxpa2VsaWhvb2QgZnVuY3Rpb24NCmJpbm9taWFsLmxvZy5saWtlbGlob29kID0gZnVuY3Rpb24odGhldGEsc3VjY2VzcyxzaXplKXsNCiAgLShzdW0oZGJpbm9tKHg9c3VjY2VzcyxzaXplPXNpemUscHJvYj10aGV0YSwgbG9nPVRSVUUpKSl9DQoNCih0aGV0YS5vcHQ9b3B0aW1pemUoYmlub21pYWwubG9nLmxpa2VsaWhvb2QsIGMoMC4wMSwwLjk5KSxzdWNjZXNzPXN1bShkYXRhJEFJRFNfeWVzKSxzaXplPXN1bShkYXRhJG4pKSRtaW5pbXVtKQ0KDQoobmxtaW5iKHN0YXJ0PTAuNSxvYmplY3RpdmU9Ymlub21pYWwubG9nLmxpa2VsaWhvb2QsbG93ZXI9MCxzdWNjZXNzPWssc2l6ZT1uKSRwYXIpDQoNCmBgYA0KDQojIyMgRml0IHRoZSBCaW5vbWlhbCBzZXBhcmF0ZWx5IHRvIHRoZSB0d28gZGlzdHJpYnV0aW9ucyBhbmQgdGVzdCBpZiB0aGVyZSBpcyBhIGRpZmZlcmVuY2UgYmV0d2VlbiB0aGUgZ3JvdXBzLg0KDQpgYGB7cn0NCiNUaGV0YSBmb3IgcGF0aWVudHMgdHJlYXRlZCB3aXRoIEFaVC4gVGhpcyBpcyB0aGUgcHJvYmFiaWxpdHkgb2YgaGF2aW5nIEFJRFMgd2hlbiB0cmVhdGVkIHdpdGggQVpULiANCiModGhldGFfQVpUX3llcy5vcHQ9b3B0aW1pemUoYmlub21pYWwubG9nLmxpa2VsaWhvb2QsIGMoMC4wMSwwLjk5KSx4PWRhdGEkQUlEU195ZXNbMV0sc2l6ZT1kYXRhJG5bMV0pJG1pbmltdW0pDQoNCih0aGV0YV9BWlRfeWVzLm9wdD1ubG1pbmIoc3RhcnQ9MC41LGJpbm9taWFsLmxvZy5saWtlbGlob29kLGxvd2VyPTAsc3VjY2Vzcz1kYXRhJEFJRFNfeWVzWzFdLHNpemU9ZGF0YSRuWzFdKSRwYXIpDQoNCih0aGV0YV9BWlRfbm8ub3B0PW5sbWluYihzdGFydD0wLjUsYmlub21pYWwubG9nLmxpa2VsaWhvb2QsbG93ZXI9MCxzdWNjZXNzPWRhdGEkQUlEU195ZXNbMl0sc2l6ZT1kYXRhJG5bMl0pJHBhcikNCg0KI1RoZXRhIGZvciBwYXRpZW50cyB0cmVhdGVkIHdpdGhvdXQgQVpULiBUaGlzIGlzIHRoZSBwcm9iYWJpbGl0eSBvZiBoYXZpbmcgQUlEUyB3aXRob3V0IHRyZWFtZW50LiANCiModGhldGFfQVpUX25vLm9wdD1vcHRpbWl6ZShiaW5vbWlhbC5sb2cubGlrZWxpaG9vZCwgYygwLjAxLDAuOTkpLHg9ZGF0YSRBSURTX3llc1syXSxzaXplPWRhdGEkblsyXSkkbWluaW11bSkNCmBgYA0KQXMgZXhwZWN0ZWQsIHRoZSBwcm9iYWJpbGl0eSBmb3IgZ2V0dGluZyBBSURTIGlzIGxvd2VyIHdoZW4gdHJlYXRlZCB3aXRoIEFaVC4gDQoNCg0KKipGaW5kaW5nIHRoZSBjb25maWRlbmNlIGludGVydmFsIGZvciB0aGUgcHJvYmFiaWxpdGllcy4qKiANCg0KDQpgYGB7cn0NCmsxIDwtIGRhdGEkQUlEU195ZXNbMV0gI0FUWl95ZXMNCmsyIDwtIGRhdGEkQUlEU195ZXNbMl0gI0FUWl9ubw0KbjEgPC0gZGF0YSRuWzFdDQpuMiA8LSBkYXRhJG5bMl0NCnAxIDwtIGsxL24xDQpwMiA8LSBrMi9uMg0KYGBgDQoNCg0KYGBge3J9DQpsaWJyYXJ5KG51bURlcml2KQ0KSSA8LSBoZXNzaWFuKGJpbm9taWFsLmxvZy5saWtlbGlob29kLHRoZXRhLHN1Y2Nlc3M9ayxzaXplPW4pDQpJX0FaVF95ZXMgPC0gaGVzc2lhbihiaW5vbWlhbC5sb2cubGlrZWxpaG9vZCx0aGV0YV9BWlRfeWVzLm9wdCxzdWNjZXNzPWsxLHNpemU9bjEpDQpJX0FaVF9ubyA8LSBoZXNzaWFuKGJpbm9taWFsLmxvZy5saWtlbGlob29kLHRoZXRhX0FaVF9uby5vcHQsc3VjY2Vzcz1rMixzaXplPW4yKQ0KDQojVGhlIHN0YW5kYXJkIGVycm9yIA0Kc2UgPC0gMS9zcXJ0KEkpDQpzZV9BWlRfeWVzIDwtIDEvc3FydChJX0FaVF95ZXMpDQpzZV9BWlRfbm8gPC0gMS9zcXJ0KElfQVpUX25vKQ0KDQoNCg0KI2NvbmZpZGVuY2UgaW50ZXJ2YWxsZXQNCihwK2MoLTEsMSkqcW5vcm0oMC45NzUpKnNlL3NxcnQobikpDQoocDErYygtMSwxKSpxbm9ybSgwLjk3NSkqc2VfQVpUX3llcy9zcXJ0KG4xKSkNCihwMitjKC0xLDEpKnFub3JtKDAuOTc1KSpzZV9BWlRfbm8vc3FydChuMikpDQoNCmBgYA0KTm93IHRoZSBwYXJhbWV0ZXJzIGFuZCB0aGVpciBjb3JyZXNwb25kaW5nIENJIGFyZSBmb3VuZC4gDQoNClRoZSBudWxsIGh5cG90aGVzaXMgaXMgdGhhdCB0aGUgdHdvIGRpc3RyaWJ1dGlvbnMgYXJlIGVxdWFsIG1lYW5pbmcgdGhhdCBpZiBBWlRfeWVzIGZvbGxvd3MgJEIobSxccGlfeCkkIGFuZCBBWlRfbm8gZm9sbG93cyAkQihuLFxwaV95KSQgJFxwaV94PVxwaV95JC4NCmBgYHtyfQ0KeD1kYXRhJEFJRFNfeWVzWzFdDQp5PWRhdGEkQUlEU19ub1sxXQ0KbT1zdW0oZGF0YSRBSURTX3llcykNCm49c3VtKGRhdGEkQUlEU19ubykNCk49bStuDQp0PXgreQ0KDQojVGhlIHN0YW5kYXJkIHRlc3Qgb2YgZXF1YWxpdHkgb2YgcHJvcG9ydGlvbnMgaXMgdGhlIGZhbW91cyBjaGktc3F1YXJlZCB0ZXN0DQooY2hpLnNxdWFyZWQudGVzdD1OKih4KihuLXkpLXkqKG0teCkpXjIvKG0qbip0KihOLXQpKSkNCg0KKHBjaGlzcShjaGkuc3F1YXJlZC50ZXN0LCBkZj0xLCBsb3dlci50YWlsPUZBTFNFKSkNCmBgYA0KV2l0aCBhIHAtdmFsdWUgb2YgMC4wMDg4MTYxNTkgd2UgaGF2ZSBzdHJvbmcgZXZpZGVuY2UgYWdhaW5zdCB0aGUgbnVsbCBoeXBvdGhlc2lzIG1lYW5pbmcgdGhhdCB0aGUgdHdvIGdyb3VwcyBkb2VzIG5vdCBmb2xsb3cgdGhlIHNhbWUgZGlzdHJpYnV0aW9uLg0KDQpUbyBwcm9jZWVkIHdpdGggYSBsaWtlbGlob29kIGFuYWx5c2lzLCB0aGUgbnVtYmVyIG9mIHBlb3BsZSB3aXRoIEFJRFMgKFgpIGluIHRoZSBncm91cCB0cmVhdGVkIHdpdGggQVpUIGlzICRCKG0sXHBpX3gpJCBhbmQgaW5kZXBlbmRlbnRseSB0aGUgbnVtYmVyIG9mIHBlb3BsZSB3aXRoIEFJRFMgKFkpICBpbiB0aGUgc2Vjb25kIGdyb3VwIGlzICRCKG4sXHBpX3kpJC4NCg0KT24gb2JzZXJ2aW5nIHggYW5kIHkgdGhlIGpvaW50IGxpa2VsaWhvb2Qgb2YgJChccGlfeCxccGlfeSkkOg0KJCRMKFxwaV94LCBccGlfeSk9XHBpX3heeCooMS1ccGlfeClee20teH1ccGlfeV55KDEtXHBpX3kpXntuLXl9JCQNCg0KVGhlIGxvZyBvZGRzLXJhdGlvIGlzIGRlZmluZWQgYnk6DQokJFx0aGV0YT1cbG9nIFxmcmFje1xwaV97eH0gL1xsZWZ0KDEtXHBpX3t4fVxyaWdodCl9e1xwaV97eX0gL1xsZWZ0KDEtXHBpX3t5fVxyaWdodCl9JCQNCmBgYHtyfQ0KKHRoZXRhLmNvbXBhcmUgPSBsb2coKHRoZXRhX0FaVF95ZXMub3B0LygxLXRoZXRhX0FaVF95ZXMub3B0KSkvKHRoZXRhX0FaVF9uby5vcHQvKDEtIHRoZXRhX0FaVF9uby5vcHQpKSkpDQoNCihsb2coKHgvKG0teCkpLyh5LShuLXkpKSkpDQoNCmBgYA0KDQoNClRoZSBudWxsIGh5cG90aGVzaXMgaXMgJEhfMDogXHRoZXRhPTAkLiBTaW5jZSAkXHRoZXRhJCBpcyBzaWduaWZpY2FudGx5IGRpZmZlcmVudCBmcm9tIHplcm8sIHRoZSBudWxsLWh5cG90aGVzaXMgaXMgcmVqZWN0ZWQgYW5kIGl0IGlzIGNvbmNsdWRlZCB0aGF0IHRoZSBncm91cHMgYXJlIHNpZ25pZmljYW50bHkgZGlmZmVyZW50IGZyb20gZWFjaCBvdGhlci4gVGhpcyBtZWFucyB0aGF0IHRoZXJlIGlzIGEgZGlmZmVyZW5jZSBpbiBpZiBhIHBhdGllbnQgcmVjZWl2ZXMgdHJlYW1lbnQgd2l0aCBBWlQgb3Igbm90LiANCg0KDQojIyMgRXN0aW1hdGUgcGFyYW1ldGVycyBpbiB0aGUgbW9kZWwgKHAwIHByb2JhYmlsaXR5IG9mIEFJRFMgaW4gY29udHJvbCBncm91cCwgcDEgcHJvYmFiaWxpdHkgb2YgQUlEUyBpbiB0cmVhdG1lbnQgZ3JvdXApIGFuZCByZXBvcnQgYSBjb25maWRlbmNlIGludGVydmFsIGZvciB0aGUgcGFyYW1ldGVyIGRlc2NyaWJpbmcgdGhlIGRpZi0gZmVyZW5jZSwgY29tcGFyZSB3aXRoIHRoZSByZXN1bHQgYWJvdmUuDQoNCmBgYHtyfQ0KDQprMSA8LSBkYXRhJEFJRFNfeWVzWzFdICNBVFpfeWVzDQprMiA8LSBkYXRhJEFJRFNfeWVzWzJdICNBVFpfbm8NCm4xIDwtIGRhdGEkblsxXQ0KbjIgPC0gZGF0YSRuWzJdDQoNCiNOZWdhdGl2ZSBsb2ctbGlrZWxpaG9vZCBmdW5jdGlvbiANCg0KbG9nTCA8LSBmdW5jdGlvbih0aGV0YSl7DQogIA0KICBiMCA8LSB0aGV0YVsxXQ0KICBiMSA8LSB0aGV0YVsyXQ0KICANCiBrMiooKGIwICtiMSowKS1sb2coMStleHAoYjArYjEqMCkpKSsobjItazIpKigoYjArYjEqMCktbG9nKDErZXhwKGIwK2IxKjApKSkrazEqKChiMCArYjEqMSktbG9nKDErZXhwKGIwK2IxKjEpKSkrKG4xLWsxKSooKGIwK2IxKjApLWxvZygxK2V4cChiMCtiMSoxKSkpDQogIA0KfQ0KDQpvcHQgPC0gbmxtaW5iKGMoMCwwKSxvYmplY3RpdmUgPSBsb2dMLGxvd2VyPWMoLUluZiwtSW5mKSkNCg0KYGBgDQoNCg0KDQpUaGUgZm9ybXVsYXMgbG9vayBsaWtlIGEgYmlub21pYWwgbW9kZWwuIFRoaXMgYmlub21pYWwgbW9kZWwgaGFzIHRoZSBsb2ctbGlrZWxpaG9vZA0KJCQgJCQNCmBgYHtyfQ0KDQojZml0LmdsbSA9Z2xtKHl+eCwgZmFtaWx5PWJpbm9taWFsKQ0KYGBgDQoNCiNBbmFseXNpcyBvZiB0aGUgc3Vydml2YWwgdGltZSBkYXRhDQoNCmBgYHtyfQ0KDQojTG9hZCBkYXRhDQpkYXRhLnRpbWUgPC0gcmVhZC5kZWxpbSgiYWN0ZzMyMC50eHQiLGhlYWRlciA9IFRSVUUsIHNlcCA9ICIiLCBkZWMgPSAiLiIpDQpoZWFkKGRhdGEudGltZSwyKSANCmBgYA0KDQoNCmBgYHtyfQ0KI0NvdW50IG51bWJlciBvZiBwYXRpZW50IHdpdGhvdXQgdHJlYXRtZW50IGFuZCB3aXRob3V0IEFJRFMNCihzdW0oZGF0YS50aW1lJHR4ID09IDAgJiBkYXRhLnRpbWUkZXZlbnQgPT0gMCkpDQojQ291bnQgbnVtYmVyIG9mIHBhdGllbnQgd2l0aG91dCB0cmVhdG1lbnQgYW5kIEFJRFMNCihzdW0oZGF0YS50aW1lJHR4ID09IDAgJiBkYXRhLnRpbWUkZXZlbnQgPT0gMSkpDQojQ291bnQgbnVtYmVyIG9mIHBhdGllbnQgd2l0aCB0cmVhdG1lbnQgYW5kIHdpdGhvdXQgQUlEUw0KKHN1bShkYXRhLnRpbWUkdHggPT0gMSAmIGRhdGEudGltZSRldmVudCA9PSAwKSkNCiMgQ291bnQgbnVtYmVyIG9mIHBhdGllbnQgd2l0aCB0cmVhdG1lbnQgYW5kIEFJRFMNCihzdW0oZGF0YS50aW1lJHR4ID09IDEgJiBkYXRhLnRpbWUkZXZlbnQgPT0gMSkpDQoNCiNDYWxjdWxhdGluZyBwcm9wb3J0aW9ucw0KDQojTm8gYWlkcyBvdXQgb2YgcGVvcGxlIHdpdGhvdXQgdHJlYXRtZW50DQooc3VtKGRhdGEudGltZSR0eCA9PSAwICYgZGF0YS50aW1lJGV2ZW50ID09IDApKS9zdW0oZGF0YS50aW1lJHR4ID09IDApDQooc3VtKGRhdGEudGltZSR0eCA9PSAwICYgZGF0YS50aW1lJGV2ZW50ID09IDEpKS9zdW0oZGF0YS50aW1lJHR4ID09IDApDQooc3VtKGRhdGEudGltZSR0eCA9PSAxICYgZGF0YS50aW1lJGV2ZW50ID09IDApKS9zdW0oZGF0YS50aW1lJHR4ID09IDEpDQooc3VtKGRhdGEudGltZSR0eCA9PSAxICYgZGF0YS50aW1lJGV2ZW50ID09IDEpKS9zdW0oZGF0YS50aW1lJHR4ID09IDEpDQpgYGANCiMjIyBGaXQgYW4gZXhwb25lbnRpYWwgZGlzdHJpYnV0aW9uIHRvIGFsbCB0aGUgZGF0YS4gDQoNCmBgYHtyfQ0KZXhwLmxpa2VsaWhvb2Q9ZnVuY3Rpb24ocmF0ZSl7DQogIC1zdW0oZGV4cCh4PWRhdGEudGltZSR0aW1lW2RhdGEudGltZSRldmVudD09MV0sIHJhdGU9cmF0ZSwgbG9nPVRSVUUpKS0gc3VtKHBleHAocT1kYXRhLnRpbWUkdGltZVtkYXRhLnRpbWUkZXZlbnQ9PTBdLCBsb3dlci50YWlsID0gRkFMU0UsIHJhdGU9cmF0ZSwgbG9nPVRSVUUpKQ0KICB9DQoNCg0KKG5sbWluYihzdGFydD0wLjUsb2JqZWN0aXZlID0gZXhwLmxpa2VsaWhvb2QsbG93ZXI9MCkkcGFyKQ0KKG5sbWluYihzdGFydD0wLjUsb2JqZWN0aXZlID0gZXhwLmxpa2VsaWhvb2QsbG93ZXI9MCkkb2JqZWN0aXZlKQ0KIyhvcHRpbWl6ZShleHAubGlrZWxpaG9vZCxjKDAsIDEwMCksbWF4aW11bT1UUlVFKSRtYXhpbXVtKQ0KDQpgYGANCg0KRml0IGFuIGV4cG9uZW50aWFsIGRpc3RyaWJ1dGlvbiB0byBlYWNoIGdyb3VwLiANCg0KYGBge3J9DQoNCmV4cC5saWtlbGlob29kX25vX3RyZWF0PWZ1bmN0aW9uKHJhdGUpew0KICAtc3VtKGRleHAoeD1kYXRhLnRpbWUkdGltZVtkYXRhLnRpbWUkZXZlbnQ9PTEgJiBkYXRhLnRpbWUkdHggPT0gMF0sIHJhdGU9cmF0ZSwgbG9nPVRSVUUpKS0gc3VtKHBleHAocT1kYXRhLnRpbWUkdGltZVtkYXRhLnRpbWUkZXZlbnQ9PTAgJiBkYXRhLnRpbWUkdHggPT0gMF0sIGxvd2VyLnRhaWwgPSBGQUxTRSwgcmF0ZT1yYXRlLCBsb2c9VFJVRSkpDQp9DQoNCihubG1pbmIoc3RhcnQ9MC41LG9iamVjdGl2ZSA9IGV4cC5saWtlbGlob29kX25vX3RyZWF0LGxvd2VyPTApJHBhcikNCihubG1pbmIoc3RhcnQ9MC41LG9iamVjdGl2ZSA9IGV4cC5saWtlbGlob29kX25vX3RyZWF0LGxvd2VyPTApJG9iamVjdGl2ZSkNCg0KDQoNCmV4cC5saWtlbGlob29kX3dpdGhfdHJlYXQ9ZnVuY3Rpb24ocmF0ZSl7DQogIC1zdW0oZGV4cCh4PWRhdGEudGltZSR0aW1lW2RhdGEudGltZSRldmVudD09MSAmIGRhdGEudGltZSR0eCA9PSAxXSwgcmF0ZT1yYXRlLCBsb2c9VFJVRSkpLSBzdW0ocGV4cChxPWRhdGEudGltZSR0aW1lW2RhdGEudGltZSRldmVudD09MCAmIGRhdGEudGltZSR0eCA9PSAxXSwgbG93ZXIudGFpbCA9IEZBTFNFLCByYXRlPXJhdGUsIGxvZz1UUlVFKSkNCn0NCg0KKG5sbWluYihzdGFydD0wLjUsb2JqZWN0aXZlID0gZXhwLmxpa2VsaWhvb2Rfd2l0aF90cmVhdCxsb3dlcj0wKSRwYXIpDQoobmxtaW5iKHN0YXJ0PTAuNSxvYmplY3RpdmUgPSBleHAubGlrZWxpaG9vZF93aXRoX3RyZWF0LGxvd2VyPTApJG9iamVjdGl2ZSApDQpgYGANCkl0IGNhbiBiZSBzZWVuIHRoYXQgdGhlIG1vZGVsIGZpdHMgdGhlIGRhdGEgYmV0dGVyIHdoZW4gdGhlIGRhdGEgaXMgc2VwYXJhdGVkIGludG8gdGhlIHR3byB0cmVhdG1lbnQgZ3JvdXBzLiANCg0KIyMjIEZvcm11bGF0ZSBhZiBtb2RlbCB3aGVyZSBvbmUgcGFyYW1ldGVyIGluZGljYXRlIHRoZSB0cmVhdG1lbnQgZWZmZWN0DQoNCmBgYHtyfQ0KIyBJbXBsZW1lbnQgbmVnYXRpdmUgbG9nIGxpa2VsaWhvb2QgZnVuY3Rpb24NCg0KbmxsLmV4cCA8LSBmdW5jdGlvbihyYXRlKXsNCiAgDQogIHZhbDEgPC0gLXN1bShkZXhwKHg9ZGF0YS50aW1lJHRpbWVbZGF0YS50aW1lJGV2ZW50PT0xXSxyYXRlPXJhdGVbMV0rcmF0ZVsyXSpkYXRhLnRpbWUkdHhbZGF0YS50aW1lJGV2ZW50PT0xXSxsb2c9VFJVRSkpDQogIA0KICB2YWwyIDwtIC1zdW0ocGV4cChxPWRhdGEudGltZSR0aW1lW2RhdGEudGltZSRldmVudD09MF0scmF0ZT1yYXRlWzFdK3JhdGVbMl0qZGF0YS50aW1lJHR4W2RhdGEudGltZSRldmVudD09MF0sbG93ZXIudGFpbD1GLGxvZz1UUlVFKSkNCiAgDQogIHZhbDErdmFsMg0KfQ0KDQpvcHQuZXhwIDwtIG5sbWluYihzdGFydD1jKDAuMDAxLDAuMDA1KSxvYmplY3RpdmU9bmxsLmV4cCxsb3dlcj1jKC1JbmYsLUluZikpDQoob3B0LmV4cCRwYXJbMl0pDQoNCg0KI01ha2luZyBhIGNvbmZpZGVuY2UgaW50ZXJ2YWwNCg0KSSA8LSBoZXNzaWFuKG5sbC5leHAsb3B0LmV4cCRwYXIpDQpzZSA8LSAxL3NxcnQoSSkNCihvcHQuZXhwJHBhcitjKC0xLDEpKnFub3JtKDAuOTc1KSpzZS9zcXJ0KG4pKQ0KYGBgDQoNCg0KDQog</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkFzc2lnbm1lbnQgU3Vydml2YWwgRGF0YSINCm91dHB1dDoNCiAgcGRmX2RvY3VtZW50OiBkZWZhdWx0DQogIGh0bWxfbm90ZWJvb2s6IGRlZmF1bHQNCi0tLQ0KDQojQW5hbHlzaXMgb2YgYmluYXJ5IGRhdGENCg0KIyMjICBSZWFkIHRoZSBMb2dpc3RpYy50eHQgaW50byBSLg0KDQpgYGB7cn0NCmRhdGEgPC0gcmVhZC5kZWxpbSgiTG9naXN0aWMudHh0IixoZWFkZXIgPSBUUlVFLCBzZXAgPSAiIiwgZGVjID0gIi4iKQ0KZGF0YSRBSURTX25vPWRhdGEkbi1kYXRhJEFJRFNfeWVzDQpoZWFkKGRhdGEsMikgDQoNCm4gPC0gc3VtKGRhdGFbLDNdKSAjTnVtYmVyIG9mIHBhdGllbnQgI24gDQprIDwtIHN1bShkYXRhWywyXSkgI051bWJlciBvZiBwYXRpZW50cyB3aXRoIEFJRFMgI1N1Y2Vzc2VzICNrDQp0aGV0YSA8LSBzL24gI1Byb2JhYmlsaXR5IHRoYXQgeW91IGhhdmUgQWlkcw0KYGBgDQpUaGUgZGF0YSBjb25zaXN0IG9mIHBhdGllbnRzIGJlaW5nIHRyZWF0ZWQgd2l0aCBBWlQgYW5kIHRoZSBudW1iZXIgb2YgcGF0aWVudHMgd2l0aCBBSURTLCBhcyB3ZWxsIGFzIHBhdGllbnRzIG5vdCBiZWluZyB0cmVhdGVkIHdpdGggQVpUIGFuZCB0aGUgbnVtYmVyIG9mIHBhdGllbnRzIGhhdmluZyBBSURTLiBJdCBsb29rcyBsaWtlIG1vcmUgcGF0aWVudHMgZ2V0IEFJRFMgaWYgdGhleSBhcmUgbm90IHRyZWF0ZWQgd2l0aCBBWlQuDQoNCiMjIyBGaXR0aW5nIGRhdGEgdG8gYmlub21pYWwgZGlzdHJpYnV0aW9uIChpLmUuIGNvbnNpZGVyIGFsbCBkYXRhIGFzIGNvbWluZyBmcm9tIHRoZSBzYW1lIHBvcHVsYXRpb24pDQpUaGUgbG9nLWxpa2VsaWhvb2Qgb2YgdGhlIGJpbm9taWFsIGRpc3RyaWJ1dGlvbiBpczoNCiQkbChcdGhldGEpPVxzdW1fe2s9MH1ee259a1xjZG90IGxvZyhcdGhldGEpKyhuLWspXGNkb3QgbG9nKDEtXHRoZXRhKStjKG4saykkJA0Kd2hlcmUgbiBpcyB0aGUgbnVtYmVyIG9mIHBhdGllbnRzLCBrIGlzIHRoZSBudW1iZXIgb2YgcGF0aWVudCB3aXRoIEFJRFMuIFNpbmNlIGl0IGlzIGNvbnNpZGVyZWQgYXMgY29taW5nIGZyb20gdGhlIHNhbWUgcG9wdWxhdGlvbiBpLmUuIGZvbGxvdyB0aGUgc2FtZSBkaXN0aWJ1dGlvbiwgdGhlIGRhdGEgaXMgZml0dGVkIHRvIG9uZSBiaW5vbWlhbCBkaXN0cmlidXRpb24uDQoNCmBgYHtyfQ0KDQojRm9ybXVsYXRpbmcgdGhlIGxpa2VsaWhvb2QgZnVuY3Rpb24NCmJpbm9taWFsLmxvZy5saWtlbGlob29kID0gZnVuY3Rpb24odGhldGEsc3VjY2VzcyxzaXplKXsNCiAgLShzdW0oZGJpbm9tKHg9c3VjY2VzcyxzaXplPXNpemUscHJvYj10aGV0YSwgbG9nPVRSVUUpKSl9DQoNCih0aGV0YS5vcHQ9b3B0aW1pemUoYmlub21pYWwubG9nLmxpa2VsaWhvb2QsIGMoMC4wMSwwLjk5KSxzdWNjZXNzPXN1bShkYXRhJEFJRFNfeWVzKSxzaXplPXN1bShkYXRhJG4pKSRtaW5pbXVtKQ0KDQoobmxtaW5iKHN0YXJ0PTAuNSxvYmplY3RpdmU9Ymlub21pYWwubG9nLmxpa2VsaWhvb2QsbG93ZXI9MCxzdWNjZXNzPWssc2l6ZT1uKSRwYXIpDQoNCmBgYA0KDQojIyMgRml0IHRoZSBCaW5vbWlhbCBzZXBhcmF0ZWx5IHRvIHRoZSB0d28gZGlzdHJpYnV0aW9ucyBhbmQgdGVzdCBpZiB0aGVyZSBpcyBhIGRpZmZlcmVuY2UgYmV0d2VlbiB0aGUgZ3JvdXBzLg0KDQpgYGB7cn0NCiNUaGV0YSBmb3IgcGF0aWVudHMgdHJlYXRlZCB3aXRoIEFaVC4gVGhpcyBpcyB0aGUgcHJvYmFiaWxpdHkgb2YgaGF2aW5nIEFJRFMgd2hlbiB0cmVhdGVkIHdpdGggQVpULiANCiModGhldGFfQVpUX3llcy5vcHQ9b3B0aW1pemUoYmlub21pYWwubG9nLmxpa2VsaWhvb2QsIGMoMC4wMSwwLjk5KSx4PWRhdGEkQUlEU195ZXNbMV0sc2l6ZT1kYXRhJG5bMV0pJG1pbmltdW0pDQoNCih0aGV0YV9BWlRfeWVzLm9wdD1ubG1pbmIoc3RhcnQ9MC41LGJpbm9taWFsLmxvZy5saWtlbGlob29kLGxvd2VyPTAsc3VjY2Vzcz1kYXRhJEFJRFNfeWVzWzFdLHNpemU9ZGF0YSRuWzFdKSRwYXIpDQoNCih0aGV0YV9BWlRfbm8ub3B0PW5sbWluYihzdGFydD0wLjUsYmlub21pYWwubG9nLmxpa2VsaWhvb2QsbG93ZXI9MCxzdWNjZXNzPWRhdGEkQUlEU195ZXNbMl0sc2l6ZT1kYXRhJG5bMl0pJHBhcikNCg0KI1RoZXRhIGZvciBwYXRpZW50cyB0cmVhdGVkIHdpdGhvdXQgQVpULiBUaGlzIGlzIHRoZSBwcm9iYWJpbGl0eSBvZiBoYXZpbmcgQUlEUyB3aXRob3V0IHRyZWFtZW50LiANCiModGhldGFfQVpUX25vLm9wdD1vcHRpbWl6ZShiaW5vbWlhbC5sb2cubGlrZWxpaG9vZCwgYygwLjAxLDAuOTkpLHg9ZGF0YSRBSURTX3llc1syXSxzaXplPWRhdGEkblsyXSkkbWluaW11bSkNCmBgYA0KQXMgZXhwZWN0ZWQsIHRoZSBwcm9iYWJpbGl0eSBmb3IgZ2V0dGluZyBBSURTIGlzIGxvd2VyIHdoZW4gdHJlYXRlZCB3aXRoIEFaVC4gDQoNCg0KKipGaW5kaW5nIHRoZSBjb25maWRlbmNlIGludGVydmFsIGZvciB0aGUgcHJvYmFiaWxpdGllcy4qKiANCg0KDQpgYGB7cn0NCmsxIDwtIGRhdGEkQUlEU195ZXNbMV0gI0FUWl95ZXMNCmsyIDwtIGRhdGEkQUlEU195ZXNbMl0gI0FUWl9ubw0KbjEgPC0gZGF0YSRuWzFdDQpuMiA8LSBkYXRhJG5bMl0NCnAxIDwtIGsxL24xDQpwMiA8LSBrMi9uMg0KYGBgDQoNCg0KYGBge3J9DQpsaWJyYXJ5KG51bURlcml2KQ0KSSA8LSBoZXNzaWFuKGJpbm9taWFsLmxvZy5saWtlbGlob29kLHRoZXRhLHN1Y2Nlc3M9ayxzaXplPW4pDQpJX0FaVF95ZXMgPC0gaGVzc2lhbihiaW5vbWlhbC5sb2cubGlrZWxpaG9vZCx0aGV0YV9BWlRfeWVzLm9wdCxzdWNjZXNzPWsxLHNpemU9bjEpDQpJX0FaVF9ubyA8LSBoZXNzaWFuKGJpbm9taWFsLmxvZy5saWtlbGlob29kLHRoZXRhX0FaVF9uby5vcHQsc3VjY2Vzcz1rMixzaXplPW4yKQ0KDQojVGhlIHN0YW5kYXJkIGVycm9yIA0Kc2UgPC0gMS9zcXJ0KEkpDQpzZV9BWlRfeWVzIDwtIDEvc3FydChJX0FaVF95ZXMpDQpzZV9BWlRfbm8gPC0gMS9zcXJ0KElfQVpUX25vKQ0KDQoNCg0KI2NvbmZpZGVuY2UgaW50ZXJ2YWxsZXQNCihwK2MoLTEsMSkqcW5vcm0oMC45NzUpKnNlL3NxcnQobikpDQoocDErYygtMSwxKSpxbm9ybSgwLjk3NSkqc2VfQVpUX3llcy9zcXJ0KG4xKSkNCihwMitjKC0xLDEpKnFub3JtKDAuOTc1KSpzZV9BWlRfbm8vc3FydChuMikpDQoNCmBgYA0KTm93IHRoZSBwYXJhbWV0ZXJzIGFuZCB0aGVpciBjb3JyZXNwb25kaW5nIENJIGFyZSBmb3VuZC4gDQoNClRoZSBudWxsIGh5cG90aGVzaXMgaXMgdGhhdCB0aGUgdHdvIGRpc3RyaWJ1dGlvbnMgYXJlIGVxdWFsIG1lYW5pbmcgdGhhdCBpZiBBWlRfeWVzIGZvbGxvd3MgJEIobSxccGlfeCkkIGFuZCBBWlRfbm8gZm9sbG93cyAkQihuLFxwaV95KSQgJFxwaV94PVxwaV95JC4NCmBgYHtyfQ0KeD1kYXRhJEFJRFNfeWVzWzFdDQp5PWRhdGEkQUlEU19ub1sxXQ0KbT1zdW0oZGF0YSRBSURTX3llcykNCm49c3VtKGRhdGEkQUlEU19ubykNCk49bStuDQp0PXgreQ0KDQojVGhlIHN0YW5kYXJkIHRlc3Qgb2YgZXF1YWxpdHkgb2YgcHJvcG9ydGlvbnMgaXMgdGhlIGZhbW91cyBjaGktc3F1YXJlZCB0ZXN0DQooY2hpLnNxdWFyZWQudGVzdD1OKih4KihuLXkpLXkqKG0teCkpXjIvKG0qbip0KihOLXQpKSkNCg0KKHBjaGlzcShjaGkuc3F1YXJlZC50ZXN0LCBkZj0xLCBsb3dlci50YWlsPUZBTFNFKSkNCmBgYA0KV2l0aCBhIHAtdmFsdWUgb2YgMC4wMDg4MTYxNTkgd2UgaGF2ZSBzdHJvbmcgZXZpZGVuY2UgYWdhaW5zdCB0aGUgbnVsbCBoeXBvdGhlc2lzIG1lYW5pbmcgdGhhdCB0aGUgdHdvIGdyb3VwcyBkb2VzIG5vdCBmb2xsb3cgdGhlIHNhbWUgZGlzdHJpYnV0aW9uLg0KDQpUbyBwcm9jZWVkIHdpdGggYSBsaWtlbGlob29kIGFuYWx5c2lzLCB0aGUgbnVtYmVyIG9mIHBlb3BsZSB3aXRoIEFJRFMgKFgpIGluIHRoZSBncm91cCB0cmVhdGVkIHdpdGggQVpUIGlzICRCKG0sXHBpX3gpJCBhbmQgaW5kZXBlbmRlbnRseSB0aGUgbnVtYmVyIG9mIHBlb3BsZSB3aXRoIEFJRFMgKFkpICBpbiB0aGUgc2Vjb25kIGdyb3VwIGlzICRCKG4sXHBpX3kpJC4NCg0KT24gb2JzZXJ2aW5nIHggYW5kIHkgdGhlIGpvaW50IGxpa2VsaWhvb2Qgb2YgJChccGlfeCxccGlfeSkkOg0KJCRMKFxwaV94LCBccGlfeSk9XHBpX3heeCooMS1ccGlfeClee20teH1ccGlfeV55KDEtXHBpX3kpXntuLXl9JCQNCg0KVGhlIGxvZyBvZGRzLXJhdGlvIGlzIGRlZmluZWQgYnk6DQokJFx0aGV0YT1cbG9nIFxmcmFje1xwaV97eH0gL1xsZWZ0KDEtXHBpX3t4fVxyaWdodCl9e1xwaV97eX0gL1xsZWZ0KDEtXHBpX3t5fVxyaWdodCl9JCQNCmBgYHtyfQ0KKHRoZXRhLmNvbXBhcmUgPSBsb2coKHRoZXRhX0FaVF95ZXMub3B0LygxLXRoZXRhX0FaVF95ZXMub3B0KSkvKHRoZXRhX0FaVF9uby5vcHQvKDEtIHRoZXRhX0FaVF9uby5vcHQpKSkpDQoNCihsb2coKHgvKG0teCkpLyh5LShuLXkpKSkpDQoNCmBgYA0KDQoNClRoZSBudWxsIGh5cG90aGVzaXMgaXMgJEhfMDogXHRoZXRhPTAkLiBTaW5jZSAkXHRoZXRhJCBpcyBzaWduaWZpY2FudGx5IGRpZmZlcmVudCBmcm9tIHplcm8sIHRoZSBudWxsLWh5cG90aGVzaXMgaXMgcmVqZWN0ZWQgYW5kIGl0IGlzIGNvbmNsdWRlZCB0aGF0IHRoZSBncm91cHMgYXJlIHNpZ25pZmljYW50bHkgZGlmZmVyZW50IGZyb20gZWFjaCBvdGhlci4gVGhpcyBtZWFucyB0aGF0IHRoZXJlIGlzIGEgZGlmZmVyZW5jZSBpbiBpZiBhIHBhdGllbnQgcmVjZWl2ZXMgdHJlYW1lbnQgd2l0aCBBWlQgb3Igbm90LiANCg0KDQojIyMgRXN0aW1hdGUgcGFyYW1ldGVycyBpbiB0aGUgbW9kZWwgKHAwIHByb2JhYmlsaXR5IG9mIEFJRFMgaW4gY29udHJvbCBncm91cCwgcDEgcHJvYmFiaWxpdHkgb2YgQUlEUyBpbiB0cmVhdG1lbnQgZ3JvdXApIGFuZCByZXBvcnQgYSBjb25maWRlbmNlIGludGVydmFsIGZvciB0aGUgcGFyYW1ldGVyIGRlc2NyaWJpbmcgdGhlIGRpZi0gZmVyZW5jZSwgY29tcGFyZSB3aXRoIHRoZSByZXN1bHQgYWJvdmUuDQoNCmBgYHtyfQ0KDQprMSA8LSBkYXRhJEFJRFNfeWVzWzFdICNBVFpfeWVzDQprMiA8LSBkYXRhJEFJRFNfeWVzWzJdICNBVFpfbm8NCm4xIDwtIGRhdGEkblsxXQ0KbjIgPC0gZGF0YSRuWzJdDQoNCiNOZWdhdGl2ZSBsb2ctbGlrZWxpaG9vZCBmdW5jdGlvbiANCg0KbG9nTCA8LSBmdW5jdGlvbih0aGV0YSl7DQogIA0KICBiMCA8LSB0aGV0YVsxXQ0KICBiMSA8LSB0aGV0YVsyXQ0KICANCiBrMiooKGIwICtiMSowKS1sb2coMStleHAoYjArYjEqMCkpKSsobjItazIpKigoYjArYjEqMCktbG9nKDErZXhwKGIwK2IxKjApKSkrazEqKChiMCArYjEqMSktbG9nKDErZXhwKGIwK2IxKjEpKSkrKG4xLWsxKSooKGIwK2IxKjApLWxvZygxK2V4cChiMCtiMSoxKSkpDQogIA0KfQ0KDQpvcHQgPC0gbmxtaW5iKGMoMCwwKSxvYmplY3RpdmUgPSBsb2dMLGxvd2VyPWMoLUluZiwtSW5mKSkNCg0KYGBgDQoNCg0KI0FuYWx5c2lzIG9mIHRoZSBzdXJ2aXZhbCB0aW1lIGRhdGENCg0KYGBge3J9DQoNCiNMb2FkIGRhdGENCmRhdGEudGltZSA8LSByZWFkLmRlbGltKCJhY3RnMzIwLnR4dCIsaGVhZGVyID0gVFJVRSwgc2VwID0gIiIsIGRlYyA9ICIuIikNCmhlYWQoZGF0YS50aW1lLDIpIA0KYGBgDQoNCg0KYGBge3J9DQojQ291bnQgbnVtYmVyIG9mIHBhdGllbnQgd2l0aG91dCB0cmVhdG1lbnQgYW5kIHdpdGhvdXQgQUlEUw0KKHN1bShkYXRhLnRpbWUkdHggPT0gMCAmIGRhdGEudGltZSRldmVudCA9PSAwKSkNCiNDb3VudCBudW1iZXIgb2YgcGF0aWVudCB3aXRob3V0IHRyZWF0bWVudCBhbmQgQUlEUw0KKHN1bShkYXRhLnRpbWUkdHggPT0gMCAmIGRhdGEudGltZSRldmVudCA9PSAxKSkNCiNDb3VudCBudW1iZXIgb2YgcGF0aWVudCB3aXRoIHRyZWF0bWVudCBhbmQgd2l0aG91dCBBSURTDQooc3VtKGRhdGEudGltZSR0eCA9PSAxICYgZGF0YS50aW1lJGV2ZW50ID09IDApKQ0KIyBDb3VudCBudW1iZXIgb2YgcGF0aWVudCB3aXRoIHRyZWF0bWVudCBhbmQgQUlEUw0KKHN1bShkYXRhLnRpbWUkdHggPT0gMSAmIGRhdGEudGltZSRldmVudCA9PSAxKSkNCg0KI0NhbGN1bGF0aW5nIHByb3BvcnRpb25zDQoNCiNObyBhaWRzIG91dCBvZiBwZW9wbGUgd2l0aG91dCB0cmVhdG1lbnQNCihzdW0oZGF0YS50aW1lJHR4ID09IDAgJiBkYXRhLnRpbWUkZXZlbnQgPT0gMCkpL3N1bShkYXRhLnRpbWUkdHggPT0gMCkNCihzdW0oZGF0YS50aW1lJHR4ID09IDAgJiBkYXRhLnRpbWUkZXZlbnQgPT0gMSkpL3N1bShkYXRhLnRpbWUkdHggPT0gMCkNCihzdW0oZGF0YS50aW1lJHR4ID09IDEgJiBkYXRhLnRpbWUkZXZlbnQgPT0gMCkpL3N1bShkYXRhLnRpbWUkdHggPT0gMSkNCihzdW0oZGF0YS50aW1lJHR4ID09IDEgJiBkYXRhLnRpbWUkZXZlbnQgPT0gMSkpL3N1bShkYXRhLnRpbWUkdHggPT0gMSkNCmBgYA0KIyMjIEZpdCBhbiBleHBvbmVudGlhbCBkaXN0cmlidXRpb24gdG8gYWxsIHRoZSBkYXRhLiANCg0KYGBge3J9DQpleHAubGlrZWxpaG9vZD1mdW5jdGlvbihyYXRlKXsNCiAgLXN1bShkZXhwKHg9ZGF0YS50aW1lJHRpbWVbZGF0YS50aW1lJGV2ZW50PT0xXSwgcmF0ZT1yYXRlLCBsb2c9VFJVRSkpLSBzdW0ocGV4cChxPWRhdGEudGltZSR0aW1lW2RhdGEudGltZSRldmVudD09MF0sIGxvd2VyLnRhaWwgPSBGQUxTRSwgcmF0ZT1yYXRlLCBsb2c9VFJVRSkpDQogIH0NCg0KDQoobmxtaW5iKHN0YXJ0PTAuNSxvYmplY3RpdmUgPSBleHAubGlrZWxpaG9vZCxsb3dlcj0wKSRwYXIpDQoobmxtaW5iKHN0YXJ0PTAuNSxvYmplY3RpdmUgPSBleHAubGlrZWxpaG9vZCxsb3dlcj0wKSRvYmplY3RpdmUpDQojKG9wdGltaXplKGV4cC5saWtlbGlob29kLGMoMCwgMTAwKSxtYXhpbXVtPVRSVUUpJG1heGltdW0pDQoNCmBgYA0KDQpGaXQgYW4gZXhwb25lbnRpYWwgZGlzdHJpYnV0aW9uIHRvIGVhY2ggZ3JvdXAuIA0KDQpgYGB7cn0NCg0KZXhwLmxpa2VsaWhvb2Rfbm9fdHJlYXQ9ZnVuY3Rpb24ocmF0ZSl7DQogIC1zdW0oZGV4cCh4PWRhdGEudGltZSR0aW1lW2RhdGEudGltZSRldmVudD09MSAmIGRhdGEudGltZSR0eCA9PSAwXSwgcmF0ZT1yYXRlLCBsb2c9VFJVRSkpLSBzdW0ocGV4cChxPWRhdGEudGltZSR0aW1lW2RhdGEudGltZSRldmVudD09MCAmIGRhdGEudGltZSR0eCA9PSAwXSwgbG93ZXIudGFpbCA9IEZBTFNFLCByYXRlPXJhdGUsIGxvZz1UUlVFKSkNCn0NCg0KKG5sbWluYihzdGFydD0wLjUsb2JqZWN0aXZlID0gZXhwLmxpa2VsaWhvb2Rfbm9fdHJlYXQsbG93ZXI9MCkkcGFyKQ0KKG5sbWluYihzdGFydD0wLjUsb2JqZWN0aXZlID0gZXhwLmxpa2VsaWhvb2Rfbm9fdHJlYXQsbG93ZXI9MCkkb2JqZWN0aXZlKQ0KDQoNCg0KZXhwLmxpa2VsaWhvb2Rfd2l0aF90cmVhdD1mdW5jdGlvbihyYXRlKXsNCiAgLXN1bShkZXhwKHg9ZGF0YS50aW1lJHRpbWVbZGF0YS50aW1lJGV2ZW50PT0xICYgZGF0YS50aW1lJHR4ID09IDFdLCByYXRlPXJhdGUsIGxvZz1UUlVFKSktIHN1bShwZXhwKHE9ZGF0YS50aW1lJHRpbWVbZGF0YS50aW1lJGV2ZW50PT0wICYgZGF0YS50aW1lJHR4ID09IDFdLCBsb3dlci50YWlsID0gRkFMU0UsIHJhdGU9cmF0ZSwgbG9nPVRSVUUpKQ0KfQ0KDQoobmxtaW5iKHN0YXJ0PTAuNSxvYmplY3RpdmUgPSBleHAubGlrZWxpaG9vZF93aXRoX3RyZWF0LGxvd2VyPTApJHBhcikNCihubG1pbmIoc3RhcnQ9MC41LG9iamVjdGl2ZSA9IGV4cC5saWtlbGlob29kX3dpdGhfdHJlYXQsbG93ZXI9MCkkb2JqZWN0aXZlICkNCmBgYA0KSXQgY2FuIGJlIHNlZW4gdGhhdCB0aGUgbW9kZWwgZml0cyB0aGUgZGF0YSBiZXR0ZXIgd2hlbiB0aGUgZGF0YSBpcyBzZXBhcmF0ZWQgaW50byB0aGUgdHdvIHRyZWF0bWVudCBncm91cHMuIA0KDQojIyMgRm9ybXVsYXRlIGFmIG1vZGVsIHdoZXJlIG9uZSBwYXJhbWV0ZXIgaW5kaWNhdGUgdGhlIHRyZWF0bWVudCBlZmZlY3QNCg0KYGBge3J9DQojIEltcGxlbWVudCBuZWdhdGl2ZSBsb2cgbGlrZWxpaG9vZCBmdW5jdGlvbg0KDQpubGwuZXhwIDwtIGZ1bmN0aW9uKHJhdGUpew0KICANCiAgdmFsMSA8LSAtc3VtKGRleHAoeD1kYXRhLnRpbWUkdGltZVtkYXRhLnRpbWUkZXZlbnQ9PTFdLHJhdGU9cmF0ZVsxXStyYXRlWzJdKmRhdGEudGltZSR0eFtkYXRhLnRpbWUkZXZlbnQ9PTFdLGxvZz1UUlVFKSkNCiAgDQogIHZhbDIgPC0gLXN1bShwZXhwKHE9ZGF0YS50aW1lJHRpbWVbZGF0YS50aW1lJGV2ZW50PT0wXSxyYXRlPXJhdGVbMV0rcmF0ZVsyXSpkYXRhLnRpbWUkdHhbZGF0YS50aW1lJGV2ZW50PT0wXSxsb3dlci50YWlsPUYsbG9nPVRSVUUpKQ0KICANCiAgdmFsMSt2YWwyDQp9DQoNCm9wdC5leHAgPC0gbmxtaW5iKHN0YXJ0PWMoMC4wMDEsMC4wMDUpLG9iamVjdGl2ZT1ubGwuZXhwLGxvd2VyPWMoLUluZiwtSW5mKSkNCihvcHQuZXhwJHBhclsyXSkNCg0KDQojTWFraW5nIGEgY29uZmlkZW5jZSBpbnRlcnZhbA0KDQpJIDwtIGhlc3NpYW4obmxsLmV4cCxvcHQuZXhwJHBhcikNCnNlIDwtIDEvc3FydChJKQ0KKG9wdC5leHAkcGFyK2MoLTEsMSkqcW5vcm0oMC45NzUpKnNlL3NxcnQobikpDQpgYGANCg0KDQoNCiA=</div>
 
 
 
