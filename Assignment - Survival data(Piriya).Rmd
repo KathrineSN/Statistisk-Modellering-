@@ -146,6 +146,14 @@ opt <- nlminb(c(0,0),objective = logL,lower=c(-Inf,-Inf))
 ```
 
 
+
+The formulas look like a binomial model. This binomial model has the log-likelihood
+$$ $$
+```{r}
+
+#fit.glm =glm(y~x, family=binomial)
+```
+
 #Analysis of the survival time data
 
 ```{r}
