@@ -1,0 +1,390 @@
+---
+title: "Assignment Survival Data"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+#Analysis of binary data
+
+###  Read the Logistic.txt into R.
+
+```{r}
+data <- read.delim("Logistic.txt",header = TRUE, sep = "", dec = ".")
+data$AIDS_no=data$n-data$AIDS_yes
+head(data,2) 
+
+n <- sum(data[,3]) #Number of patient #n 
+k <- sum(data[,2]) #Number of patients with AIDS #Sucesses #k
+theta <- k/n #Probability that you have Aids
+```
+The data consist of patients being treated with AZT and the number of patients with AIDS, as well as patients not being treated with AZT and the number of patients having AIDS. It looks like more patients get AIDS if they are not treated with AZT.
+
+### Fitting data to binomial distribution (i.e. consider all data as coming from the same population)
+The log-likelihood of the binomial distribution is:
+$$l(\theta)=\sum_{k=0}^{n}k\cdot log(\theta)+(n-k)\cdot log(1-\theta)+c(n,k)$$
+where n is the number of patients, k is the number of patient with AIDS. Since it is considered as coming from the same population i.e. follow the same distribution, the data is fitted to one binomial distribution.
+
+```{r}
+
+#Formulating the likelihood function
+binomial.log.likelihood = function(theta,success,size){
+  -(sum(dbinom(x=success,size=size,prob=theta, log=TRUE)))}
+
+#(theta.opt=optimize(binomial.log.likelihood, c(0.01,0.99),success=sum(data$AIDS_yes),size=sum(data$n))$minimum)
+
+(nlminb(start=0.5,objective=binomial.log.likelihood,lower=0,success=k,size=n)$par)
+```
+
+### Fit the Binomial separately to the two distributions and test if there is a difference between the groups.
+
+```{r}
+
+#(theta_AZT_yes.opt=optimize(binomial.log.likelihood, c(0.01,0.99),x=data$AIDS_yes[1],size=data$n[1])$minimum)
+#(theta_AZT_no.opt=optimize(binomial.log.likelihood, c(0.01,0.99),x=data$AIDS_yes[2],size=data$n[2])$minimum)
+
+
+#Theta for patients treated with AZT. This is the probability of having AIDS when treated with AZT. 
+(theta_AZT_yes.opt=nlminb(start=0.5,binomial.log.likelihood,lower=0,success=data$AIDS_yes[1],size=data$n[1])$par)
+
+#Theta for patients treated without AZT. This is the probability of having AIDS without treament. 
+(theta_AZT_no.opt=nlminb(start=0.5,binomial.log.likelihood,lower=0,success=data$AIDS_yes[2],size=data$n[2])$par)
+
+```
+As expected, the probability for getting AIDS is lower when treated with AZT. 
+
+
+**Finding the confidence interval for the probabilities.** 
+
+
+```{r}
+k1 <- data$AIDS_yes[1] #ATZ_yes
+k2 <- data$AIDS_yes[2] #ATZ_no
+n1 <- data$n[1]
+n2 <- data$n[2]
+p1 <- k1/n1
+p2 <- k2/n2
+p <- k/n
+```
+
+
+```{r}
+library(numDeriv)
+I <- hessian(binomial.log.likelihood,theta,success=k,size=n)
+I_AZT_yes <- hessian(binomial.log.likelihood,theta_AZT_yes.opt,success=k1,size=n1)
+I_AZT_no <- hessian(binomial.log.likelihood,theta_AZT_no.opt,success=k2,size=n2)
+
+#The standard error 
+se <- 1/sqrt(I)
+se_AZT_yes <- 1/sqrt(I_AZT_yes)
+se_AZT_no <- 1/sqrt(I_AZT_no)
+
+
+
+#confidence intervallet
+(p+c(-1,1)*qnorm(0.975)*se/sqrt(n))
+(p1+c(-1,1)*qnorm(0.975)*se_AZT_yes/sqrt(n1))
+(p2+c(-1,1)*qnorm(0.975)*se_AZT_no/sqrt(n2))
+
+```
+
+**Test if there is a difference between the two grops**
+
+The null hypothesis is that the two distributions are equal meaning that if AZT_yes follows $B(m,\pi_x)$ and AZT_no follows $B(n,\pi_y)$ $\pi_x=\pi_y$.
+```{r}
+x=data$AIDS_yes[1]
+y=data$AIDS_no[1]
+m=sum(data$AIDS_yes)
+n=sum(data$AIDS_no)
+N=m+n
+t=x+y
+
+#The standard test of equality of proportions is the famous chi-squared test
+(chi.squared.test=N*(x*(n-y)-y*(m-x))^2/(m*n*t*(N-t)))
+
+(pchisq(chi.squared.test, df=1, lower.tail=FALSE))
+```
+With a p-value of 0.008816159 we have strong evidence against the null hypothesis meaning that the two groups do not follow the same distribution.
+
+The null hypothesis is $H_0: \theta=0$. Since $\theta$ is significantly different from zero, the null-hypothesis is rejected and it is concluded that the groups are significantly different from each other. This means that there is a difference in if a patient receives treatment with AZT or not. 
+
+
+-------------------------------------------
+**I (Piriya) think this part should be deleted.** ** Then delete it (AK)**
+
+To proceed with a likelihood analysis, the number of people with AIDS (X) in the group treated with AZT is $B(m,\pi_x)$ and independently the number of people with AIDS (Y)  in the second group is $B(n,\pi_y)$.
+
+On observing x and y the joint likelihood of $(\pi_x,\pi_y)$:
+$$L(\pi_x, \pi_y)=\pi_x^x*(1-\pi_x)^{m-x}\pi_y^y(1-\pi_y)^{n-y}$$
+
+The log odds-ratio is defined by:
+$$\theta=\log \frac{\pi_{x} /\left(1-\pi_{x}\right)}{\pi_{y} /\left(1-\pi_{y}\right)}$$
+```{r}
+(theta.compare = log((theta_AZT_yes.opt/(1-theta_AZT_yes.opt))/(theta_AZT_no.opt/(1- theta_AZT_no.opt))))
+
+
+(log((x/(m-x))/(y-(n-y))))
+
+```
+
+To make a profile likelihood function for $\theta$ as stated above, the eta is calculated:
+
+$$\eta=\log \frac{\pi_{y}}{1-\pi_{y}}$$
+With $\eta$ the joint likelihood function for $\theta$ and $\eta$ can be found:
+
+$$L(\theta, \eta)=e^{\theta x} e^{\eta(x+y)}\left(1+e^{\theta+\eta}\right)^{-m}\left(1+e^{\eta}\right)^{-n}$$
+The MLE for this likelihood function is:
+$$\hat{\theta}=log(\frac{x/(m-x)}{y/(n-y)})$$
+
+
+$\hat{\theta}}=-0.721766$
+Plot the joint likelihood
+```{r}
+ehat<- log(y/(n-y))
+  #print(c(that,ehat))
+  cat('theta-hat=',that,',  se=',se,'\n')
+
+# plots
+par(mfrow=c(1,1))
+th<- seq(that-2*se,that+3*se,len=30)
+et<- seq(ehat-4,ehat+2,len=30)
+
+fun1<- function(theta,eta){
+      a <- exp(theta+eta)
+      b<- exp(eta)
+      x*theta + (x+y)*eta - m*log(1+a) - n*log(1+b)
+      }
+
+ll<- outer(th,et,'fun1')
+like<- exp(ll-max(ll))
+
+lik1<- apply(like,1,max)
+plot(th,lik1,type='n',xlab=expression(theta),
+     ylab='Likelihood')
+  lines(th,lik1)
+  abline(h=.15,lwd=.4)
+  abline(v=0)
+  title(expression('(b) Profile likelihood'))
+  
+
+
+```
+-----------------
+
+### Estimate parameters in the model (p0 probability of AIDS in control group, p1 probability of AIDS in treatment group) and report a confidence interval for the parameter describing the difference, compare with the result above.
+
+The parameters $\beta_0$ and $\beta_1$ can be estimated with the logistic regression model. Here $p_0$ denotes the probability of success (i.e. getting AIDS) in the control treatment and $p_1$ denotes the probability of succes in the new treatment. 
+
+$$p_{0}=\frac{e^{\beta_{0}}}{1+e^{\beta_{0}}}, \quad p_{1}=\frac{e^{\beta_{0}+\beta_{1}}}{1+e^{\beta_{0}+\beta_{1}}}$$
+In the above $\beta_1$ describes the difference between the treatments. Thus if $\beta_1 = 0$ then there is no difference between the two treatments.
+The likelihood for the logistic regression can be written as:
+
+$$L(\beta_0, \beta_1) = \Pi_i p_i^{y_i}(1-p_i)^{1-y_i}$$
+Here $y_i$ is the succes in treatment i. We have that $i=0$ control treatment, $i=1$ test treatment.
+The log-likelighood is given as
+$$logL(\beta_0, \beta_1) = \sum_i \left[(\beta_0 + \beta_1 \cdot treatment_i)y_i - log(1 + exp(\beta_0 + \beta_1 \cdot treatment_i)) \right]$$
+```{r}
+library(magrittr)
+log_data = data
+logL_partial <- function(b0, b1, data, AZT = TRUE){
+    y = if (AZT) {data[1,2]} else {data[2,2]} %>% as.numeric()
+    n = if (AZT) {data[1,3]} else {data[2,3]} %>% as.numeric()
+    false = n-y
+    
+    y*((b0 + b1 * AZT) * 1 - log(1+exp(b0+b1*AZT))) + false*((b0 + b1 * AZT) * 0 - log(1+exp(b0+b1*AZT)))
+}
+
+logL <- function(theta, data){
+     - (logL_partial(theta[1], theta[2],data, F) + logL_partial(theta[1],theta[2],data, T))
+}
+
+
+opt <- nlminb(c(0, 0), logL, lower = c(-Inf,-Inf), data = log_data)
+
+p0 <- exp(opt$par[1])/(1+exp(opt$par[1]))
+p1 <- exp(opt$par[1] + opt$par[2])/(1+exp(opt$par[1] + opt$par[2]))
+
+
+
+logL_b1 <- function(theta, b1, data){
+      -(logL_partial(theta[1], b1,data, F) + logL_partial(theta[1],b1,data, T))
+}
+
+profile_b1 <- function(b1, data){
+  opt <- nlminb(c(0), logL_b1, lower = c(-Inf), data = log_data, b1 = b1)
+  # optimize(logL)
+  b0 <- opt$par
+  -logL_b1(c(b0),b1,data)
+}
+
+
+b1 <- seq(-5,5,0.01)
+alpha <- 0.05
+c <- exp(-1/2*qchisq(1-alpha,1))
+p = c()
+for (i in 1:length(b1)){
+  p[i] = exp(profile_b1(b1[i], log_data))
+}
+
+MLE_b1 <- optimize(profile_b1, c(-5,5), data = log_data, maximum = T)$maximum
+
+plot(b1, p/max(p), 'l')
+abline(c, 0)
+abline(v = MLE_b1)
+
+
+
+a_b1 <- b1[p/max(p) > c]
+CI_b1 <- c(min(a_b1), max(a_b1))
+
+
+cat("The maximum likelihood estimates of p0 and p1 are: p0 = ", p0, " p1 = ", p1, "\n")
+cat("The maximum profile likelihood estimate of b1 is:  ", MLE_b1, "\n")
+cat("With confidence intervals: ", CI_b1, "\n")
+```
+
+
+#Analysis of the survival time data
+
+### Read the data act320.txt into R. 
+
+```{r}
+
+#Load data
+data.time <- read.delim("actg320.txt",header = TRUE, sep = "", dec = ".")
+head(data.time,2) 
+```
+### How many patients got AIDS or dies in the two treatment groups?
+### What is the proportion of patients that got AIDS or died in the two groups?
+
+```{r}
+#Count number of patient without treatment and without AIDS
+(sum(data.time$tx == 0 & data.time$event == 0))
+#Count number of patient without treatment and AIDS
+(sum(data.time$tx == 0 & data.time$event == 1))
+#Count number of patient with treatment and without AIDS
+(sum(data.time$tx == 1 & data.time$event == 0))
+# Count number of patient with treatment and AIDS
+(sum(data.time$tx == 1 & data.time$event == 1))
+
+#Calculating proportions
+
+#No aids out of people without treatment
+(sum(data.time$tx == 0 & data.time$event == 0))/sum(data.time$tx == 0)
+(sum(data.time$tx == 0 & data.time$event == 1))/sum(data.time$tx == 0)
+(sum(data.time$tx == 1 & data.time$event == 0))/sum(data.time$tx == 1)
+(sum(data.time$tx == 1 & data.time$event == 1))/sum(data.time$tx == 1)
+```
+### Fit an exponential distribution to all the data. 
+
+```{r}
+exp.likelihood=function(rate){
+  -sum(dexp(x=data.time$time[data.time$event==1], rate=rate, log=TRUE))- sum(pexp(q=data.time$time[data.time$event==0], lower.tail = FALSE, rate=rate, log=TRUE))
+  }
+
+
+(nlminb(start=0.5,objective = exp.likelihood,lower=0)$par)
+(nlminb(start=0.5,objective = exp.likelihood,lower=0)$objective)
+#(optimize(exp.likelihood,c(0, 100),maximum=TRUE)$maximum)
+
+```
+
+**Fit an exponential distribution to each group.**
+
+```{r}
+
+exp.likelihood_no_treat=function(rate){
+  -sum(dexp(x=data.time$time[data.time$event==1 & data.time$tx == 0], rate=rate, log=TRUE))- sum(pexp(q=data.time$time[data.time$event==0 & data.time$tx == 0], lower.tail = FALSE, rate=rate, log=TRUE))
+}
+
+(nlminb(start=0.5,objective = exp.likelihood_no_treat,lower=0)$par)
+(nlminb(start=0.5,objective = exp.likelihood_no_treat,lower=0)$objective)
+
+
+
+exp.likelihood_with_treat=function(rate){
+  -sum(dexp(x=data.time$time[data.time$event==1 & data.time$tx == 1], rate=rate, log=TRUE))- sum(pexp(q=data.time$time[data.time$event==0 & data.time$tx == 1], lower.tail = FALSE, rate=rate, log=TRUE))
+}
+
+(nlminb(start=0.5,objective = exp.likelihood_with_treat,lower=0)$par)
+(nlminb(start=0.5,objective = exp.likelihood_with_treat,lower=0)$objective )
+```
+It can be seen that the model fits the data better when the data is separated into the two treatment groups. 
+
+### Formulate af model where one parameter indicate the treatment effect
+
+```{r}
+# Implement negative log likelihood function
+
+nll.exp <- function(rate){
+  
+  val1 <- -sum(dexp(x=data.time$time[data.time$event==1],rate=rate[1]+rate[2]*data.time$tx[data.time$event==1],log=TRUE))
+  
+  val2 <- -sum(pexp(q=data.time$time[data.time$event==0],rate=rate[1]+rate[2]*data.time$tx[data.time$event==0],lower.tail=F,log=TRUE))
+  
+  val1+val2
+}
+
+opt.exp <- nlminb(start=c(0.001,0.005),objective=nll.exp,lower=c(-Inf,-Inf))
+(opt.exp$par[2])
+
+
+```
+
+### Making the Wald confidence interval
+
+```{r}
+
+#Der er noget galt her!!!!!
+#Making a confidence interval
+
+I <- hessian(nll.exp,opt.exp$par)
+se <- 1/sqrt(I)
+
+(opt.exp$par[2]+c(-1,1)*qnorm(0.975)*se/sqrt(n))
+```
+
+It can be seen that the confidence interval does not cover zero which means that the two treatment groups are significantly different from each other.
+
+### Implement the profile likelihood function 
+
+```{r}
+nll.b1 <- function(rate,b1){
+  
+  val1 <- -sum(dexp(x=data.time$time[data.time$event==1],rate=rate[1]+b1*data.time$tx[data.time$event==1],log=TRUE))
+  
+  val2 <- -sum(pexp(q=data.time$time[data.time$event==0],rate=rate[1]+b1*data.time$tx[data.time$event==0],lower.tail=F,log=TRUE))
+  
+  val1+val2
+}
+
+profile.b1 <- function(b1){
+  opt <- nlminb(start=c(0.001),objective=nll.exp,lower=c(-Inf),b1=b1)
+  b0 <-opt$par
+  
+  -nll.b1(c(b0),b1)
+}
+```
+
+
+```{r}
+b1 <- seq(-0.0005,0.0005,0.00001)
+
+
+n_b1 = length(b1)
+p = rep(NaN,n_b1)
+
+# for (i in 1:length(b1)) {
+#    p[i] = exp(profile.b1(b1[i]))
+#  }
+# 
+# plot(b1,p/max(p),'l')
+
+n_b1 = length(b1)
+profile.b1.plot = rep(NaN,n_b1)
+for (i in 1:length(b1)){
+  profile.b1.plot[i] = profile.b1(b1[i])
+}
+  plot(b1,profile.b1.plot,type='l')
+```
+

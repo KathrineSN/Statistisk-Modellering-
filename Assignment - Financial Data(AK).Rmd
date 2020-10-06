@@ -13,7 +13,7 @@ head(data,6)
 
 ### a) Present the data, estimate the parameters in a normal model, and asses if the normal model is appropriate.
 
-A scatter plot and a qq-plot of the data is made:
+A scatter plot and a qq-plot of the data is made to asses if a normal model is appropriate.
 ```{r}
 plot(data$time,data$SLV)
 qqnorm(data$SLV, pch = 1, frame = FALSE)
@@ -27,104 +27,118 @@ Where the maximum likelihood estimates are:
 $$\hat{\mu}= \bar{x}$$
 $$\hat{\sigma^2}=\frac{1}{n}\cdot \sum_i (x_i-\bar{x})^2$$
 ```{r}
-normal.likelihood=function(mu,sigma2){
-  -sum(dnorm(x=data$SLV,mu,sigma2,log=TRUE))}
 
-```
+normal.function=function(dat){
+normal.likelihood=function(params,dat){-sum(dnorm(x=dat,params[1],params[2],log=TRUE))}
 
+#Find the optimal parameters using nlimnb:
+opt=nlminb(c(0.001,0.001),normal.likelihood, dat=dat)
+# Find the Fisher information:
+H=hessian(normal.likelihood,opt$par, dat=dat)
+se=sqrt(diag(solve(H)))
 
-```{r}
-#Profile likelihood for mu 
-mu=seq(1, 10,by=0.0001)
-sigma2=seq(0.01, 5,by=0.01)
+CI1=opt$par[1]+c(-1,1)*se[1]*qnorm(0.975)
+CI2=opt$par[2]+c(-1,1)*se[2]*qnorm(0.975)
 
-
-lp.mu= function(mu){
-  ## Function for inner optimization:
-  fun.tmp<- function(mu, sigma2){
-    normal.likelihood(mu,sigma2)
-  }
-  # Find the profile likelihood
-  optimise(fun.tmp,c(0.001,10), mu=mu)$objective
+return(list("opt"=opt,"CI1"=CI1, "CI2"=CI2, "se"=se))
 }
 
-(opt.mu=optimise(lp.mu, c(0.001,10))$minimum)
 
-```
+normal.function(data$SLV)
 
-```{r}
-#Profile likelihood for shape1 
-mu=seq(1, 10,by=0.0001)
-sigma2=seq(0.01, 5,by=0.01)
-
-
-lp.sigma2= function(sigma2){
-  ## Function for inner optimization:
-  fun.tmp<- function(mu, sigma2){
-    normal.likelihood(mu,sigma2)
-  }
-  # Find the profile likelihood
-  optimise(fun.tmp,c(0.001,10), sigma2=sigma2)$objective
-}
-
-(opt.sigma2=optimise(lp.sigma2, c(0.001,10))$minimum)
-```
-
-```{r}
-normal.likelihood(opt.mu,opt.sigma2)
 ```
 
 ```{r}
 x=data$SLV
-h<-hist(x, xlab="Power Obs Norm",
+h<-hist(x, xlab="SLV",
    main="Histogram with Normal Curve")
 xfit<-seq(min(x),max(x),length=40)
-yfit<-dnorm(xfit,opt.mu,opt.sigma2)
+yfit<-dnorm(xfit,normal.function(data$SLV)$opt$par[1],normal.function(data$SLV)$opt$par[2])
 yfit <- yfit*diff(h$mids[1:2])*length(x)
 lines(xfit, yfit, col="blue", lwd=2)
-```
-AIC function:
-```{r}
-AIC=function(nll,k){
-  2*k-2*(-nll)
-}
-
-
-(AIC.normal=AIC(normal.likelihood(opt.mu,opt.sigma2),2))
 ```
 
 
 #### b) Hypothesize a model that could fit the data better (Hint: consider tail probabilities), and compare with the normal model estimated above
 
-A model that considers the tail probabilities is a t-distribution with $v$ degrees of freedom, if $v=1$ we obtain the cauchy model, while $v \rightarrow \infinity$ gives the normal distribution
-```{r}
-mean
-```
+A model that considers the tail probabilities is a t-distribution with $v$ degrees of freedom, if $v=1$ we obtain the cauchy model, while $v \rightarrow \infinity$ gives the normal distribution.
+
+The t-distribution is given as:
 
 ```{r}
 library(metRology)
-t.likelihood=function(params){
-  -sum(dt.scaled(x=data$SLV, df=params[1], mean = params[2], sd = params[3], log = TRUE))}
-```
+t.function=function(dat){
+t.likelihood=function(params,dat){
+  -sum(dt.scaled(x=dat, df=params[1], mean = params[2], sd = params[3], log = TRUE))}
 
-```{r}
-(opt.t=nlminb(c(1,1,1),t.likelihood))
+
+#Find the optimal parameters using nlimnb:
+opt=nlminb(c(1,0.001,0.001),t.likelihood, dat=dat)
+# Find the Fisher information:
+H=hessian(t.likelihood,opt$par, dat=dat)
+se=sqrt(diag(solve(H)))
+
+CI1=opt$par[1]+c(-1,1)*se[1]*qnorm(0.975)
+CI2=opt$par[2]+c(-1,1)*se[2]*qnorm(0.975)
+CI3=opt$par[3]+c(-1,1)*se[3]*qnorm(0.975)
+
+
+return(list("opt"=opt,"CI1"=CI1, "CI2"=CI2,"CI3"=CI3, "se"=se))
+}
+
+t.function(data$SLV)
 ```
 
 ```{r}
 x=data$SLV
-h<-hist(x, xlab="Power Obs Norm",
+h<-hist(x, xlab="SLV",
    main="Histogram with t-curve Curve")
 xfit<-seq(min(x),max(x),length=40)
-yfit<-dt.scaled(xfit, df=opt.t$par[1],mean = opt.t$par[2],sd =opt.t$par[3])
+yfit<-dt.scaled(xfit, df=t.function(data$SLV)$opt$par[1],mean = t.function(data$SLV)$opt$par[2],sd =t.function(data$SLV)$opt$par[3])
 yfit <- yfit*diff(h$mids[1:2])*length(x)
 lines(xfit, yfit, col="blue", lwd=2)
 ```
 
+#### c) represent the final model (i.e. relevant keynumbers for the estimates)
+The AIC function is used to compare the two models.
 ```{r}
-(AIC.t=AIC(t.likelihood(opt.t$par),3))
+AIC=function(nll,k){
+  2*k-2*(-nll)}
 ```
 
-#### c) represent the final model (i.e. relevant keynumbers for the estimates)
+The table below shows the relevant key numbers for both models.
+```{r}
+library(kableExtra)
+results =matrix(NA,ncol=11, nrow=2)
+colnames(results) = c("","AIC", "DF", "Mean", "Sd", "CI lower DF","CI upper DF","CI lower Mean","CI upper Mean","CI lower Sd","CI upper Sd")
+results[1:2,1]=c("Normal Distribution", "t - Distribution")
 
- confidence intervaller på parameterne etc.. 
+
+results[1,2] =round(AIC(normal.function(data$SLV)$opt$objective,2))
+results[1,3] =NA
+results[1,4] =round(normal.function(data$SLV)$opt$par[1],4)
+results[1,5] =round(normal.function(data$SLV)$opt$par[2],4)
+results[1,6] = NA
+results[1,7] =NA
+results[1,8] =round(normal.function(data$SLV)$CI1[1],4)
+results[1,9] =round(normal.function(data$SLV)$CI1[2],4)
+results[1,10] = round(normal.function(data$SLV)$CI2[1],4)
+results[1,11] = round(normal.function(data$SLV)$CI2[2],4)
+
+results[2,2] =round(AIC(t.function(data$SLV)$opt$objective,2))
+results[2,3] =round(t.function(data$SLV)$opt$par[1],4)
+results[2,4] =round(t.function(data$SLV)$opt$par[2],4)
+results[2,5] =round(t.function(data$SLV)$opt$par[3],4)
+results[2,6] =round(t.function(data$SLV)$CI1[1],4)
+results[2,7] =round(t.function(data$SLV)$CI1[2],4)
+results[2,8] =round(t.function(data$SLV)$CI2[1],4)
+results[2,9] =round(t.function(data$SLV)$CI2[2],4)
+results[2,10] = round(t.function(data$SLV)$CI3[1],4)
+results[2,11] = round(t.function(data$SLV)$CI3[2],4)
+
+
+results %>%kbl() %>%kable_styling(full_width = TRUE)
+```
+
+The t-distribution performs best as it has the lowest AIC. The t-distribution has 6.28 degrees of freedom the model does not reflect the cauchy nor the normal distribution, it is something inbetween. The mean and the standard deviation is similar for the two models.
+

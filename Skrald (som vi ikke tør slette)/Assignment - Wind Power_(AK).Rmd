@@ -1,7 +1,10 @@
 ---
 title: "Assignment Wind Power"
 output:
-  pdf_document: default
+  
+  pdf_document:
+    fig_width: 8
+    fig_height: 4
   html_notebook: default
 ---
 
@@ -298,6 +301,8 @@ xfit<-seq(min(x),max(x),length=40)
 yfit<-dlnorm(xfit,opt.LogNormal.meanlog,opt.LogNormal.sdlog)
 yfit <- yfit*diff(h$mids[1:2])*length(x)
 lines(xfit, yfit, col="blue", lwd=2)
+
+
 ```
 
 Calculate AIC for log-normal distribution. 
@@ -355,7 +360,7 @@ qqline(data$pow.obs.norm, col = "steelblue")
 
 ##### Transformation 1
 $$Y^{(\lambda)}=\frac{1}{\lambda}log(\frac{y^{\lambda}}{y^{\lambda}-1}),  \quad \lambda>0$$
-
+We will use change of variables to find the profile likelihoods (slide 25 lecture 5)
 ```{r}
 trans1 <- function(lambda,y){
     y.l <- 1/lambda*log((y^lambda)/(1-y^lambda))
@@ -366,12 +371,50 @@ lp.lambda1 <- function(lambda,y){
     n <- length(y)
     y.l <- trans1(lambda ,y)
     sigmasq <- 1/n * sum((y.l-mean(y.l))^2)
-    -n/2 * log(sigmasq) + (lambda-1)*sum(log(y))}  #Sidste del er profile likelihood for coxbox, skal findes for den selv.
+    -n/2 * log(sigmasq) + sum(-1/(y*(-1 + y^lambda)))}
 
-lambda <- seq(0,2,by=0.01)
+lambda <- seq(0.01,2,by=0.01)
     
-(opt.lambda1=optimize(lp.lambda1,c(0,5),y=data$pow.obs.norm,maximum=TRUE))
+(opt.lambda1=nlminb(c(0.001),lp.lambda1,y=data$pow.obs.norm))
+
 ```
+
+##### Transformation 2
+$$Y^{(\lambda)}=2 \cdot log(\frac{y^{\lambda}}{(1-y)^{1-\lambda}}),  \quad \lambda \in (0,1)$$
+
+
+
+We will use change of variables to find the profile likelihoods (slide 25 lecture 5)
+```{r}
+trans2 <- function(lambda,y){
+    y.l <- 2*log((y^lambda)/(1-y)^(1-lambda))
+    return(y.l)}
+
+## profile likelihood for lambda
+lp.lambda2 <- function(lambda,y){
+    n <- length(y)
+    y.l <- trans1(lambda ,y)
+    sigmasq <- 1/n * sum((y.l-mean(y.l))^2)
+    -n/2 * log(sigmasq) + sum(((4*lambda - 2)*y - 2*lambda)/(y*(-1 + y)))}  #Sidste del er profile likelihood for coxbox, skal findes for den selv.
+
+lambda <- seq(0.01,2,by=0.01)
+    
+(opt.lambda1=nlminb(c(0.001),lp.lambda2,y=data$pow.obs.norm))
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

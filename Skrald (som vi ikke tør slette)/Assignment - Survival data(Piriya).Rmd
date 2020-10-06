@@ -242,7 +242,39 @@ I <- hessian(nll.exp,opt.exp$par)
 se <- 1/sqrt(I)
 (opt.exp$par+c(-1,1)*qnorm(0.975)*se/sqrt(n))
 ```
+It can be seen that the confidence interval does cover zero which means that the two treatment groups are not significantly different from each other. So even though it was found in the previous question that the model fits that data better when the data is separated, there is no significant difference. 
+
+```{r}
+nll.b1 <- function(rate,b1){
+  
+  val1 <- -sum(dexp(x=data.time$time[data.time$event==1],rate=rate[1]+b1*data.time$tx[data.time$event==1],log=TRUE))
+  
+  val2 <- -sum(pexp(q=data.time$time[data.time$event==0],rate=rate[1]+b1*data.time$tx[data.time$event==0],lower.tail=F,log=TRUE))
+  
+  val1+val2
+}
 
 
+profile.b1 <- function(b1){
+  opt <- nlminb(c(0),nll.b1,lower=(-Inf),b1=b1)
+  b0 <-opt$par[1]
+  
+  -nll.b1(c(b0),b1)
+}
+```
+
+
+```{r}
+b1 <- seq(-5,5,0.1)
+p = c()
+
+# for (i in 1:length(b1)) {
+#   p[i] = exp(profile.b1(b1[i]))
+# }
+  
+  #plot(b1,p/max(p),'l')
+  plot(b1,profile.b1(b1))
+
+```
 
  
