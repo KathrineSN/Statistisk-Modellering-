@@ -527,3 +527,49 @@ lines(xfit, yfit, col="blue", lwd=2)
 
 ### For wind direction use vonmieses distribution - do the likelihood based interval use uniroot first week solution.
 
+### Reparameterisering - Hans Martins note!
+
+```{r}
+gamma.function.rep=function(dat){
+# Define likelihood function:
+Gamma.likelihood=function(params, dat){ -sum(dgamma(x=dat,shape=params[1]*params[2], rate=params[2], log=TRUE))}
+
+# Find the optimal parameters using nlimnb:
+opt=nlminb(c(0.01,0.01),Gamma.likelihood, dat=dat)
+# Find the Fisher information:
+H=hessian(Gamma.likelihood,opt$par, dat=dat)
+se=sqrt(diag(solve(H)))
+
+CI1=opt$par[1]+c(-1,1)*se[1]*qnorm(0.975)
+CI2=opt$par[2]+c(-1,1)*se[2]*qnorm(0.975)
+
+return(list("opt"=opt,"CI1"=CI1, "CI2"=CI2, "se"=se))
+}
+```
+
+```{r}
+gamma.function.rep(data$pow.obs.norm)
+```
+$\mu$ is 0.276 and is with 95% certainty in the confidence interval [0.2379052, 0.3145731]
+ 
+```{r}
+beta.function.rep = function(dat){
+# Define likelihood function:
+Beta.likelihood=function(params,dat){ -sum(dbeta(x=dat,shape1=-(params[1]*params[2])/(params[1]-1), shape2=params[2], log=TRUE))}
+# Find the optimal parameters using nlimnb:
+opt=nlminb(c(0.01,0.01),Beta.likelihood, dat=dat)
+# Find the Fisher information:
+H=hessian(Beta.likelihood,opt$par, dat=dat)
+se=sqrt(diag(solve(H)))
+
+CI1=opt$par[1]+c(-1,1)*se[1]*qnorm(0.975)
+CI2=opt$par[2]+c(-1,1)*se[2]*qnorm(0.975)
+
+return(list("opt"=opt,"CI1"=CI1, "CI2"=CI2, "se"=se))
+}
+```
+
+```{r}
+beta.function.rep(data$pow.obs.norm)
+```
+$\mu$ is 0.272 and is with 95% certainty in the confidence interval [0.2437152, 0.3000847]
