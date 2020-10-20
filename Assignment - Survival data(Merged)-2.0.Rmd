@@ -273,7 +273,7 @@ nll.exp <- function(rate){
 }
 nll.exp(c(7,1))
 # Find optimal rate:
-opt <- optim(c(7,1),nll.exp, hessian=T)
+opt.exp<- optim(c(7,1),nll.exp, hessian=T)
 #opt.exp <- nlminb(start=c(0.001,0.005),objective=nll.exp,lower=c(-Inf,-Inf))
 opt$par
 opt$hessian
