@@ -287,7 +287,11 @@ qqline(data$pow.obs.norm, col = "steelblue")
 The models will be compared using AIC. AIC is calculated using the formula:
 $$AIC=2k-2ln(\hat{L})$$
 where L is the maximum value for the likelihood function for the model. (The likelihood functions defined are negative log likelihoods, so remember to insert (-L)!)
- 
+j
+```{r}
+AIC=function(k,L){2*k-2*L}
+```
+
 The table below shows the AIC for all models created. The lower the AIC the better.
 ```{r, echo=FALSE}
 
