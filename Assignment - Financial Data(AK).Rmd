@@ -5,7 +5,7 @@ output: html_notebook
 
 ## 1: Descriptive statistics and simple models
 ```{r}
-setwd("/Users/akterminsprove/Desktop/DTU/5. Semester/02418 Statistisk Modellering Teori og Anvendelser/Assignments/Financial Data")
+#setwd("/Users/akterminsprove/Desktop/DTU/5. Semester/02418 Statistisk Modellering Teori og Anvendelser/Assignments/Financial Data")
 data <- read.csv("finance_data.csv", header=TRUE,sep=";")
 data$time=as.Date(data$time)
 head(data,6)
