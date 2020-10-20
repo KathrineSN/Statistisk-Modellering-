@@ -40,22 +40,17 @@ There is a correlation between average daily power production and predicted wind
 ### Normalize the power production, wind speed and wind direction before modelling:
 The data is normalized before modelling, as the models require data in the interval [0,1].
 ```{r}
-normalize <- function(x) {
-  return ((x+0.01 - min(x)) / (max(x) - min(x)+0.04))}
-
-data$pow.obs.norm<-normalize(data$pow.obs)
-data$ws30.norm<-normalize(data$ws30)
-data$wd30.norm<-normalize(data$wd30)
-
+data$pow.obs.norm<-(data$pow.obs)/5000
 head(data,6)
-
 ```
+Wind speed and power obs is not normalized as there is no maximum values. This means that it is not possible to fit a beta-distribution.
+
 # Fitting different distritbutions to the data
 A function is created for each distribution that is fitted to the data. The function can then be called using different data sets. The functions returns the MLE for the parameters in the model and the 95 \% confidence intervals. The models are compared using AIC.
 
 ## Fitting a beta distribution
 
-The likelihood function for the wind data, can be defined as a sum of the log density functions $$l(\theta)=\sum_{i=1}^{n}log(p_{\theta}(x_{i}))$$
+The likelihood function for the data, can be defined as a sum of the log density functions $$l(\theta)=\sum_{i=1}^{n}log(p_{\theta}(x_{i}))$$
 
 where $p_{\theta}$ in this case is the beta density function
 given as:
@@ -142,6 +137,48 @@ return(list("opt"=opt,"CI1"=CI1, "CI2"=CI2, "se"=se))
 }
 ```
 
+## Fitting a Normal distribution
+
+```{r}
+
+normal.function=function(dat){
+# Define likelihood function:
+Normal.likelihood=function(params,dat){ -sum(dnorm(x=dat,mean=params[1], sd=params[2], log=TRUE))}
+
+# Find the optimal parameters using nlimnb:
+opt=nlminb(c(0.01,0.01),Normal.likelihood, dat=dat)
+# Find the Fisher information:
+H=hessian(Normal.likelihood,opt$par, dat=dat)
+se=sqrt(diag(solve(H)))
+
+CI1=opt$par[1]+c(-1,1)*se[1]*qnorm(0.975)
+CI2=opt$par[2]+c(-1,1)*se[2]*qnorm(0.975)
+
+return(list("opt"=opt,"CI1"=CI1, "CI2"=CI2, "se"=se))
+}
+
+```
+
+## Fitting a Vonmieses distribution
+
+```{r}
+Vonmieses.function=function(dat){
+# Define likelihood function:
+Vonmieses.likelihood=function(params,dat){ -sum(dvonmises(x=dat, mu=params[1], kappa=params[2], log=TRUE))}
+
+# Find the optimal parameters using nlimnb:
+opt=nlminb(c(1,1),Vonmieses.likelihood, dat=dat,lower = 0.1, upper = Inf)
+# Find the Fisher information:
+H=hessian(Vonmieses.likelihood,opt$par, dat=dat)
+se=sqrt(diag(solve(H)))
+
+CI1=opt$par[1]+c(-1,1)*se[1]*qnorm(0.975)
+CI2=opt$par[2]+c(-1,1)*se[2]*qnorm(0.975)
+
+return(list("opt"=opt,"CI1"=CI1, "CI2"=CI2, "se"=se))
+}
+```
+
 
 
 ## Fit transformations
@@ -150,8 +187,6 @@ Different transformations will be applied to the power obs data to test if the m
 ##### Box Cox 
 Box Cox transformation $$Y_{\lambda}=\frac{y^{\lambda}-1}{\lambda}$$
 ```{r, warning=FALSE}
-library(MASS)
-#boxcox.lambda=boxcox(lm(data$pow.obs.norm~1),lambda=lambda)
 
 ## box-cox transformation
 bc.trans <- function(lambda,y){
@@ -167,15 +202,15 @@ lp.lambda <- function(lambda,y){
     sigmasq <- 1/n * sum((y.l-mean(y.l))^2)
     -n/2 * log(sigmasq) + (lambda-1)*sum(log(y))}
 
-(opt.lambda.boxcox=optimize(lp.lambda,c(-2,2),y=data$pow.obs,maximum=TRUE))
+(opt.lambda.boxcox=optimize(lp.lambda,c(-2,2),y=data$pow.obs.norm,maximum=TRUE))
 
 ```
 
 
 ```{r}
 par(mfrow=c(1,2))
-qqnorm(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs)),main="Distribution after boxcox transformation")
-qqline(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.)))
+qqnorm(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm),main="Distribution after boxcox transformation")
+qqline(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm))
 qqnorm(data$pow.obs.norm, pch = 1, frame = TRUE, main="Distribution before transformation")
 qqline(data$pow.obs.norm, col = "steelblue")
 ```
@@ -204,15 +239,15 @@ lp.lambda1 <- function(lambda,y){
     n <- length(y)
     y.l <- trans1(lambda ,y)
     sigmasq <- 1/n * sum((y.l-mean(y.l))^2)
-    -n/2 * log(sigmasq) + sum(-1/(y*(-1 + y^lambda)))}
+    -n/2 * log(sigmasq) + sum(log(abs(-1/(y*(-1 + y^lambda)))))}
 
-(opt.lambda.trans1=nlminb(c(0.001),lp.lambda1,y=data$pow.obs.norm))
+(opt.lambda.trans1=optimize(lp.lambda1,c(0.000001,70),y=data$pow.obs.norm, maximum=TRUE))
 
 ```
 ```{r, warning=FALSE}
 par(mfrow=c(1,2))
-qqnorm(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)),main="Distribution after transformation 1")
-qqline(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))
+qqnorm((trans1(opt.lambda.trans1$maximum,data$pow.obs.norm)),main="Distribution after transformation 1")
+qqline((trans1(opt.lambda.trans1$maximum,data$pow.obs.norm)))
 qqnorm(data$pow.obs.norm, pch = 1, frame = TRUE, main="Distribution before transformation")
 qqline(data$pow.obs.norm, col = "steelblue")
 ```
@@ -234,16 +269,16 @@ lp.lambda2 <- function(lambda,y){
     n <- length(y)
     y.l <- trans2(lambda ,y)
     sigmasq <- 1/n * sum((y.l-mean(y.l))^2)
-    -n/2 * log(sigmasq) + sum(((4*lambda - 2)*y - 2*lambda)/(y*(-1 + y)))}
+    -n/2 * log(sigmasq) + sum(log(abs(((4*lambda - 2)*y - 2*lambda)/(y*(-1 + y)))))}
     
-(opt.lambda.trans2=nlminb(c(0.000001),lp.lambda2,y=data$pow.obs.norm))
+(opt.lambda.trans2=optimize(lp.lambda2,c(0.000001,1),y=data$pow.obs.norm, maximum=TRUE))
 
 ```
 
 ```{r}
 par(mfrow=c(1,2))
-qqnorm(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)),main="Distribution after transformation 2")
-qqline(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))
+qqnorm((trans2(opt.lambda.trans2$maximum,data$pow.obs.norm)),main="Distribution after transformation 2")
+qqline((trans2(opt.lambda.trans2$maximum,data$pow.obs.norm)))
 qqnorm(data$pow.obs.norm, pch = 1, frame = TRUE, main="Distribution before transformation")
 qqline(data$pow.obs.norm, col = "steelblue")
 ```
@@ -255,44 +290,62 @@ where L is the maximum value for the likelihood function for the model. (The lik
  
 The table below shows the AIC for all models created. The lower the AIC the better.
 ```{r, echo=FALSE}
+
 library(kableExtra)
-results =matrix(NA,ncol=4, nrow=6)
-colnames(results) = c("Data","AIC Beta Distribution", "AIC Gamma Distribution", "AIC Log-Normal Distribution")
-results[1:6,1]=c("Power Obs", "Boxcox Power Obs", "Transformation 1 Power Obs", "Transformation 2 Power Obs", "Wind Speed", "Wind direction")
+library(circular)
+results =matrix(NA,ncol=6, nrow=6)
+colnames(results) = c("Data","AIC Beta Distribution", "AIC Gamma Distribution", "AIC Log-Normal Distribution", "AIC Normal Distribution", "AIC Von Mises")
+results[1:6,1]=c("Power Obs","Wind Speed", "Wind direction", "Boxcox Power Obs", "Transformation 1 Power Obs", "Transformation 2 Power Obs")
 
 
 results[1,2] =round(AIC(2,-beta.function(data$pow.obs.norm)$opt$objective))
-results[2,2] =round(AIC(2,-beta.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$opt$objective))
-results[3,2] =round(AIC(2,-beta.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$opt$objective))
-results[4,2] =round(AIC(2,-beta.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$opt$objective))
-results[5,2] =round(AIC(2,-beta.function(data$ws30.norm)$opt$objective))
-results[6,2] =round(AIC(2,-beta.function(data$wd30.norm)$opt$objective))
+results[2,2] = NA
+results[3,2] = NA 
+results[4,2] = NA
+results[5,2] =NA 
+results[6,2] =NA 
 
 results[1,3] =round(AIC(2,-gamma.function(data$pow.obs.norm)$opt$objective))
-results[2,3] =round(AIC(2,-gamma.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$opt$objective))
-results[3,3] =round(AIC(2,-gamma.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$opt$objective))
-results[4,3] =round(AIC(2,-gamma.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$opt$objective))
-results[5,3] =round(AIC(2,-gamma.function(data$ws30.norm)$opt$objective))
-results[6,3] =round(AIC(2,-gamma.function(data$wd30.norm)$opt$objective))
+results[2,3] =round(AIC(2,-gamma.function(data$ws30)$opt$objective))
+results[3,3] =round(AIC(2,-gamma.function(data$wd30)$opt$objective))
+results[4,3] =NA 
+results[5,3] =NA 
+results[6,3] =NA
 
 
 results[1,4] =round(AIC(2,-log.normal.function(data$pow.obs.norm)$opt$objective))
-results[2,4] =round(AIC(2,-log.normal.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$opt$objective))
-results[3,4] =round(AIC(2,-log.normal.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$opt$objective))
-results[4,4] =round(AIC(2,-log.normal.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$opt$objective))
-results[5,4] =round(AIC(2,-log.normal.function(data$ws30.norm)$opt$objective))
-results[6,4] =round(AIC(2,-log.normal.function(data$wd30.norm)$opt$objective))
+results[2,4] =round(AIC(2,-log.normal.function(data$ws30)$opt$objective))
+results[3,4] =round(AIC(2,-log.normal.function(data$wd30)$opt$objective))
+results[4,4] =NA
+results[5,4] =NA 
+results[6,4] =NA 
+
+
+results[1,5] =round(AIC(2,-normal.function(data$pow.obs.norm)$opt$objective))
+results[2,5] =round(AIC(2,-normal.function(data$ws30)$opt$objective))
+results[3,5] = round(AIC(2,-normal.function(data$wd30)$opt$objective))
+results[4,5] =round(AIC(2,-normal.function((bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$opt$objective))
+results[5,5] =round(AIC(2,-normal.function((trans1(opt.lambda.trans1$maximum,data$pow.obs.norm)))$opt$objective))
+results[6,5] =round(AIC(2,-normal.function((trans2(opt.lambda.trans2$maximum,data$pow.obs.norm)))$opt$objective))
+
+results[1,6] =NA 
+results[2,6] = round(AIC(2,-Vonmieses.function(data$ws30)$opt$objective))
+results[3,6] =round(AIC(2,-Vonmieses.function(data$wd30)$opt$objective))
+results[4,6] =NA
+results[5,6] =NA
+results[6,6] =NA
+
 
 results %>%kbl() %>%kable_styling(full_width = FALSE)
 ```
-The best model fitting the power observation is to use transformation 2 and then the log normal distribution. If no transformation is made to data the beta model is best. The best model for wind speed is the gamma model, and the best model for wind direction is the beta model.
+The NA values indicates, that the model have not been tested on the corresponding data set. The overall best model for Power Obs is the beta model, whereas the best model for wind speed and wind direction is Von Mises.
 
 The table below shows the MLE coefficients for the parameters for all models created using the beta distribution. The 95\% confidence interval is included for each parameter.
 
 ```{r, echo=FALSE}
-results2 =matrix(NA,ncol=7, nrow=6)
+results2 =matrix(NA,ncol=7, nrow=1)
 colnames(results2) = c("Beta Distribution for"," Optimal Shape 1", "Optimal Shape 2", "Lower CI Shape 1", "Upper CI Shape 1", "Lower CI Shape 2", "Upper CI Shape 2")
-results2[1:6,1]=c("Power Obs", "Boxcox Power Obs", "Transformation 1 Power Obs", "Transformation 2 Power Obs", "Wind Speed", "Wind direction")
+results2[1,1]=c("Power Obs")
 
 
 results2[1,2] =round(beta.function(data$pow.obs.norm)$opt$par[1],2)
@@ -302,44 +355,6 @@ results2[1,5] =round(beta.function(data$pow.obs.norm)$CI1[2],2)
 results2[1,6] =round(beta.function(data$pow.obs.norm)$CI2[1],2)
 results2[1,7] =round(beta.function(data$pow.obs.norm)$CI2[2],2)
 
-results2[2,2] =round(beta.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$opt$par[1],2)
-results2[2,3] =round(beta.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$opt$par[2],2)
-results2[2,4] =round(beta.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$CI1[1],2)
-results2[2,5] =round(beta.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$CI1[2],2)
-results2[2,6] =round(beta.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$CI2[1],2)
-results2[2,7] =round(beta.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$CI2[2],2)
-
-results2[3,2] =round(beta.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$opt$par[1],2)
-results2[3,3] =round(beta.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$opt$par[2],2)
-results2[3,4] =round(beta.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$CI1[1],2)
-results2[3,5] =round(beta.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$CI1[2],2)
-results2[3,6] =round(beta.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$CI2[1],2)
-results2[3,7] =round(beta.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$CI2[2],2)
-
-results2[4,2] =round(beta.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$opt$par[1],2)
-results2[4,3] =round(beta.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$opt$par[2],2)
-results2[4,4] =round(beta.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$CI1[1],2)
-results2[4,5] =round(beta.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$CI1[2],2)
-results2[4,6] =round(beta.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$CI2[1],2)
-results2[4,7] =round(beta.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$CI2[2],2)
-
-results2[5,2] =round(beta.function(data$ws30.norm)$opt$par[1],2)
-results2[5,3] =round(beta.function(data$ws30.norm)$opt$par[2],2)
-results2[5,4] =round(beta.function(data$ws30.norm)$CI1[1],2)
-results2[5,5] =round(beta.function(data$ws30.norm)$CI1[2],2)
-results2[5,6] =round(beta.function(data$ws30.norm)$CI2[1],2)
-results2[5,7] =round(beta.function(data$ws30.norm)$CI2[2],2)
-
-results2[6,2] =round(beta.function(data$wd30.norm)$opt$par[1],2)
-results2[6,3] =round(beta.function(data$wd30.norm)$opt$par[2],2)
-results2[6,4] =round(beta.function(data$wd30.norm)$CI1[1],2)
-results2[6,5] =round(beta.function(data$wd30.norm)$CI1[2],2)
-results2[6,6] =round(beta.function(data$wd30.norm)$CI2[1],2)
-results2[6,7] =round(beta.function(data$wd30.norm)$CI2[2],2)
-
-
-
-
 results2 %>%kbl() %>%kable_styling(full_width = FALSE)
 ```
 
@@ -348,9 +363,9 @@ The table below shows the MLE coefficients for the parameters for all models cre
 
 
 ```{r, echo=FALSE}
-results3 =matrix(NA,ncol=7, nrow=6)
+results3 =matrix(NA,ncol=7, nrow=3)
 colnames(results3) = c("Gamma Distribution for"," Optimal Shape", "Optimal Rate", "Lower CI Shape", "Upper CI Shape", "Lower CI Rate", "Upper CI Rate")
-results3[1:6,1]=c("Power Obs", "Boxcox Power Obs", "Transformation 1 Power Obs", "Transformation 2 Power Obs", "Wind Speed", "Wind direction")
+results3[1:3,1]=c("Power Obs","Wind Speed", "Wind direction")
 
 
 results3[1,2] =round(gamma.function(data$pow.obs.norm)$opt$par[1],2)
@@ -360,52 +375,28 @@ results3[1,5] =round(gamma.function(data$pow.obs.norm)$CI1[2],2)
 results3[1,6] =round(gamma.function(data$pow.obs.norm)$CI2[1],2)
 results3[1,7] =round(gamma.function(data$pow.obs.norm)$CI2[2],2)
 
-results3[2,2] =round(gamma.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$opt$par[1],2)
-results3[2,3] =round(gamma.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$opt$par[2],2)
-results3[2,4] =round(gamma.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$CI1[1],2)
-results3[2,5] =round(gamma.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$CI1[2],2)
-results3[2,6] =round(gamma.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$CI2[1],2)
-results3[2,7] =round(gamma.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$CI2[2],2)
+results3[2,2] =round(gamma.function(data$ws30)$opt$par[1],2)
+results3[2,3] =round(gamma.function(data$ws30)$opt$par[2],2)
+results3[2,4] =round(gamma.function(data$ws30)$CI1[1],2)
+results3[2,5] =round(gamma.function(data$ws30)$CI1[2],2)
+results3[2,6] =round(gamma.function(data$ws30)$CI2[1],2)
+results3[2,7] =round(gamma.function(data$ws30)$CI2[2],2)
 
-results3[3,2] =round(gamma.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$opt$par[1],2)
-results3[3,3] =round(gamma.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$opt$par[2],2)
-results3[3,4] =round(gamma.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$CI1[1],2)
-results3[3,5] =round(gamma.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$CI1[2],2)
-results3[3,6] =round(gamma.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$CI2[1],2)
-results3[3,7] =round(gamma.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$CI2[2],2)
-
-results3[4,2] =round(gamma.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$opt$par[1],2)
-results3[4,3] =round(gamma.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$opt$par[2],2)
-results3[4,4] =round(gamma.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$CI1[1],2)
-results3[4,5] =round(gamma.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$CI1[2],2)
-results3[4,6] =round(gamma.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$CI2[1],2)
-results3[4,7] =round(gamma.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$CI2[2],2)
-
-results3[5,2] =round(gamma.function(data$ws30.norm)$opt$par[1],2)
-results3[5,3] =round(gamma.function(data$ws30.norm)$opt$par[2],2)
-results3[5,4] =round(gamma.function(data$ws30.norm)$CI1[1],2)
-results3[5,5] =round(gamma.function(data$ws30.norm)$CI1[2],2)
-results3[5,6] =round(gamma.function(data$ws30.norm)$CI2[1],2)
-results3[5,7] =round(gamma.function(data$ws30.norm)$CI2[2],2)
-
-results3[6,2] =round(gamma.function(data$wd30.norm)$opt$par[1],2)
-results3[6,3] =round(gamma.function(data$wd30.norm)$opt$par[2],2)
-results3[6,4] =round(gamma.function(data$wd30.norm)$CI1[1],2)
-results3[6,5] =round(gamma.function(data$wd30.norm)$CI1[2],2)
-results3[6,6] =round(gamma.function(data$wd30.norm)$CI2[1],2)
-results3[6,7] =round(gamma.function(data$wd30.norm)$CI2[2],2)
-
-
-
+results3[3,2] =round(gamma.function(data$wd30)$opt$par[1],2)
+results3[3,3] =round(gamma.function(data$wd30)$opt$par[2],2)
+results3[3,4] =round(gamma.function(data$wd30)$CI1[1],2)
+results3[3,5] =round(gamma.function(data$wd30)$CI1[2],2)
+results3[3,6] =round(gamma.function(data$wd30)$CI2[1],2)
+results3[3,7] =round(gamma.function(data$wd30)$CI2[2],2)
 
 results3 %>%kbl() %>%kable_styling(full_width = FALSE)
 ```
 
 The table below shows the MLE coefficients for the parameters for all models created using the log normal distribution. The 95\% confidence interval is included for each parameter.
 ```{r, echo=FALSE}
-results4 =matrix(NA,ncol=7, nrow=6)
+results4 =matrix(NA,ncol=7, nrow=3)
 colnames(results4) = c("Log Normal Distribution for"," Optimal Mean Log", "Optimal Sd Log", "Lower CI Mean Log", "Upper CI Mean Log", "Lower CI Sd Log", "Upper CI Sd Log")
-results4[1:6,1]=c("Power Obs", "Boxcox Power Obs", "Transformation 1 Power Obs", "Transformation 2 Power Obs", "Wind Speed", "Wind direction")
+results4[1:3,1]=c("Power Obs", "Wind Speed", "Wind direction")
 
 
 results4[1,2] =round(log.normal.function(data$pow.obs.norm)$opt$par[1],2)
@@ -415,86 +406,166 @@ results4[1,5] =round(log.normal.function(data$pow.obs.norm)$CI1[2],2)
 results4[1,6] =round(log.normal.function(data$pow.obs.norm)$CI2[1],2)
 results4[1,7] =round(log.normal.function(data$pow.obs.norm)$CI2[2],2)
 
-results4[2,2] =round(log.normal.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$opt$par[1],2)
-results4[2,3] =round(log.normal.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$opt$par[2],2)
-results4[2,4] =round(log.normal.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$CI1[1],2)
-results4[2,5] =round(log.normal.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$CI1[2],2)
-results4[2,6] =round(log.normal.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$CI2[1],2)
-results4[2,7] =round(log.normal.function(normalize(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)))$CI2[2],2)
+results4[2,2] =round(log.normal.function(data$ws30)$opt$par[1],2)
+results4[2,3] =round(log.normal.function(data$ws30)$opt$par[2],2)
+results4[2,4] =round(log.normal.function(data$ws30)$CI1[1],2)
+results4[2,5] =round(log.normal.function(data$ws30)$CI1[2],2)
+results4[2,6] =round(log.normal.function(data$ws30)$CI2[1],2)
+results4[2,7] =round(log.normal.function(data$ws30)$CI2[2],2)
 
-results4[3,2] =round(log.normal.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$opt$par[1],2)
-results4[3,3] =round(log.normal.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$opt$par[2],2)
-results4[3,4] =round(log.normal.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$CI1[1],2)
-results4[3,5] =round(log.normal.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$CI1[2],2)
-results4[3,6] =round(log.normal.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$CI2[1],2)
-results4[3,7] =round(log.normal.function(normalize(trans1(opt.lambda.trans1$par,data$pow.obs.norm)))$CI2[2],2)
-
-results4[4,2] =round(log.normal.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$opt$par[1],2)
-results4[4,3] =round(log.normal.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$opt$par[2],2)
-results4[4,4] =round(log.normal.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$CI1[1],2)
-results4[4,5] =round(log.normal.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$CI1[2],2)
-results4[4,6] =round(log.normal.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$CI2[1],2)
-results4[4,7] =round(log.normal.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$CI2[2],2)
-
-results4[5,2] =round(log.normal.function(data$ws30.norm)$opt$par[1],2)
-results4[5,3] =round(log.normal.function(data$ws30.norm)$opt$par[2],2)
-results4[5,4] =round(log.normal.function(data$ws30.norm)$CI1[1],2)
-results4[5,5] =round(log.normal.function(data$ws30.norm)$CI1[2],2)
-results4[5,6] =round(log.normal.function(data$ws30.norm)$CI2[1],2)
-results4[5,7] =round(log.normal.function(data$ws30.norm)$CI2[2],2)
-
-results4[6,2] =round(log.normal.function(data$wd30.norm)$opt$par[1],2)
-results4[6,3] =round(log.normal.function(data$wd30.norm)$opt$par[2],2)
-results4[6,4] =round(log.normal.function(data$wd30.norm)$CI1[1],2)
-results4[6,5] =round(log.normal.function(data$wd30.norm)$CI1[2],2)
-results4[6,6] =round(log.normal.function(data$wd30.norm)$CI2[1],2)
-results4[6,7] =round(log.normal.function(data$wd30.norm)$CI2[2],2)
+results4[3,2] =round(log.normal.function(data$wd30)$opt$par[1],2)
+results4[3,3] =round(log.normal.function(data$wd30)$opt$par[2],2)
+results4[3,4] =round(log.normal.function(data$wd30)$CI1[1],2)
+results4[3,5] =round(log.normal.function(data$wd30)$CI1[2],2)
+results4[3,6] =round(log.normal.function(data$wd30)$CI2[1],2)
+results4[3,7] =round(log.normal.function(data$wd30)$CI2[2],2)
 
 
 
 
 results4 %>%kbl() %>%kable_styling(full_width = FALSE)
 ```
+The table below shows the MLE coefficients for the parameters for all models created using the normal distribution. The 95\% confidence interval is included for each parameter.
+```{r, echo=FALSE}
+results5 =matrix(NA,ncol=7, nrow=6)
+colnames(results5) = c("Normal Distribution for"," Optimal Mean ", "Optimal Sd ", "Lower CI Mean ", "Upper CI Mean ", "Lower CI Sd ", "Upper CI Sd ")
+results5[1:6,1]=c("Power Obs", "Wind Speed", "Wind direction", "Boxcox","Trans 1","Trans 2")
+
+
+results5[1,2] =round(normal.function(data$pow.obs.norm)$opt$par[1],2)
+results5[1,3] =round(normal.function(data$pow.obs.norm)$opt$par[2],2)
+results5[1,4] =round(normal.function(data$pow.obs.norm)$CI1[1],2)
+results5[1,5] =round(normal.function(data$pow.obs.norm)$CI1[2],2)
+results5[1,6] =round(normal.function(data$pow.obs.norm)$CI2[1],2)
+results5[1,7] =round(normal.function(data$pow.obs.norm)$CI2[2],2)
+
+results5[2,2] =round(normal.function(data$ws30)$opt$par[1],2)
+results5[2,3] =round(normal.function(data$ws30)$opt$par[2],2)
+results5[2,4] =round(normal.function(data$ws30)$CI1[1],2)
+results5[2,5] =round(normal.function(data$ws30)$CI1[2],2)
+results5[2,6] =round(normal.function(data$ws30)$CI2[1],2)
+results5[2,7] =round(normal.function(data$ws30)$CI2[2],2)
+
+results5[3,2] =round(normal.function(data$wd30)$opt$par[1],2)
+results5[3,3] =round(normal.function(data$wd30)$opt$par[2],2)
+results5[3,4] =round(normal.function(data$wd30)$CI1[1],2)
+results5[3,5] =round(normal.function(data$wd30)$CI1[2],2)
+results5[3,6] =round(normal.function(data$wd30)$CI2[1],2)
+results5[3,7] =round(normal.function(data$wd30)$CI2[2],2)
+
+results5[4,2] =round(normal.function(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm))$opt$par[1],2)
+results5[4,3] =round(normal.function(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm))$opt$par[2],2)
+results5[4,4] =round(normal.function(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm))$CI1[1],2)
+results5[4,5] =round(normal.function(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm))$CI1[2],2)
+results5[4,6] =round(normal.function(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm))$CI2[1],2)
+results5[4,7] =round(normal.function(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm))$CI2[2],2)
+
+results5[5,2] =round(normal.function(trans1(opt.lambda.trans1$maximum,data$pow.obs.norm))$opt$par[1],2)
+results5[5,3] =round(normal.function(trans1(opt.lambda.trans1$maximum,data$pow.obs.norm))$opt$par[2],2)
+results5[5,4] =round(normal.function(trans1(opt.lambda.trans1$maximum,data$pow.obs.norm))$CI1[1],2)
+results5[5,5] =round(normal.function(trans1(opt.lambda.trans1$maximum,data$pow.obs.norm))$CI1[2],2)
+results5[5,6] =round(normal.function(trans1(opt.lambda.trans1$maximum,data$pow.obs.norm))$CI2[1],2)
+results5[5,7] =round(normal.function(trans1(opt.lambda.trans1$maximum,data$pow.obs.norm))$CI2[2],2)
+
+results5[6,2] =round(normal.function(trans2(opt.lambda.trans2$maximum,data$pow.obs.norm))$opt$par[1],2)
+results5[6,3] =round(normal.function(trans2(opt.lambda.trans2$maximum,data$pow.obs.norm))$opt$par[2],2)
+results5[6,4] =round(normal.function(trans2(opt.lambda.trans2$maximum,data$pow.obs.norm))$CI1[1],2)
+results5[6,5] =round(normal.function(trans2(opt.lambda.trans2$maximum,data$pow.obs.norm))$CI1[2],2)
+results5[6,6] =round(normal.function(trans2(opt.lambda.trans2$maximum,data$pow.obs.norm))$CI2[1],2)
+results5[6,7] =round(normal.function(trans2(opt.lambda.trans2$maximum,data$pow.obs.norm))$CI2[2],2)
+
+
+results5 %>%kbl() %>%kable_styling(full_width = FALSE)
+```
+The table below shows the MLE coefficients for the parameters for all models created using the Von Mises distribution. The 95\% confidence interval is included for each parameter.
+```{r, echo=FALSE}
+results6 =matrix(NA,ncol=7, nrow=2)
+colnames(results6) = c("Von Mises Distribution for"," Optimal Mean", "Optimal Kappa", "Lower CI Mean", "Upper CI Mean", "Lower CI Kappa", "Upper CI Kappa")
+results6[1:2,1]=c("Wind Speed", "Wind direction")
+
+results6[1,2] =round(Vonmieses.function(data$ws30)$opt$par[1],2)
+results6[1,3] =round(Vonmieses.function(data$ws30)$opt$par[2],2)
+results6[1,4] =round(Vonmieses.function(data$ws30)$CI1[1],2)
+results6[1,5] =round(Vonmieses.function(data$ws30)$CI1[2],2)
+results6[1,6] =round(Vonmieses.function(data$ws30)$CI2[1],2)
+results6[1,7] =round(Vonmieses.function(data$ws30)$CI2[2],2)
+
+results6[2,2] =round(Vonmieses.function(data$wd30)$opt$par[1],2)
+results6[2,3] =round(Vonmieses.function(data$wd30)$opt$par[2],2)
+results6[2,4] =round(Vonmieses.function(data$wd30)$CI1[1],2)
+results6[2,5] =round(Vonmieses.function(data$wd30)$CI1[2],2)
+results6[2,6] =round(Vonmieses.function(data$wd30)$CI2[1],2)
+results6[2,7] =round(Vonmieses.function(data$wd30)$CI2[2],2)
+
+results6 %>%kbl() %>%kable_styling(full_width = FALSE)
+```
+
 ## Plotting the best models:
 ```{r}
-x <- normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm))
-h<-hist(x, xlab="Power Obs Transformation 2",
-   main="Histogram Log Normal Power Obs Transformation 2")
+x <-data$pow.obs.norm
+h<-hist(x, xlab="Power Obs",main="Fitting Beta distribution")
 xfit<-seq(min(x),max(x),length=40)
-yfit<-dlnorm(xfit,log.normal.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$opt$par[1],log.normal.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$opt$par[2])
-yfit <- yfit*diff(h$mids[1:2])*length(x)
-lines(xfit, yfit, col="blue", lwd=2)
-```
-
-```{r}
-x <- normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm))
-h<-hist(x, xlab="Power Obs Transformation 2",
-   main="Histogram Gamma Power Obs Transformation 2")
-xfit<-seq(min(x),max(x),length=40)
-yfit<-dgamma(xfit,gamma.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$opt$par[1],gamma.function(normalize(trans2(opt.lambda.trans2$par,data$pow.obs.norm)))$opt$par[2])
+yfit<-dbeta(xfit,beta.function(data$pow.obs.norm)$opt$par[1],beta.function(data$pow.obs.norm)$opt$par[2])
 yfit <- yfit*diff(h$mids[1:2])*length(x)
 lines(xfit, yfit, col="blue", lwd=2)
 ```
 
 
 ```{r}
-
-x <- data$ws30.norm
+x <- circular(data$wd30)
 h<-hist(x, xlab="Wind Speed",
-   main="Histogram Gamma Wind Speed"
-   )
+   main="Von Mises distribution")
 xfit<-seq(min(x),max(x),length=40)
-yfit<-dgamma(xfit,gamma.function(data$ws30.norm)$opt$par[1],gamma.function(data$ws30.norm)$opt$par[2])
+yfit<-dvonmises(xfit,Vonmieses.function(circular(data$wd30))$opt$par[1],Vonmieses.function(circular(data$wd30))$opt$par[2])
 yfit <- yfit*diff(h$mids[1:2])*length(x)
 lines(xfit, yfit, col="blue", lwd=2)
+```
+
+### For wind direction use vonmieses distribution - do the likelihood based interval use uniroot first week solution.
+
+### Reparameterisering - Hans Martins note!
+
+```{r}
+gamma.function.rep=function(dat){
+# Define likelihood function:
+Gamma.likelihood=function(params, dat){ -sum(dgamma(x=dat,shape=params[1]*params[2], rate=params[2], log=TRUE))}
+
+# Find the optimal parameters using nlimnb:
+opt=nlminb(c(0.01,0.01),Gamma.likelihood, dat=dat)
+# Find the Fisher information:
+H=hessian(Gamma.likelihood,opt$par, dat=dat)
+se=sqrt(diag(solve(H)))
+
+CI1=opt$par[1]+c(-1,1)*se[1]*qnorm(0.975)
+CI2=opt$par[2]+c(-1,1)*se[2]*qnorm(0.975)
+
+return(list("opt"=opt,"CI1"=CI1, "CI2"=CI2, "se"=se))
+}
 ```
 
 ```{r}
-
-x <- data$wd30.norm
-h<-hist(x, xlab="Wind Direction", main="Histogram Beta for Wind Direction")
-xfit<-seq(min(x),max(x),length=40)
-yfit<-dbeta(xfit,beta.function(data$wd30.norm)$opt$par[1],beta.function(data$wd30.norm)$opt$par[2])
-yfit <- yfit*diff(h$mids[1:2])*length(x)
-lines(xfit, yfit, col="blue", lwd=2)
+gamma.function.rep(data$pow.obs.norm)
 ```
+$\mu$ is 0.276 and is with 95% certainty in the confidence interval [0.2379052, 0.3145731]
+ 
+```{r}
+beta.function.rep = function(dat){
+# Define likelihood function:
+Beta.likelihood=function(params,dat){ -sum(dbeta(x=dat,shape1=-(params[1]*params[2])/(params[1]-1), shape2=params[2], log=TRUE))}
+# Find the optimal parameters using nlimnb:
+opt=nlminb(c(0.01,0.01),Beta.likelihood, dat=dat)
+# Find the Fisher information:
+H=hessian(Beta.likelihood,opt$par, dat=dat)
+se=sqrt(diag(solve(H)))
+
+CI1=opt$par[1]+c(-1,1)*se[1]*qnorm(0.975)
+CI2=opt$par[2]+c(-1,1)*se[2]*qnorm(0.975)
+
+return(list("opt"=opt,"CI1"=CI1, "CI2"=CI2, "se"=se))
+}
+```
+
+```{r}
+beta.function.rep(data$pow.obs.norm)
+```
+$\mu$ is 0.272 and is with 95% certainty in the confidence interval [0.2437152, 0.3000847]
