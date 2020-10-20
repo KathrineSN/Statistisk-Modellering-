@@ -52,13 +52,13 @@ fun1<- function(theta,eta){
 ll<- outer(th,et,'fun1')
 like<- exp(ll-max(ll))
 contour(th,et,like,level=c(.1,.3,.5,.7,.9),
-        xlab=expression(theta),
-        ylab=expression(eta))
+        xlab=expression(beta_0),
+        ylab=expression(beta_1))
 title(expression('Likelihood contour'))
 abline(v=that,h=ehat,lwd=.4)
 
 lik1<- apply(like,1,max)
-plot(th,lik1,type='n',xlab=expression(theta),
+plot(th,lik1,type='n',xlab=expression(beta_0),
      ylab='Likelihood')
 lines(th,lik1)
 abline(h=.15,lwd=.4)

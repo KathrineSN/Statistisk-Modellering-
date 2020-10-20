@@ -123,62 +123,76 @@ $$logL(\beta_0, \beta_1) = \sum_i \left[(\beta_0 + \beta_1 \cdot treatment_i)y_i
 library(magrittr)
 log_data = data
 
-#Creating likelihood function for b0 and b1
-logL_partial <- function(b0, b1, data, AZT = TRUE){
-    y = if (AZT) {data[1,2]} else {data[2,2]} %>% as.numeric()
-    n = if (AZT) {data[1,3]} else {data[2,3]} %>% as.numeric()
-    false = n-y
-    
-    y*((b0 + b1 * AZT) * 1 - log(1+exp(b0+b1*AZT))) + false*((b0 + b1 * AZT) * 0 - log(1+exp(b0+b1*AZT)))
+# Values as described on pp. 78
+x=data$AIDS_yes[1]
+y=data$AIDS_yes[2]
+m=data$n[1]
+n=data$n[2]
+N=m+n
+t=x+y
+
+```
+```{r}
+# Example 4.4
+
+x<- 25; m<- 170
+y<- 44; n<- 168
+
+that<- log(x/(m-x)*(n-y)/y)
+se2<- 1/x + 1/(m-x) + 1/y + 1/(n-y)
+se<- sqrt(se2)
+
+ehat<- log(y/(n-y))
+#print(c(that,ehat))
+cat('theta-hat=',that,',  se=',se,'\n')
+
+# plots
+par(mfrow=c(2,2))
+th<- seq(-2,2,len=1000)
+et<- seq(-2,0,len=1000)
+
+fun1<- function(theta,eta){
+  a <- exp(theta+eta)
+  b<- exp(eta)
+  x*theta + (x+y)*eta - m*log(1+a) - n*log(1+b)
 }
 
-logL <- function(theta, data){
-     - (logL_partial(theta[1], theta[2],data, F) + logL_partial(theta[1],theta[2],data, T))
+ll<- outer(th,et,'fun1')
+like<- exp(ll-max(ll))
+contour(th,et,like,level=c(.1,.3,.5,.7,.9),
+        xlab=expression(beta_0),
+        ylab=expression(beta_1))
+title(expression('Likelihood contour'))
+abline(v=that,h=ehat,lwd=.4)
+
+lik1<- apply(like,1,max)
+plot(th,lik1,type='n',xlab=expression(beta_0),
+     ylab='Likelihood')
+lines(th,lik1)
+abline(h=.15,lwd=.4)
+abline(v=0)
+title(expression('Profile likelihood'))
+
+# getting likelihood of H0
+a<- approx(th,lik1,xout=0)$y
+print(a)
+
+# getting likelihood interval
+#a <- li(th,lik1,0.15)
+#cat('95% CI for theta=',a,'\n')
+
+# finding optimal parameters
+fun2<- function(th){
+  theta = th[1]
+  eta = th[2]
+  a <- exp(theta+eta)
+  b <- exp(eta)
+  -(x*theta + (x+y)*eta - m*log(1+a) - n*log(1+b))
 }
-
-# Finding the optimal values for b0 and b1
-opt <- nlminb(c(0, 0), logL, lower = c(-Inf,-Inf), data = log_data)
-
-#Calculate p0 and p1
-p0 <- exp(opt$par[1])/(1+exp(opt$par[1]))
-p1 <- exp(opt$par[1] + opt$par[2])/(1+exp(opt$par[1] + opt$par[2]))
-
-# Creating profile likelihood for b1
-logL_b1 <- function(theta, b1, data){
-      -(logL_partial(theta[1], b1,data, F) + logL_partial(theta[1],b1,data, T))
-}
-
-profile_b1 <- function(b1, data){
-  opt <- nlminb(c(0), logL_b1, lower = c(-Inf), data = log_data, b1 = b1)
-  # optimize(logL)
-  b0 <- opt$par
-  -logL_b1(c(b0),b1,data)
-}
-
-
-b1 <- seq(-5,5,0.01)
-alpha <- 0.05
-c <- exp(-1/2*qchisq(1-alpha,1))
-p = c()
-for (i in 1:length(b1)){
-  p[i] = exp(profile_b1(b1[i], log_data))
-}
-
-MLE_b1 <- optimize(profile_b1, c(-5,5), data = log_data, maximum = T)$maximum
-
-plot(b1, p/max(p), 'l')
-abline(c, 0)
-abline(v = MLE_b1)
-
-a_b1 <- b1[p/max(p) > c]
-CI_b1 <- c(min(a_b1), max(a_b1))
-
-
-cat("The maximum likelihood estimates of p0 and p1 are: p0 = ", p0, " p1 = ", p1, "\n")
-cat("The maximum profile likelihood estimate of b1 is:  ", MLE_b1, "\n")
-cat("With confidence intervals: ", CI_b1, "\n")
-
+opt <- nlminb(c(0, 0), fun2)
 (opt$par)
+
+
 ```
 Again it is seen that the two groups are different, as b1 is statistically different from zero.
 
@@ -253,7 +267,7 @@ exp.likelihood_with_treat=function(rate){
 ```
 It can be seen by looking at the objective values that the model fits the data better when the data is separated into the two treatment groups. (lower values is better, as it is a negative log likelihood function)
 
-### Formulate af model where one parameter indicate the treatment effect
+### Formulate a model where one parameter indicate the treatment effect
 
 The following model is fitted to the data:
 $E[T]=e^{\beta_{0}+\beta_{1}}$
@@ -273,7 +287,7 @@ nll.exp <- function(rate){
 }
 nll.exp(c(7,1))
 # Find optimal rate:
-opt <- optim(c(7,1),nll.exp, hessian=T)
+opt.exp <- optim(c(7,1),nll.exp, hessian=T)
 #opt.exp <- nlminb(start=c(0.001,0.005),objective=nll.exp,lower=c(-Inf,-Inf))
 opt$par
 opt$hessian
