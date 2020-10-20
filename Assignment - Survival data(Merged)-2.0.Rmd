@@ -265,15 +265,18 @@ If $\beta{1}$ is significantly different from zero, it indicates that there is a
 
 nll.exp <- function(rate){
   # Part for people with Aids 
-  val1 <- -sum(dexp(x=data.time$time[data.time$event==1],rate=rate[1]+rate[2]*data.time$tx[data.time$event==1],log=TRUE))
+  val1 <- -sum(dexp(x=data.time$time[data.time$event==1],rate=exp(-rate[1]-rate[2]*data.time$tx[data.time$event==1]),log=TRUE))
   # Part for people without Aids
-  val2 <- -sum(pexp(q=data.time$time[data.time$event==0],rate=rate[1]+rate[2]*data.time$tx[data.time$event==0],lower.tail=F,log=TRUE))
+  val2 <- -sum(log(1-pexp(q=data.time$time[data.time$event==0],rate=exp(-rate[1]-rate[2]*data.time$tx[data.time$event==0]))))
   
   val1+val2
 }
+nll.exp(c(7,1))
 # Find optimal rate:
-opt.exp <- nlminb(start=c(0.001,0.005),objective=nll.exp,lower=c(-Inf,-Inf))
-
+opt <- optim(c(7,1),nll.exp, hessian=T)
+#opt.exp <- nlminb(start=c(0.001,0.005),objective=nll.exp,lower=c(-Inf,-Inf))
+opt$par
+opt$hessian
 # b1 -  is the treatment effect
 (opt.exp$par[2])
 
