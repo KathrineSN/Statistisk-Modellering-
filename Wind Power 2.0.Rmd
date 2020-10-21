@@ -10,6 +10,7 @@ linestretch: "`r (lstr=1.25)`"
 fontsize: 11pt
 ---
 
+# Project 1 
 # Descriptive statistics 
 
 ## 1. Read the data tuno.txt into R.
@@ -43,7 +44,7 @@ The data is normalized before modelling, as the models require data in the inter
 data$pow.obs.norm<-(data$pow.obs)/5000
 head(data,6)
 ```
-Wind speed and power obs is not normalized as there is no maximum values. This means that it is not possible to fit a beta-distribution.
+Wind speed and power obs is not normalized as there are no maximum values. This means that it is not possible to fit a beta-distribution.
 
 # Fitting different distritbutions to the data
 A function is created for each distribution that is fitted to the data. The function can then be called using different data sets. The functions returns the MLE for the parameters in the model and the 95 \% confidence intervals. The models are compared using AIC.
@@ -549,6 +550,7 @@ return(list("opt"=opt,"CI1"=CI1, "CI2"=CI2, "se"=se))
 
 ```{r}
 gamma.function.rep(data$pow.obs.norm)
+
 ```
 $\mu$ is 0.276 and is with 95% certainty in the confidence interval [0.2379052, 0.3145731]
  
@@ -573,3 +575,5 @@ return(list("opt"=opt,"CI1"=CI1, "CI2"=CI2, "se"=se))
 beta.function.rep(data$pow.obs.norm)
 ```
 $\mu$ is 0.272 and is with 95% certainty in the confidence interval [0.2437152, 0.3000847]
+
+# Project 2

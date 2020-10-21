@@ -7,6 +7,7 @@ output:
     df_print: paged
 ---
 
+# Project 1
 # Analysis of binary data
 
 ###  Read the Logistic.txt into R.
@@ -287,14 +288,10 @@ nll.exp <- function(rate){
 }
 nll.exp(c(7,1))
 # Find optimal rate:
-<<<<<<< HEAD
 opt.exp <- optim(c(7,1),nll.exp, hessian=T)
-=======
-opt.exp<- optim(c(7,1),nll.exp, hessian=T)
->>>>>>> 23df4b232664e5bbf896158c4348ed913d938163
 #opt.exp <- nlminb(start=c(0.001,0.005),objective=nll.exp,lower=c(-Inf,-Inf))
-opt$par
-opt$hessian
+opt.exp$par
+opt.exp$hessian
 # b1 -  is the treatment effect
 (opt.exp$par[2])
 
@@ -316,48 +313,5 @@ se <- sqrt(diag(solve(HE)))
 
 It can be seen that the confidence interval does not cover zero which means that the two treatment groups are significantly different from each other. This is the same conclusion as in the previous question. 
 
-### Implement the profile likelihood function 
 
-```{r}
-nll.b1 <- function(rate,b1){
-  
-  val1 <- -sum(dexp(x=data.time$time[data.time$event==1],rate=rate[1]+b1*data.time$tx[data.time$event==1],log=TRUE))
-  
-  val2 <- -sum(pexp(q=data.time$time[data.time$event==0],rate=rate[1]+b1*data.time$tx[data.time$event==0],lower.tail=F,log=TRUE))
-  
-  val1+val2
-}
-
-profile.b1 <- function(b1){
-  opt <- nlminb(start=c(0.001),objective=nll.exp,lower=c(-Inf),b1=b1)
-  b0 <-opt$par
-  
-  -nll.b1(c(b0),b1)
-}
-```
-
-
-```{r}
-b1 <- seq(-0.0005,0.0005,0.00001)
-
-
-n_b1 = length(b1)
-p = rep(NaN,n_b1)
-
-# for (i in 1:length(b1)) {
-#    p[i] = exp(profile.b1(b1[i]))
-#  }
-# 
-# plot(b1,p/max(p),'l')
-
-n_b1 = length(b1)
-profile.b1.plot = rep(NaN,n_b1)
-for (i in 1:length(b1)){
-  profile.b1.plot[i] = profile.b1(b1[i])
-}
-  plot(b1,profile.b1.plot,type='l')
-  
-  #Ved ikke hvorfor det ikke virker. Det virkede tidligere. Lidt underligt. 
-```
-
-
+# Project 2
