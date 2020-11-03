@@ -1,0 +1,70 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+## Read the data tuno.txt into R.
+The data is read, and the first few lines of the code is shown.
+```{r}
+data <- read.delim("tuno.txt",header = TRUE, sep = " ", dec = ".")
+data$pow.obs.norm<-(data$pow.obs)/5000
+head(data,6)
+```
+
+
+### 1. Formulate an initial model
+
+The model that we consider is:
+$$y=f(w_s)=\beta_0+\beta_1w_s+\beta_2w_s^2$$
+Where y is the observed power production and f is a function of wind speed.
+```{r}
+mod1=lm(pow.obs.norm~ ws30+I(ws30^2), data=data)
+summary(mod1)
+AIC(mod1)
+```
+All parameters are significant.
+
+Adding wind direction:
+```{r}
+mod4=lm(pow.obs.norm~ ws30+wd30+I(ws30^2)+I(wd30^2), data=data)
+summary(mod4)
+AIC(mod4)
+```
+
+```{r}
+mod2=glm(pow.obs.norm~ ws30,family=Gamma,  data=data)
+summary(mod2)
+AIC(mod2)
+```
+
+
+
+Using transformation 1, from project 1:
+```{r, warning=FALSE}
+trans1 <- function(lambda,y){
+    y.l <- 1/lambda*log((y^lambda)/(1-y^lambda))
+    return(y.l)}
+
+## profile likelihood for lambda
+lp.lambda1 <- function(lambda,y){
+    n <- length(y)
+    y.l <- trans1(lambda ,y)
+    sigmasq <- 1/n * sum((y.l-mean(y.l))^2)
+    -n/2 * log(sigmasq) + sum(log(abs(-1/(y*(-1 + y^lambda)))))}
+
+(opt.lambda.trans1=optimize(lp.lambda1,c(0.000001,70),y=data$pow.obs.norm, maximum=TRUE))
+
+```
+
+```{r}
+mod3=glm(trans1(opt.lambda.trans1$maximum,data$pow.obs.norm)~ ws30,family=gaussian,  data=data)
+summary(mod3)
+AIC(mod3)
+```
+
+Trying an exponential model:
+```{r}
+mod5=lm(log(data$pow.obs.norm)~data$ws30)
+summary(mod5)
+AIC(mod5)
+```

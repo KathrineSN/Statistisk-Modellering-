@@ -47,7 +47,7 @@ Calculate a 95% confidence interval:
 (upperOR=exp(log(OR)+qnorm(0.975)*sqrt(1/a+1/b+1/c+1/d)))
 (lowerOR=exp(log(OR)-qnorm(0.975)*sqrt(1/a+1/b+1/c+1/d)))
 ```
-The 95% confidence interval does not include 1, meaning that is a patient is treated with AZT the probability of getting AIDS is lower.
+The 95% confidence interval does not include 1, meaning that if a patient is treated with AZT the probability of getting AIDS is lower.
 
 ## Analysis of the survival time data
 
