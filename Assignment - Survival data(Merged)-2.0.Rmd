@@ -81,9 +81,13 @@ se_AZT_no <- 1/sqrt(I_AZT_no)
 
 
 #confidence intervallet
-(p+c(-1,1)*qnorm(0.975)*se/sqrt(n))
-(p1+c(-1,1)*qnorm(0.975)*se_AZT_yes/sqrt(n1))
-(p2+c(-1,1)*qnorm(0.975)*se_AZT_no/sqrt(n2))
+(p+c(-1,1)*qnorm(0.975)*(p*(1-p))/sqrt(n))
+(p1+c(-1,1)*qnorm(0.975)*(p1*(1-p1))/sqrt(n1))
+(p2+c(-1,1)*qnorm(0.975)*(p2*(1-p2))/sqrt(n2))
+
+#(p+c(-1,1)*qnorm(0.975)*se/sqrt(n))
+#(p1+c(-1,1)*qnorm(0.975)*se_AZT_yes/sqrt(n1))
+#(p2+c(-1,1)*qnorm(0.975)*se_AZT_no/sqrt(n2))
 
 ```
 
@@ -287,11 +291,9 @@ nll.exp <- function(rate){
 }
 nll.exp(c(7,1))
 # Find optimal rate:
-<<<<<<< HEAD
-opt.exp <- optim(c(7,1),nll.exp, hessian=T)
-=======
+
 opt.exp<- optim(c(7,1),nll.exp, hessian=T)
->>>>>>> 23df4b232664e5bbf896158c4348ed913d938163
+
 #opt.exp <- nlminb(start=c(0.001,0.005),objective=nll.exp,lower=c(-Inf,-Inf))
 opt$par
 opt$hessian
@@ -359,5 +361,9 @@ for (i in 1:length(b1)){
   
   #Ved ikke hvorfor det ikke virker. Det virkede tidligere. Lidt underligt. 
 ```
+
+
+
+
 
 

@@ -1,0 +1,146 @@
+#################
+## Binary data ##
+#################
+
+Read the Logistic.txt into R
+```{r}
+data <- read.delim("Logistic.txt",header = TRUE, sep = "", dec = ".")
+data$AIDS_no=data$n-data$AIDS_yes
+head(data,2) 
+```
+
+Fit a logistic regression model
+
+```{r}
+df <- data.frame("AZT" = c(rep(1, 170), rep(0,168)), "AIDS" = c(rep(1, 25), rep(0, 145), rep(1, 44), rep(0, 124)))
+
+head(df, )
+         
+length(AZT)
+length(AIDS)
+
+mod2 <- survreg(Surv(AIDS) ~ AZT, data = df, dist = "logistic")
+summary(mod2)
+         
+```
+Calculating the odds ratio
+
+```{r}
+exp(coef(mod2)[2]/mod2$scale)
+```
+Interpretation: The odds of survival until time t is 0.68 times greater for AZT = 1 than for AZT = 0
+
+Confidence interval
+
+```{r}
+confint(mod2)
+
+```
+Test the hypothesis of no effect of AZT on AIDS
+
+Likelihood ratio test
+
+Directly from R output??
+
+```{r}
+
+```
+
+
+
+The Wald test
+
+The null hypothesis of log(scale) = 0 this can be seen directly from the R output
+The null hypothesis is rejected on all levels as the p-value is 2e-16 
+
+
+
+```{r}
+
+```
+
+
+
+
+
+
+#######################
+## Suvival time data ##
+#######################
+
+Reading the data into R
+
+```{r}
+data.time <- read.delim("actg320.txt",header = TRUE, sep = "", dec = ".")
+head(data.time,2) 
+```
+
+Number of patients getting AIDS or dying in the two groups
+```{r}
+# Treated group
+(sum(data.time$event == 1 & data.time$tx == 1 ))
+
+
+# Non treated group
+(sum(data.time$event == 1 & data.time$tx == 0 ))
+
+```
+The total follow up time
+follow up time = sum of the time that you follow all of the participants
+```{r}
+print('Follow up for new treatment group')
+(sum(data.time$time[data.time$tx == 0])/365)
+
+
+print('Follow up for new treatment group')
+(sum(data.time$time[data.time$tx == 1])/365)
+```
+Plotting survival function in the two treatment groups
+
+```{r}
+library(survival)
+
+Surv.ByTreat <- survfit(Surv(time, event == 1) ~ tx,conf.type = "log-log",data = data.time)
+
+plot(Surv.ByTreat, conf.int = T, las = 1, xlab = "Days",ylab = "Estimated Survival Prob.", col=2:3, lwd = 2, ylim=c(0.8,1))
+legend("bottomleft", col=2:3, c("Control","Treated"), lwd=2)
+
+
+```
+From the above plot it seems that the treated group is doing best
+
+Plot the cumulative incidence functions
+
+```{r}
+plot(Surv.ByTreat, fun=function(x) { 1- x }, conf.int = F,las = 1, xlab = "Days",ylab = "Estimated Failure Prob.", col=2:3, lwd = 2)
+legend("topleft", col=2:3, c("Control","Treated"), lwd=2)
+
+# I would prefer the survival function as it is more positive to think about a survival probability than it is about a failure probability
+
+```
+
+Compare survival in the two treatment groups using log-rank test
+
+```{r}
+# Log rank test
+# To test if the is a difference between two survival curves
+
+survdiff(Surv(time, event == 1) ~ tx, data = data.time)
+
+
+```
+This yields a low p-value, thus the HO cannot be accepted and the survival curves are significantly different from each other
+
+
+Logistic Regression
+
+```{r}
+data <- read.delim("Logistic.txt",header = TRUE, sep = "", dec = ".")
+data$AIDS_no=data$n-data$AIDS_yes
+head(data,2) 
+
+```
+
+
+
+
