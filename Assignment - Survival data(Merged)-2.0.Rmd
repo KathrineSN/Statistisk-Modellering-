@@ -82,9 +82,13 @@ se_AZT_no <- 1/sqrt(I_AZT_no)
 
 
 #confidence intervallet
-(p+c(-1,1)*qnorm(0.975)*se/sqrt(n))
-(p1+c(-1,1)*qnorm(0.975)*se_AZT_yes/sqrt(n1))
-(p2+c(-1,1)*qnorm(0.975)*se_AZT_no/sqrt(n2))
+(p+c(-1,1)*qnorm(0.975)*(p*(1-p))/sqrt(n))
+(p1+c(-1,1)*qnorm(0.975)*(p1*(1-p1))/sqrt(n1))
+(p2+c(-1,1)*qnorm(0.975)*(p2*(1-p2))/sqrt(n2))
+
+#(p+c(-1,1)*qnorm(0.975)*se/sqrt(n))
+#(p1+c(-1,1)*qnorm(0.975)*se_AZT_yes/sqrt(n1))
+#(p2+c(-1,1)*qnorm(0.975)*se_AZT_no/sqrt(n2))
 
 ```
 
@@ -288,7 +292,9 @@ nll.exp <- function(rate){
 }
 nll.exp(c(7,1))
 # Find optimal rate:
-opt.exp <- optim(c(7,1),nll.exp, hessian=T)
+
+opt.exp<- optim(c(7,1),nll.exp, hessian=T)
+
 #opt.exp <- nlminb(start=c(0.001,0.005),objective=nll.exp,lower=c(-Inf,-Inf))
 opt.exp$par
 opt.exp$hessian
@@ -314,4 +320,7 @@ se <- sqrt(diag(solve(HE)))
 It can be seen that the confidence interval does not cover zero which means that the two treatment groups are significantly different from each other. This is the same conclusion as in the previous question. 
 
 
-# Project 2
+
+
+
+
