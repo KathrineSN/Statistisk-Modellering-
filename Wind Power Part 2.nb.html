@@ -11,7 +11,7 @@
 
 
 
-<title>Assignment Survival Data</title>
+<title>R Notebook</title>
 
 <script>/*! jQuery v1.11.3 | (c) 2005, 2015 jQuery Foundation, Inc. | jquery.org/license */
 !function(a,b){"object"==typeof module&&"object"==typeof module.exports?module.exports=a.document?b(a,!0):function(a){if(!a.document)throw new Error("jQuery requires a window with a document");return b(a)}:b(a)}("undefined"!=typeof window?window:this,function(a,b){var c=[],d=c.slice,e=c.concat,f=c.push,g=c.indexOf,h={},i=h.toString,j=h.hasOwnProperty,k={},l="1.11.3",m=function(a,b){return new m.fn.init(a,b)},n=/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g,o=/^-ms-/,p=/-([\da-z])/gi,q=function(a,b){return b.toUpperCase()};m.fn=m.prototype={jquery:l,constructor:m,selector:"",length:0,toArray:function(){return d.call(this)},get:function(a){return null!=a?0>a?this[a+this.length]:this[a]:d.call(this)},pushStack:function(a){var b=m.merge(this.constructor(),a);return b.prevObject=this,b.context=this.context,b},each:function(a,b){return m.each(this,a,b)},map:function(a){return this.pushStack(m.map(this,function(b,c){return a.call(b,c,b)}))},slice:function(){return this.pushStack(d.apply(this,arguments))},first:function(){return this.eq(0)},last:function(){return this.eq(-1)},eq:function(a){var b=this.length,c=+a+(0>a?b:0);return this.pushStack(c>=0&&b>c?[this[c]]:[])},end:function(){return this.prevObject||this.constructor(null)},push:f,sort:c.sort,splice:c.splice},m.extend=m.fn.extend=function(){var a,b,c,d,e,f,g=arguments[0]||{},h=1,i=arguments.length,j=!1;for("boolean"==typeof g&&(j=g,g=arguments[h]||{},h++),"object"==typeof g||m.isFunction(g)||(g={}),h===i&&(g=this,h--);i>h;h++)if(null!=(e=arguments[h]))for(d in e)a=g[d],c=e[d],g!==c&&(j&&c&&(m.isPlainObject(c)||(b=m.isArray(c)))?(b?(b=!1,f=a&&m.isArray(a)?a:[]):f=a&&m.isPlainObject(a)?a:{},g[d]=m.extend(j,f,c)):void 0!==c&&(g[d]=c));return g},m.extend({expando:"jQuery"+(l+Math.random()).replace(/\D/g,""),isReady:!0,error:function(a){throw new Error(a)},noop:function(){},isFunction:function(a){return"function"===m.type(a)},isArray:Array.isArray||function(a){return"array"===m.type(a)},isWindow:function(a){return null!=a&&a==a.window},isNumeric:function(a){return!m.isArray(a)&&a-parseFloat(a)+1>=0},isEmptyObject:function(a){var b;for(b in a)return!1;return!0},isPlainObject:function(a){var b;if(!a||"object"!==m.type(a)||a.nodeType||m.isWindow(a))return!1;try{if(a.constructor&&!j.call(a,"constructor")&&!j.call(a.constructor.prototype,"isPrototypeOf"))return!1}catch(c){return!1}if(k.ownLast)for(b in a)return j.call(a,b);for(b in a);return void 0===b||j.call(a,b)},type:function(a){return null==a?a+"":"object"==typeof a||"function"==typeof a?h[i.call(a)]||"object":typeof a},globalEval:function(b){b&&m.trim(b)&&(a.execScript||function(b){a.eval.call(a,b)})(b)},camelCase:function(a){return a.replace(o,"ms-").replace(p,q)},nodeName:function(a,b){return a.nodeName&&a.nodeName.toLowerCase()===b.toLowerCase()},each:function(a,b,c){var d,e=0,f=a.length,g=r(a);if(c){if(g){for(;f>e;e++)if(d=b.apply(a[e],c),d===!1)break}else for(e in a)if(d=b.apply(a[e],c),d===!1)break}else if(g){for(;f>e;e++)if(d=b.call(a[e],e,a[e]),d===!1)break}else for(e in a)if(d=b.call(a[e],e,a[e]),d===!1)break;return a},trim:function(a){return null==a?"":(a+"").replace(n,"")},makeArray:function(a,b){var c=b||[];return null!=a&&(r(Object(a))?m.merge(c,"string"==typeof a?[a]:a):f.call(c,a)),c},inArray:function(a,b,c){var d;if(b){if(g)return g.call(b,a,c);for(d=b.length,c=c?0>c?Math.max(0,d+c):c:0;d>c;c++)if(c in b&&b[c]===a)return c}return-1},merge:function(a,b){var c=+b.length,d=0,e=a.length;while(c>d)a[e++]=b[d++];if(c!==c)while(void 0!==b[d])a[e++]=b[d++];return a.length=e,a},grep:function(a,b,c){for(var d,e=[],f=0,g=a.length,h=!c;g>f;f++)d=!b(a[f],f),d!==h&&e.push(a[f]);return e},map:function(a,b,c){var d,f=0,g=a.length,h=r(a),i=[];if(h)for(;g>f;f++)d=b(a[f],f,c),null!=d&&i.push(d);else for(f in a)d=b(a[f],f,c),null!=d&&i.push(d);return e.apply([],i)},guid:1,proxy:function(a,b){var c,e,f;return"string"==typeof b&&(f=a[b],b=a,a=f),m.isFunction(a)?(c=d.call(arguments,2),e=function(){return a.apply(b||this,c.concat(d.call(arguments)))},e.guid=a.guid=a.guid||m.guid++,e):void 0},now:function(){return+new Date},support:k}),m.each("Boolean Number String Function Array Date RegExp Object Error".split(" "),function(a,b){h["[object "+b+"]"]=b.toLowerCase()});function r(a){var b="length"in a&&a.length,c=m.type(a);return"function"===c||m.isWindow(a)?!1:1===a.nodeType&&b?!0:"array"===c||0===b||"number"==typeof b&&b>0&&b-1 in a}var s=function(a){var b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u="sizzle"+1*new Date,v=a.document,w=0,x=0,y=ha(),z=ha(),A=ha(),B=function(a,b){return a===b&&(l=!0),0},C=1<<31,D={}.hasOwnProperty,E=[],F=E.pop,G=E.push,H=E.push,I=E.slice,J=function(a,b){for(var c=0,d=a.length;d>c;c++)if(a[c]===b)return c;return-1},K="checked|selected|async|autofocus|autoplay|controls|defer|disabled|hidden|ismap|loop|multiple|open|readonly|required|scoped",L="[\\x20\\t\\r\\n\\f]",M="(?:\\\\.|[\\w-]|[^\\x00-\\xa0])+",N=M.replace("w","w#"),O="\\["+L+"*("+M+")(?:"+L+"*([*^$|!~]?=)"+L+"*(?:'((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\"|("+N+"))|)"+L+"*\\]",P=":("+M+")(?:\\((('((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\")|((?:\\\\.|[^\\\\()[\\]]|"+O+")*)|.*)\\)|)",Q=new RegExp(L+"+","g"),R=new RegExp("^"+L+"+|((?:^|[^\\\\])(?:\\\\.)*)"+L+"+$","g"),S=new RegExp("^"+L+"*,"+L+"*"),T=new RegExp("^"+L+"*([>+~]|"+L+")"+L+"*"),U=new RegExp("="+L+"*([^\\]'\"]*?)"+L+"*\\]","g"),V=new RegExp(P),W=new RegExp("^"+N+"$"),X={ID:new RegExp("^#("+M+")"),CLASS:new RegExp("^\\.("+M+")"),TAG:new RegExp("^("+M.replace("w","w*")+")"),ATTR:new RegExp("^"+O),PSEUDO:new RegExp("^"+P),CHILD:new RegExp("^:(only|first|last|nth|nth-last)-(child|of-type)(?:\\("+L+"*(even|odd|(([+-]|)(\\d*)n|)"+L+"*(?:([+-]|)"+L+"*(\\d+)|))"+L+"*\\)|)","i"),bool:new RegExp("^(?:"+K+")$","i"),needsContext:new RegExp("^"+L+"*[>+~]|:(even|odd|eq|gt|lt|nth|first|last)(?:\\("+L+"*((?:-\\d)?\\d*)"+L+"*\\)|)(?=[^-]|$)","i")},Y=/^(?:input|select|textarea|button)$/i,Z=/^h\d$/i,$=/^[^{]+\{\s*\[native \w/,_=/^(?:#([\w-]+)|(\w+)|\.([\w-]+))$/,aa=/[+~]/,ba=/'|\\/g,ca=new RegExp("\\\\([\\da-f]{1,6}"+L+"?|("+L+")|.)","ig"),da=function(a,b,c){var d="0x"+b-65536;return d!==d||c?b:0>d?String.fromCharCode(d+65536):String.fromCharCode(d>>10|55296,1023&d|56320)},ea=function(){m()};try{H.apply(E=I.call(v.childNodes),v.childNodes),E[v.childNodes.length].nodeType}catch(fa){H={apply:E.length?function(a,b){G.apply(a,I.call(b))}:function(a,b){var c=a.length,d=0;while(a[c++]=b[d++]);a.length=c-1}}}function ga(a,b,d,e){var f,h,j,k,l,o,r,s,w,x;if((b?b.ownerDocument||b:v)!==n&&m(b),b=b||n,d=d||[],k=b.nodeType,"string"!=typeof a||!a||1!==k&&9!==k&&11!==k)return d;if(!e&&p){if(11!==k&&(f=_.exec(a)))if(j=f[1]){if(9===k){if(h=b.getElementById(j),!h||!h.parentNode)return d;if(h.id===j)return d.push(h),d}else if(b.ownerDocument&&(h=b.ownerDocument.getElementById(j))&&t(b,h)&&h.id===j)return d.push(h),d}else{if(f[2])return H.apply(d,b.getElementsByTagName(a)),d;if((j=f[3])&&c.getElementsByClassName)return H.apply(d,b.getElementsByClassName(j)),d}if(c.qsa&&(!q||!q.test(a))){if(s=r=u,w=b,x=1!==k&&a,1===k&&"object"!==b.nodeName.toLowerCase()){o=g(a),(r=b.getAttribute("id"))?s=r.replace(ba,"\\$&"):b.setAttribute("id",s),s="[id='"+s+"'] ",l=o.length;while(l--)o[l]=s+ra(o[l]);w=aa.test(a)&&pa(b.parentNode)||b,x=o.join(",")}if(x)try{return H.apply(d,w.querySelectorAll(x)),d}catch(y){}finally{r||b.removeAttribute("id")}}}return i(a.replace(R,"$1"),b,d,e)}function ha(){var a=[];function b(c,e){return a.push(c+" ")>d.cacheLength&&delete b[a.shift()],b[c+" "]=e}return b}function ia(a){return a[u]=!0,a}function ja(a){var b=n.createElement("div");try{return!!a(b)}catch(c){return!1}finally{b.parentNode&&b.parentNode.removeChild(b),b=null}}function ka(a,b){var c=a.split("|"),e=a.length;while(e--)d.attrHandle[c[e]]=b}function la(a,b){var c=b&&a,d=c&&1===a.nodeType&&1===b.nodeType&&(~b.sourceIndex||C)-(~a.sourceIndex||C);if(d)return d;if(c)while(c=c.nextSibling)if(c===b)return-1;return a?1:-1}function ma(a){return function(b){var c=b.nodeName.toLowerCase();return"input"===c&&b.type===a}}function na(a){return function(b){var c=b.nodeName.toLowerCase();return("input"===c||"button"===c)&&b.type===a}}function oa(a){return ia(function(b){return b=+b,ia(function(c,d){var e,f=a([],c.length,b),g=f.length;while(g--)c[e=f[g]]&&(c[e]=!(d[e]=c[e]))})})}function pa(a){return a&&"undefined"!=typeof a.getElementsByTagName&&a}c=ga.support={},f=ga.isXML=function(a){var b=a&&(a.ownerDocument||a).documentElement;return b?"HTML"!==b.nodeName:!1},m=ga.setDocument=function(a){var b,e,g=a?a.ownerDocument||a:v;return g!==n&&9===g.nodeType&&g.documentElement?(n=g,o=g.documentElement,e=g.defaultView,e&&e!==e.top&&(e.addEventListener?e.addEventListener("unload",ea,!1):e.attachEvent&&e.attachEvent("onunload",ea)),p=!f(g),c.attributes=ja(function(a){return a.className="i",!a.getAttribute("className")}),c.getElementsByTagName=ja(function(a){return a.appendChild(g.createComment("")),!a.getElementsByTagName("*").length}),c.getElementsByClassName=$.test(g.getElementsByClassName),c.getById=ja(function(a){return o.appendChild(a).id=u,!g.getElementsByName||!g.getElementsByName(u).length}),c.getById?(d.find.ID=function(a,b){if("undefined"!=typeof b.getElementById&&p){var c=b.getElementById(a);return c&&c.parentNode?[c]:[]}},d.filter.ID=function(a){var b=a.replace(ca,da);return function(a){return a.getAttribute("id")===b}}):(delete d.find.ID,d.filter.ID=function(a){var b=a.replace(ca,da);return function(a){var c="undefined"!=typeof a.getAttributeNode&&a.getAttributeNode("id");return c&&c.value===b}}),d.find.TAG=c.getElementsByTagName?function(a,b){return"undefined"!=typeof b.getElementsByTagName?b.getElementsByTagName(a):c.qsa?b.querySelectorAll(a):void 0}:function(a,b){var c,d=[],e=0,f=b.getElementsByTagName(a);if("*"===a){while(c=f[e++])1===c.nodeType&&d.push(c);return d}return f},d.find.CLASS=c.getElementsByClassName&&function(a,b){return p?b.getElementsByClassName(a):void 0},r=[],q=[],(c.qsa=$.test(g.querySelectorAll))&&(ja(function(a){o.appendChild(a).innerHTML="<a id='"+u+"'></a><select id='"+u+"-\f]' msallowcapture=''><option selected=''></option></select>",a.querySelectorAll("[msallowcapture^='']").length&&q.push("[*^$]="+L+"*(?:''|\"\")"),a.querySelectorAll("[selected]").length||q.push("\\["+L+"*(?:value|"+K+")"),a.querySelectorAll("[id~="+u+"-]").length||q.push("~="),a.querySelectorAll(":checked").length||q.push(":checked"),a.querySelectorAll("a#"+u+"+*").length||q.push(".#.+[+~]")}),ja(function(a){var b=g.createElement("input");b.setAttribute("type","hidden"),a.appendChild(b).setAttribute("name","D"),a.querySelectorAll("[name=d]").length&&q.push("name"+L+"*[*^$|!~]?="),a.querySelectorAll(":enabled").length||q.push(":enabled",":disabled"),a.querySelectorAll("*,:x"),q.push(",.*:")})),(c.matchesSelector=$.test(s=o.matches||o.webkitMatchesSelector||o.mozMatchesSelector||o.oMatchesSelector||o.msMatchesSelector))&&ja(function(a){c.disconnectedMatch=s.call(a,"div"),s.call(a,"[s!='']:x"),r.push("!=",P)}),q=q.length&&new RegExp(q.join("|")),r=r.length&&new RegExp(r.join("|")),b=$.test(o.compareDocumentPosition),t=b||$.test(o.contains)?function(a,b){var c=9===a.nodeType?a.documentElement:a,d=b&&b.parentNode;return a===d||!(!d||1!==d.nodeType||!(c.contains?c.contains(d):a.compareDocumentPosition&&16&a.compareDocumentPosition(d)))}:function(a,b){if(b)while(b=b.parentNode)if(b===a)return!0;return!1},B=b?function(a,b){if(a===b)return l=!0,0;var d=!a.compareDocumentPosition-!b.compareDocumentPosition;return d?d:(d=(a.ownerDocument||a)===(b.ownerDocument||b)?a.compareDocumentPosition(b):1,1&d||!c.sortDetached&&b.compareDocumentPosition(a)===d?a===g||a.ownerDocument===v&&t(v,a)?-1:b===g||b.ownerDocument===v&&t(v,b)?1:k?J(k,a)-J(k,b):0:4&d?-1:1)}:function(a,b){if(a===b)return l=!0,0;var c,d=0,e=a.parentNode,f=b.parentNode,h=[a],i=[b];if(!e||!f)return a===g?-1:b===g?1:e?-1:f?1:k?J(k,a)-J(k,b):0;if(e===f)return la(a,b);c=a;while(c=c.parentNode)h.unshift(c);c=b;while(c=c.parentNode)i.unshift(c);while(h[d]===i[d])d++;return d?la(h[d],i[d]):h[d]===v?-1:i[d]===v?1:0},g):n},ga.matches=function(a,b){return ga(a,null,null,b)},ga.matchesSelector=function(a,b){if((a.ownerDocument||a)!==n&&m(a),b=b.replace(U,"='$1']"),!(!c.matchesSelector||!p||r&&r.test(b)||q&&q.test(b)))try{var d=s.call(a,b);if(d||c.disconnectedMatch||a.document&&11!==a.document.nodeType)return d}catch(e){}return ga(b,n,null,[a]).length>0},ga.contains=function(a,b){return(a.ownerDocument||a)!==n&&m(a),t(a,b)},ga.attr=function(a,b){(a.ownerDocument||a)!==n&&m(a);var e=d.attrHandle[b.toLowerCase()],f=e&&D.call(d.attrHandle,b.toLowerCase())?e(a,b,!p):void 0;return void 0!==f?f:c.attributes||!p?a.getAttribute(b):(f=a.getAttributeNode(b))&&f.specified?f.value:null},ga.error=function(a){throw new Error("Syntax error, unrecognized expression: "+a)},ga.uniqueSort=function(a){var b,d=[],e=0,f=0;if(l=!c.detectDuplicates,k=!c.sortStable&&a.slice(0),a.sort(B),l){while(b=a[f++])b===a[f]&&(e=d.push(f));while(e--)a.splice(d[e],1)}return k=null,a},e=ga.getText=function(a){var b,c="",d=0,f=a.nodeType;if(f){if(1===f||9===f||11===f){if("string"==typeof a.textContent)return a.textContent;for(a=a.firstChild;a;a=a.nextSibling)c+=e(a)}else if(3===f||4===f)return a.nodeValue}else while(b=a[d++])c+=e(b);return c},d=ga.selectors={cacheLength:50,createPseudo:ia,match:X,attrHandle:{},find:{},relative:{">":{dir:"parentNode",first:!0}," ":{dir:"parentNode"},"+":{dir:"previousSibling",first:!0},"~":{dir:"previousSibling"}},preFilter:{ATTR:function(a){return a[1]=a[1].replace(ca,da),a[3]=(a[3]||a[4]||a[5]||"").replace(ca,da),"~="===a[2]&&(a[3]=" "+a[3]+" "),a.slice(0,4)},CHILD:function(a){return a[1]=a[1].toLowerCase(),"nth"===a[1].slice(0,3)?(a[3]||ga.error(a[0]),a[4]=+(a[4]?a[5]+(a[6]||1):2*("even"===a[3]||"odd"===a[3])),a[5]=+(a[7]+a[8]||"odd"===a[3])):a[3]&&ga.error(a[0]),a},PSEUDO:function(a){var b,c=!a[6]&&a[2];return X.CHILD.test(a[0])?null:(a[3]?a[2]=a[4]||a[5]||"":c&&V.test(c)&&(b=g(c,!0))&&(b=c.indexOf(")",c.length-b)-c.length)&&(a[0]=a[0].slice(0,b),a[2]=c.slice(0,b)),a.slice(0,3))}},filter:{TAG:function(a){var b=a.replace(ca,da).toLowerCase();return"*"===a?function(){return!0}:function(a){return a.nodeName&&a.nodeName.toLowerCase()===b}},CLASS:function(a){var b=y[a+" "];return b||(b=new RegExp("(^|"+L+")"+a+"("+L+"|$)"))&&y(a,function(a){return b.test("string"==typeof a.className&&a.className||"undefined"!=typeof a.getAttribute&&a.getAttribute("class")||"")})},ATTR:function(a,b,c){return function(d){var e=ga.attr(d,a);return null==e?"!="===b:b?(e+="","="===b?e===c:"!="===b?e!==c:"^="===b?c&&0===e.indexOf(c):"*="===b?c&&e.indexOf(c)>-1:"$="===b?c&&e.slice(-c.length)===c:"~="===b?(" "+e.replace(Q," ")+" ").indexOf(c)>-1:"|="===b?e===c||e.slice(0,c.length+1)===c+"-":!1):!0}},CHILD:function(a,b,c,d,e){var f="nth"!==a.slice(0,3),g="last"!==a.slice(-4),h="of-type"===b;return 1===d&&0===e?function(a){return!!a.parentNode}:function(b,c,i){var j,k,l,m,n,o,p=f!==g?"nextSibling":"previousSibling",q=b.parentNode,r=h&&b.nodeName.toLowerCase(),s=!i&&!h;if(q){if(f){while(p){l=b;while(l=l[p])if(h?l.nodeName.toLowerCase()===r:1===l.nodeType)return!1;o=p="only"===a&&!o&&"nextSibling"}return!0}if(o=[g?q.firstChild:q.lastChild],g&&s){k=q[u]||(q[u]={}),j=k[a]||[],n=j[0]===w&&j[1],m=j[0]===w&&j[2],l=n&&q.childNodes[n];while(l=++n&&l&&l[p]||(m=n=0)||o.pop())if(1===l.nodeType&&++m&&l===b){k[a]=[w,n,m];break}}else if(s&&(j=(b[u]||(b[u]={}))[a])&&j[0]===w)m=j[1];else while(l=++n&&l&&l[p]||(m=n=0)||o.pop())if((h?l.nodeName.toLowerCase()===r:1===l.nodeType)&&++m&&(s&&((l[u]||(l[u]={}))[a]=[w,m]),l===b))break;return m-=e,m===d||m%d===0&&m/d>=0}}},PSEUDO:function(a,b){var c,e=d.pseudos[a]||d.setFilters[a.toLowerCase()]||ga.error("unsupported pseudo: "+a);return e[u]?e(b):e.length>1?(c=[a,a,"",b],d.setFilters.hasOwnProperty(a.toLowerCase())?ia(function(a,c){var d,f=e(a,b),g=f.length;while(g--)d=J(a,f[g]),a[d]=!(c[d]=f[g])}):function(a){return e(a,0,c)}):e}},pseudos:{not:ia(function(a){var b=[],c=[],d=h(a.replace(R,"$1"));return d[u]?ia(function(a,b,c,e){var f,g=d(a,null,e,[]),h=a.length;while(h--)(f=g[h])&&(a[h]=!(b[h]=f))}):function(a,e,f){return b[0]=a,d(b,null,f,c),b[0]=null,!c.pop()}}),has:ia(function(a){return function(b){return ga(a,b).length>0}}),contains:ia(function(a){return a=a.replace(ca,da),function(b){return(b.textContent||b.innerText||e(b)).indexOf(a)>-1}}),lang:ia(function(a){return W.test(a||"")||ga.error("unsupported lang: "+a),a=a.replace(ca,da).toLowerCase(),function(b){var c;do if(c=p?b.lang:b.getAttribute("xml:lang")||b.getAttribute("lang"))return c=c.toLowerCase(),c===a||0===c.indexOf(a+"-");while((b=b.parentNode)&&1===b.nodeType);return!1}}),target:function(b){var c=a.location&&a.location.hash;return c&&c.slice(1)===b.id},root:function(a){return a===o},focus:function(a){return a===n.activeElement&&(!n.hasFocus||n.hasFocus())&&!!(a.type||a.href||~a.tabIndex)},enabled:function(a){return a.disabled===!1},disabled:function(a){return a.disabled===!0},checked:function(a){var b=a.nodeName.toLowerCase();return"input"===b&&!!a.checked||"option"===b&&!!a.selected},selected:function(a){return a.parentNode&&a.parentNode.selectedIndex,a.selected===!0},empty:function(a){for(a=a.firstChild;a;a=a.nextSibling)if(a.nodeType<6)return!1;return!0},parent:function(a){return!d.pseudos.empty(a)},header:function(a){return Z.test(a.nodeName)},input:function(a){return Y.test(a.nodeName)},button:function(a){var b=a.nodeName.toLowerCase();return"input"===b&&"button"===a.type||"button"===b},text:function(a){var b;return"input"===a.nodeName.toLowerCase()&&"text"===a.type&&(null==(b=a.getAttribute("type"))||"text"===b.toLowerCase())},first:oa(function(){return[0]}),last:oa(function(a,b){return[b-1]}),eq:oa(function(a,b,c){return[0>c?c+b:c]}),even:oa(function(a,b){for(var c=0;b>c;c+=2)a.push(c);return a}),odd:oa(function(a,b){for(var c=1;b>c;c+=2)a.push(c);return a}),lt:oa(function(a,b,c){for(var d=0>c?c+b:c;--d>=0;)a.push(d);return a}),gt:oa(function(a,b,c){for(var d=0>c?c+b:c;++d<b;)a.push(d);return a})}},d.pseudos.nth=d.pseudos.eq;for(b in{radio:!0,checkbox:!0,file:!0,password:!0,image:!0})d.pseudos[b]=ma(b);for(b in{submit:!0,reset:!0})d.pseudos[b]=na(b);function qa(){}qa.prototype=d.filters=d.pseudos,d.setFilters=new qa,g=ga.tokenize=function(a,b){var c,e,f,g,h,i,j,k=z[a+" "];if(k)return b?0:k.slice(0);h=a,i=[],j=d.preFilter;while(h){(!c||(e=S.exec(h)))&&(e&&(h=h.slice(e[0].length)||h),i.push(f=[])),c=!1,(e=T.exec(h))&&(c=e.shift(),f.push({value:c,type:e[0].replace(R," ")}),h=h.slice(c.length));for(g in d.filter)!(e=X[g].exec(h))||j[g]&&!(e=j[g](e))||(c=e.shift(),f.push({value:c,type:g,matches:e}),h=h.slice(c.length));if(!c)break}return b?h.length:h?ga.error(a):z(a,i).slice(0)};function ra(a){for(var b=0,c=a.length,d="";c>b;b++)d+=a[b].value;return d}function sa(a,b,c){var d=b.dir,e=c&&"parentNode"===d,f=x++;return b.first?function(b,c,f){while(b=b[d])if(1===b.nodeType||e)return a(b,c,f)}:function(b,c,g){var h,i,j=[w,f];if(g){while(b=b[d])if((1===b.nodeType||e)&&a(b,c,g))return!0}else while(b=b[d])if(1===b.nodeType||e){if(i=b[u]||(b[u]={}),(h=i[d])&&h[0]===w&&h[1]===f)return j[2]=h[2];if(i[d]=j,j[2]=a(b,c,g))return!0}}}function ta(a){return a.length>1?function(b,c,d){var e=a.length;while(e--)if(!a[e](b,c,d))return!1;return!0}:a[0]}function ua(a,b,c){for(var d=0,e=b.length;e>d;d++)ga(a,b[d],c);return c}function va(a,b,c,d,e){for(var f,g=[],h=0,i=a.length,j=null!=b;i>h;h++)(f=a[h])&&(!c||c(f,d,e))&&(g.push(f),j&&b.push(h));return g}function wa(a,b,c,d,e,f){return d&&!d[u]&&(d=wa(d)),e&&!e[u]&&(e=wa(e,f)),ia(function(f,g,h,i){var j,k,l,m=[],n=[],o=g.length,p=f||ua(b||"*",h.nodeType?[h]:h,[]),q=!a||!f&&b?p:va(p,m,a,h,i),r=c?e||(f?a:o||d)?[]:g:q;if(c&&c(q,r,h,i),d){j=va(r,n),d(j,[],h,i),k=j.length;while(k--)(l=j[k])&&(r[n[k]]=!(q[n[k]]=l))}if(f){if(e||a){if(e){j=[],k=r.length;while(k--)(l=r[k])&&j.push(q[k]=l);e(null,r=[],j,i)}k=r.length;while(k--)(l=r[k])&&(j=e?J(f,l):m[k])>-1&&(f[j]=!(g[j]=l))}}else r=va(r===g?r.splice(o,r.length):r),e?e(null,g,r,i):H.apply(g,r)})}function xa(a){for(var b,c,e,f=a.length,g=d.relative[a[0].type],h=g||d.relative[" "],i=g?1:0,k=sa(function(a){return a===b},h,!0),l=sa(function(a){return J(b,a)>-1},h,!0),m=[function(a,c,d){var e=!g&&(d||c!==j)||((b=c).nodeType?k(a,c,d):l(a,c,d));return b=null,e}];f>i;i++)if(c=d.relative[a[i].type])m=[sa(ta(m),c)];else{if(c=d.filter[a[i].type].apply(null,a[i].matches),c[u]){for(e=++i;f>e;e++)if(d.relative[a[e].type])break;return wa(i>1&&ta(m),i>1&&ra(a.slice(0,i-1).concat({value:" "===a[i-2].type?"*":""})).replace(R,"$1"),c,e>i&&xa(a.slice(i,e)),f>e&&xa(a=a.slice(e)),f>e&&ra(a))}m.push(c)}return ta(m)}function ya(a,b){var c=b.length>0,e=a.length>0,f=function(f,g,h,i,k){var l,m,o,p=0,q="0",r=f&&[],s=[],t=j,u=f||e&&d.find.TAG("*",k),v=w+=null==t?1:Math.random()||.1,x=u.length;for(k&&(j=g!==n&&g);q!==x&&null!=(l=u[q]);q++){if(e&&l){m=0;while(o=a[m++])if(o(l,g,h)){i.push(l);break}k&&(w=v)}c&&((l=!o&&l)&&p--,f&&r.push(l))}if(p+=q,c&&q!==p){m=0;while(o=b[m++])o(r,s,g,h);if(f){if(p>0)while(q--)r[q]||s[q]||(s[q]=F.call(i));s=va(s)}H.apply(i,s),k&&!f&&s.length>0&&p+b.length>1&&ga.uniqueSort(i)}return k&&(w=v,j=t),r};return c?ia(f):f}return h=ga.compile=function(a,b){var c,d=[],e=[],f=A[a+" "];if(!f){b||(b=g(a)),c=b.length;while(c--)f=xa(b[c]),f[u]?d.push(f):e.push(f);f=A(a,ya(e,d)),f.selector=a}return f},i=ga.select=function(a,b,e,f){var i,j,k,l,m,n="function"==typeof a&&a,o=!f&&g(a=n.selector||a);if(e=e||[],1===o.length){if(j=o[0]=o[0].slice(0),j.length>2&&"ID"===(k=j[0]).type&&c.getById&&9===b.nodeType&&p&&d.relative[j[1].type]){if(b=(d.find.ID(k.matches[0].replace(ca,da),b)||[])[0],!b)return e;n&&(b=b.parentNode),a=a.slice(j.shift().value.length)}i=X.needsContext.test(a)?0:j.length;while(i--){if(k=j[i],d.relative[l=k.type])break;if((m=d.find[l])&&(f=m(k.matches[0].replace(ca,da),aa.test(j[0].type)&&pa(b.parentNode)||b))){if(j.splice(i,1),a=f.length&&ra(j),!a)return H.apply(e,f),e;break}}}return(n||h(a,o))(f,b,!p,e,aa.test(a)&&pa(b.parentNode)||b),e},c.sortStable=u.split("").sort(B).join("")===u,c.detectDuplicates=!!l,m(),c.sortDetached=ja(function(a){return 1&a.compareDocumentPosition(n.createElement("div"))}),ja(function(a){return a.innerHTML="<a href='#'></a>","#"===a.firstChild.getAttribute("href")})||ka("type|href|height|width",function(a,b,c){return c?void 0:a.getAttribute(b,"type"===b.toLowerCase()?1:2)}),c.attributes&&ja(function(a){return a.innerHTML="<input/>",a.firstChild.setAttribute("value",""),""===a.firstChild.getAttribute("value")})||ka("value",function(a,b,c){return c||"input"!==a.nodeName.toLowerCase()?void 0:a.defaultValue}),ja(function(a){return null==a.getAttribute("disabled")})||ka(K,function(a,b,c){var d;return c?void 0:a[b]===!0?b.toLowerCase():(d=a.getAttributeNode(b))&&d.specified?d.value:null}),ga}(a);m.find=s,m.expr=s.selectors,m.expr[":"]=m.expr.pseudos,m.unique=s.uniqueSort,m.text=s.getText,m.isXMLDoc=s.isXML,m.contains=s.contains;var t=m.expr.match.needsContext,u=/^<(\w+)\s*\/?>(?:<\/\1>|)$/,v=/^.[^:#\[\.,]*$/;function w(a,b,c){if(m.isFunction(b))return m.grep(a,function(a,d){return!!b.call(a,d,a)!==c});if(b.nodeType)return m.grep(a,function(a){return a===b!==c});if("string"==typeof b){if(v.test(b))return m.filter(b,a,c);b=m.filter(b,a)}return m.grep(a,function(a){return m.inArray(a,b)>=0!==c})}m.filter=function(a,b,c){var d=b[0];return c&&(a=":not("+a+")"),1===b.length&&1===d.nodeType?m.find.matchesSelector(d,a)?[d]:[]:m.find.matches(a,m.grep(b,function(a){return 1===a.nodeType}))},m.fn.extend({find:function(a){var b,c=[],d=this,e=d.length;if("string"!=typeof a)return this.pushStack(m(a).filter(function(){for(b=0;e>b;b++)if(m.contains(d[b],this))return!0}));for(b=0;e>b;b++)m.find(a,d[b],c);return c=this.pushStack(e>1?m.unique(c):c),c.selector=this.selector?this.selector+" "+a:a,c},filter:function(a){return this.pushStack(w(this,a||[],!1))},not:function(a){return this.pushStack(w(this,a||[],!0))},is:function(a){return!!w(this,"string"==typeof a&&t.test(a)?m(a):a||[],!1).length}});var x,y=a.document,z=/^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]*))$/,A=m.fn.init=function(a,b){var c,d;if(!a)return this;if("string"==typeof a){if(c="<"===a.charAt(0)&&">"===a.charAt(a.length-1)&&a.length>=3?[null,a,null]:z.exec(a),!c||!c[1]&&b)return!b||b.jquery?(b||x).find(a):this.constructor(b).find(a);if(c[1]){if(b=b instanceof m?b[0]:b,m.merge(this,m.parseHTML(c[1],b&&b.nodeType?b.ownerDocument||b:y,!0)),u.test(c[1])&&m.isPlainObject(b))for(c in b)m.isFunction(this[c])?this[c](b[c]):this.attr(c,b[c]);return this}if(d=y.getElementById(c[2]),d&&d.parentNode){if(d.id!==c[2])return x.find(a);this.length=1,this[0]=d}return this.context=y,this.selector=a,this}return a.nodeType?(this.context=this[0]=a,this.length=1,this):m.isFunction(a)?"undefined"!=typeof x.ready?x.ready(a):a(m):(void 0!==a.selector&&(this.selector=a.selector,this.context=a.context),m.makeArray(a,this))};A.prototype=m.fn,x=m(y);var B=/^(?:parents|prev(?:Until|All))/,C={children:!0,contents:!0,next:!0,prev:!0};m.extend({dir:function(a,b,c){var d=[],e=a[b];while(e&&9!==e.nodeType&&(void 0===c||1!==e.nodeType||!m(e).is(c)))1===e.nodeType&&d.push(e),e=e[b];return d},sibling:function(a,b){for(var c=[];a;a=a.nextSibling)1===a.nodeType&&a!==b&&c.push(a);return c}}),m.fn.extend({has:function(a){var b,c=m(a,this),d=c.length;return this.filter(function(){for(b=0;d>b;b++)if(m.contains(this,c[b]))return!0})},closest:function(a,b){for(var c,d=0,e=this.length,f=[],g=t.test(a)||"string"!=typeof a?m(a,b||this.context):0;e>d;d++)for(c=this[d];c&&c!==b;c=c.parentNode)if(c.nodeType<11&&(g?g.index(c)>-1:1===c.nodeType&&m.find.matchesSelector(c,a))){f.push(c);break}return this.pushStack(f.length>1?m.unique(f):f)},index:function(a){return a?"string"==typeof a?m.inArray(this[0],m(a)):m.inArray(a.jquery?a[0]:a,this):this[0]&&this[0].parentNode?this.first().prevAll().length:-1},add:function(a,b){return this.pushStack(m.unique(m.merge(this.get(),m(a,b))))},addBack:function(a){return this.add(null==a?this.prevObject:this.prevObject.filter(a))}});function D(a,b){do a=a[b];while(a&&1!==a.nodeType);return a}m.each({parent:function(a){var b=a.parentNode;return b&&11!==b.nodeType?b:null},parents:function(a){return m.dir(a,"parentNode")},parentsUntil:function(a,b,c){return m.dir(a,"parentNode",c)},next:function(a){return D(a,"nextSibling")},prev:function(a){return D(a,"previousSibling")},nextAll:function(a){return m.dir(a,"nextSibling")},prevAll:function(a){return m.dir(a,"previousSibling")},nextUntil:function(a,b,c){return m.dir(a,"nextSibling",c)},prevUntil:function(a,b,c){return m.dir(a,"previousSibling",c)},siblings:function(a){return m.sibling((a.parentNode||{}).firstChild,a)},children:function(a){return m.sibling(a.firstChild)},contents:function(a){return m.nodeName(a,"iframe")?a.contentDocument||a.contentWindow.document:m.merge([],a.childNodes)}},function(a,b){m.fn[a]=function(c,d){var e=m.map(this,b,c);return"Until"!==a.slice(-5)&&(d=c),d&&"string"==typeof d&&(e=m.filter(d,e)),this.length>1&&(C[a]||(e=m.unique(e)),B.test(a)&&(e=e.reverse())),this.pushStack(e)}});var E=/\S+/g,F={};function G(a){var b=F[a]={};return m.each(a.match(E)||[],function(a,c){b[c]=!0}),b}m.Callbacks=function(a){a="string"==typeof a?F[a]||G(a):m.extend({},a);var b,c,d,e,f,g,h=[],i=!a.once&&[],j=function(l){for(c=a.memory&&l,d=!0,f=g||0,g=0,e=h.length,b=!0;h&&e>f;f++)if(h[f].apply(l[0],l[1])===!1&&a.stopOnFalse){c=!1;break}b=!1,h&&(i?i.length&&j(i.shift()):c?h=[]:k.disable())},k={add:function(){if(h){var d=h.length;!function f(b){m.each(b,function(b,c){var d=m.type(c);"function"===d?a.unique&&k.has(c)||h.push(c):c&&c.length&&"string"!==d&&f(c)})}(arguments),b?e=h.length:c&&(g=d,j(c))}return this},remove:function(){return h&&m.each(arguments,function(a,c){var d;while((d=m.inArray(c,h,d))>-1)h.splice(d,1),b&&(e>=d&&e--,f>=d&&f--)}),this},has:function(a){return a?m.inArray(a,h)>-1:!(!h||!h.length)},empty:function(){return h=[],e=0,this},disable:function(){return h=i=c=void 0,this},disabled:function(){return!h},lock:function(){return i=void 0,c||k.disable(),this},locked:function(){return!i},fireWith:function(a,c){return!h||d&&!i||(c=c||[],c=[a,c.slice?c.slice():c],b?i.push(c):j(c)),this},fire:function(){return k.fireWith(this,arguments),this},fired:function(){return!!d}};return k},m.extend({Deferred:function(a){var b=[["resolve","done",m.Callbacks("once memory"),"resolved"],["reject","fail",m.Callbacks("once memory"),"rejected"],["notify","progress",m.Callbacks("memory")]],c="pending",d={state:function(){return c},always:function(){return e.done(arguments).fail(arguments),this},then:function(){var a=arguments;return m.Deferred(function(c){m.each(b,function(b,f){var g=m.isFunction(a[b])&&a[b];e[f[1]](function(){var a=g&&g.apply(this,arguments);a&&m.isFunction(a.promise)?a.promise().done(c.resolve).fail(c.reject).progress(c.notify):c[f[0]+"With"](this===d?c.promise():this,g?[a]:arguments)})}),a=null}).promise()},promise:function(a){return null!=a?m.extend(a,d):d}},e={};return d.pipe=d.then,m.each(b,function(a,f){var g=f[2],h=f[3];d[f[1]]=g.add,h&&g.add(function(){c=h},b[1^a][2].disable,b[2][2].lock),e[f[0]]=function(){return e[f[0]+"With"](this===e?d:this,arguments),this},e[f[0]+"With"]=g.fireWith}),d.promise(e),a&&a.call(e,e),e},when:function(a){var b=0,c=d.call(arguments),e=c.length,f=1!==e||a&&m.isFunction(a.promise)?e:0,g=1===f?a:m.Deferred(),h=function(a,b,c){return function(e){b[a]=this,c[a]=arguments.length>1?d.call(arguments):e,c===i?g.notifyWith(b,c):--f||g.resolveWith(b,c)}},i,j,k;if(e>1)for(i=new Array(e),j=new Array(e),k=new Array(e);e>b;b++)c[b]&&m.isFunction(c[b].promise)?c[b].promise().done(h(b,k,c)).fail(g.reject).progress(h(b,j,i)):--f;return f||g.resolveWith(k,c),g.promise()}});var H;m.fn.ready=function(a){return m.ready.promise().done(a),this},m.extend({isReady:!1,readyWait:1,holdReady:function(a){a?m.readyWait++:m.ready(!0)},ready:function(a){if(a===!0?!--m.readyWait:!m.isReady){if(!y.body)return setTimeout(m.ready);m.isReady=!0,a!==!0&&--m.readyWait>0||(H.resolveWith(y,[m]),m.fn.triggerHandler&&(m(y).triggerHandler("ready"),m(y).off("ready")))}}});function I(){y.addEventListener?(y.removeEventListener("DOMContentLoaded",J,!1),a.removeEventListener("load",J,!1)):(y.detachEvent("onreadystatechange",J),a.detachEvent("onload",J))}function J(){(y.addEventListener||"load"===event.type||"complete"===y.readyState)&&(I(),m.ready())}m.ready.promise=function(b){if(!H)if(H=m.Deferred(),"complete"===y.readyState)setTimeout(m.ready);else if(y.addEventListener)y.addEventListener("DOMContentLoaded",J,!1),a.addEventListener("load",J,!1);else{y.attachEvent("onreadystatechange",J),a.attachEvent("onload",J);var c=!1;try{c=null==a.frameElement&&y.documentElement}catch(d){}c&&c.doScroll&&!function e(){if(!m.isReady){try{c.doScroll("left")}catch(a){return setTimeout(e,50)}I(),m.ready()}}()}return H.promise(b)};var K="undefined",L;for(L in m(k))break;k.ownLast="0"!==L,k.inlineBlockNeedsLayout=!1,m(function(){var a,b,c,d;c=y.getElementsByTagName("body")[0],c&&c.style&&(b=y.createElement("div"),d=y.createElement("div"),d.style.cssText="position:absolute;border:0;width:0;height:0;top:0;left:-9999px",c.appendChild(d).appendChild(b),typeof b.style.zoom!==K&&(b.style.cssText="display:inline;margin:0;border:0;padding:1px;width:1px;zoom:1",k.inlineBlockNeedsLayout=a=3===b.offsetWidth,a&&(c.style.zoom=1)),c.removeChild(d))}),function(){var a=y.createElement("div");if(null==k.deleteExpando){k.deleteExpando=!0;try{delete a.test}catch(b){k.deleteExpando=!1}}a=null}(),m.acceptData=function(a){var b=m.noData[(a.nodeName+" ").toLowerCase()],c=+a.nodeType||1;return 1!==c&&9!==c?!1:!b||b!==!0&&a.getAttribute("classid")===b};var M=/^(?:\{[\w\W]*\}|\[[\w\W]*\])$/,N=/([A-Z])/g;function O(a,b,c){if(void 0===c&&1===a.nodeType){var d="data-"+b.replace(N,"-$1").toLowerCase();if(c=a.getAttribute(d),"string"==typeof c){try{c="true"===c?!0:"false"===c?!1:"null"===c?null:+c+""===c?+c:M.test(c)?m.parseJSON(c):c}catch(e){}m.data(a,b,c)}else c=void 0}return c}function P(a){var b;for(b in a)if(("data"!==b||!m.isEmptyObject(a[b]))&&"toJSON"!==b)return!1;
@@ -1743,476 +1743,250 @@ summary {
 
 
 
-<h1 class="title toc-ignore">Assignment Survival Data</h1>
+<h1 class="title toc-ignore">R Notebook</h1>
 
 </div>
 
 
 <!-- rnb-text-begin -->
-<p>#Analysis of binary data</p>
-<div id="read-the-logistic.txt-into-r." class="section level3">
-<h3>Read the Logistic.txt into R.</h3>
+<div id="read-the-data-tuno.txt-into-r." class="section level2">
+<h2>Read the data tuno.txt into R.</h2>
+<p>The data is read, and the first few lines of the code is shown.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YSA8LSByZWFkLmRlbGltKFwiTG9naXN0aWMudHh0XCIsaGVhZGVyID0gVFJVRSwgc2VwID0gXCJcIiwgZGVjID0gXCIuXCIpXG5kYXRhJEFJRFNfbm89ZGF0YSRuLWRhdGEkQUlEU195ZXNcbmhlYWQoZGF0YSwyKSBcbmBgYCJ9 -->
-<pre class="r"><code>data &lt;- read.delim(&quot;Logistic.txt&quot;,header = TRUE, sep = &quot;&quot;, dec = &quot;.&quot;)
-data$AIDS_no=data$n-data$AIDS_yes
-head(data,2) </code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YSA8LSByZWFkLmRlbGltKFwidHVuby50eHRcIixoZWFkZXIgPSBUUlVFLCBzZXAgPSBcIiBcIiwgZGVjID0gXCIuXCIpXG5kYXRhJHBvdy5vYnMubm9ybTwtKGRhdGEkcG93Lm9icykvNTAwMFxuaGVhZChkYXRhLDYpXG5gYGAifQ== -->
+<pre class="r"><code>data &lt;- read.delim(&quot;tuno.txt&quot;,header = TRUE, sep = &quot; &quot;, dec = &quot;.&quot;)
+data$pow.obs.norm&lt;-(data$pow.obs)/5000
+head(data,6)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6MiwibmNvbCI6NH0sInJkZiI6Ikg0c0lBQUFBQUFBQUJsMVF3VTdETUF4MTBuUmpsVUNUT1BFUHJOS0srSUNKWGJnZ0JCd0dGeFM2QWhYRm1kcE1nTVJQOEJlSWp4eTRyVDJOSEp5OFo4ZCt6N21hTDA2U1JRSUFFUmpRRU1VRVlYQjJPYzFPTXdDamlTbXFqTnI3blY0ZEVqQVVZd3JOaGVpMmFCanFDMGZuZmxjRU9LSTQzdUUvRk44Ny9JdmlNMUNKMGI3U3VGN0JpTUxzN29iaDN1eDhmbjMvc1ZWVXlHRFlGZEFGODBhMWUwdGxwZ2lyL3Y0dm5GZTJFV0ZKSmt2cmJmcFlVeit4VGRBeWRDdGZPcVFtM2Y1TEhEU3JPa2lNMTlnNldVN3k1elcrVEtaWnE4QjJGTnRqYTF0c2VrMzl5N05pbmpVbzhLbkVRc3hYOXFHb21CelF5dDNHNmFvdTBjc3FsRzFTNzd5VmQwbnVLc2wweThIbUR3S3JoOEFRQWdBQSJ9 -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6NiwibmNvbCI6N30sInJkZiI6Ikg0c0lBQUFBQUFBQUF3dHlpVERtaXVCaVlHQmdabUJoWUdKZ1pnVXlHVmhEUTl4MExSZ1lXSmlBSEVhZ0JDZUlyZ0FxRWdZeTJJR1lGNGpad0pJTURFeGczVURWSUoxUWNXUjViSmlRZmo0UTdaQ1g4TGpQNHZFMGg2VTcySmtiRHp4M1dOQnJQZmZjOHl5SG1aOGJEendvY0hXWTY2dzc3WFRxQ1llVkVxMU9Dd01Xd2ZWSlBmbmx2K1N2dklPZ3VLcU8vb1pPQ0wzeGo0T1VsaWhYcXpPSGczSnU1Z3QxdHhZSGhhQkR2OFZWajhMMUNTaHJxWG9GeERvd2lzK3d1QnBZYmYvekQ4ZUJLSW01OW1lNUZSZE4yN0hRUWRUNUdLOTU5MDc3ZDVWbTBoMXY4bUQ2N0ZjOHVueWVmU09yL2NOVHh4dy9OMDIxdnkzbjRYNnNmb1g5VmFlWU9PbVV5ZmJYZnh4OThlVGhHL3NuZmQvblRIb3FqQmF3ckhtSnVhbkZRSVlBT0hDaGdrVjZLWW1WTUU1dWZsNUpCcFREakJCbkw4Z3YxOHRQS29aeVdjcUxqUTNnN0JRNG13ZXFUQzh2dnlnWHpYTE9JcUFjekFHZ1dHRnFZQUFETm5SWEp1Y2tGc05jQ1JQa1Nra3NTZFJMS3dMcUIvTCtvV2xoenk4b3ljelBBMnBpRW9iR0xiSm14aUkwQWY3U1BKQkxVblNUTTByenNuV05RQmFncFJsR3BQVEZDRW1MSUN1Wi9rT05Zb1VheFphYWw1Nlpsd3B6ZTA1aVVtb09sTU1IOURIWXczb0ZSWmw1SlRDZkFFV0w5VXJ5U3hKaDZyaVM4M05nSW1DL01md0RBS0ZSZWwwdUF3QUEifQ== -->
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["AZT"],"name":[1],"type":["chr"],"align":["left"]},{"label":["AIDS_yes"],"name":[2],"type":["int"],"align":["right"]},{"label":["n"],"name":[3],"type":["int"],"align":["right"]},{"label":["AIDS_no"],"name":[4],"type":["int"],"align":["right"]}],"data":[{"1":"Yes","2":"25","3":"170","4":"145","_rn_":"1"},{"1":"No","2":"44","3":"168","4":"124","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10],"total":[4]},"rows":{"min":[10],"max":[10],"total":[2]},"pages":{}}}
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["r.day"],"name":[1],"type":["int"],"align":["right"]},{"label":["month"],"name":[2],"type":["int"],"align":["right"]},{"label":["day"],"name":[3],"type":["int"],"align":["right"]},{"label":["pow.obs"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["ws30"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["wd30"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["pow.obs.norm"],"name":[7],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"1","3":"1","4":"243.0278","5":"6.723611","6":"4.0343405","7":"0.04860556","_rn_":"1"},{"1":"2","2":"1","3":"2","4":"2780.0137","5":"4.272603","6":"2.1365208","7":"0.55600274","_rn_":"2"},{"1":"3","2":"1","3":"3","4":"2118.6164","5":"4.272603","6":"1.6240318","7":"0.42372329","_rn_":"3"},{"1":"4","2":"1","3":"4","4":"1660.8767","5":"6.541096","6":"0.2269022","7":"0.33217534","_rn_":"4"},{"1":"5","2":"1","3":"5","4":"1872.7945","5":"9.713699","6":"5.3161852","7":"0.37455890","_rn_":"5"},{"1":"6","2":"1","3":"6","4":"3212.2603","5":"8.161644","6":"0.9522963","7":"0.64245205","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10],"total":[7]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
   </script>
 </div>
 <!-- rnb-frame-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>The data consist of patients being treated with AZT and the number of patients with AIDS, as well as patients not being treated with AZT and the number of patients having AIDS. It looks like more patients get AIDS if they are not treated with AZT.</p>
+<div id="formulate-an-initial-model" class="section level3">
+<h3>1. Formulate an initial model</h3>
+<p>The model that we consider is: <span class="math display">\[y=f(w_s)=\beta_0+\beta_1w_s+\beta_2w_s^2\]</span> Where y is the observed power production and f is a function of wind speed.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kMT1sbShwb3cub2JzLm5vcm1+IHdzMzArSSh3czMwXjIpLCBkYXRhPWRhdGEpXG5zdW1tYXJ5KG1vZDEpXG5gYGAifQ== -->
+<pre class="r"><code>mod1=lm(pow.obs.norm~ ws30+I(ws30^2), data=data)
+summary(mod1)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5DYWxsOlxubG0oZm9ybXVsYSA9IHBvdy5vYnMubm9ybSB+IHdzMzAgKyBJKHdzMzBeMiksIGRhdGEgPSBkYXRhKVxuXG5SZXNpZHVhbHM6XG4gICAgIE1pbiAgICAgICAxUSAgIE1lZGlhbiAgICAgICAzUSAgICAgIE1heCBcbi0wLjQ3NjMwIC0wLjEwNDY0IC0wLjAyMDEwICAwLjA5NDYzICAwLjY1NzkyIFxuXG5Db2VmZmljaWVudHM6XG4gICAgICAgICAgICAgIEVzdGltYXRlIFN0ZC4gRXJyb3IgdCB2YWx1ZSBQcig+fHR8KSAgICBcbihJbnRlcmNlcHQpIC0wLjE4NTc0NDQgIDAuMDM5OTIzMCAgLTQuNjUzIDUuMDNlLTA2ICoqKlxud3MzMCAgICAgICAgIDAuMDU4MTQzOCAgMC4wMDc0OTkxICAgNy43NTMgMS41OWUtMTMgKioqXG5JKHdzMzBeMikgICAtMC4wMDA2NTM2ICAwLjAwMDMwODYgIC0yLjExOCAgICAwLjAzNSAqICBcbi0tLVxuU2lnbmlmLiBjb2RlczogIDAg4oCYKioq4oCZIDAuMDAxIOKAmCoq4oCZIDAuMDEg4oCYKuKAmSAwLjA1IOKAmC7igJkgMC4xIOKAmCDigJkgMVxuXG5SZXNpZHVhbCBzdGFuZGFyZCBlcnJvcjogMC4xNjQ4IG9uIDI4NSBkZWdyZWVzIG9mIGZyZWVkb21cbk11bHRpcGxlIFItc3F1YXJlZDogIDAuNTg5NCxcdEFkanVzdGVkIFItc3F1YXJlZDogIDAuNTg2NiBcbkYtc3RhdGlzdGljOiAyMDQuNiBvbiAyIGFuZCAyODUgREYsICBwLXZhbHVlOiA8IDIuMmUtMTZcbiJ9 -->
+<pre><code>
+Call:
+lm(formula = pow.obs.norm ~ ws30 + I(ws30^2), data = data)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.47630 -0.10464 -0.02010  0.09463  0.65792 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -0.1857444  0.0399230  -4.653 5.03e-06 ***
+ws30         0.0581438  0.0074991   7.753 1.59e-13 ***
+I(ws30^2)   -0.0006536  0.0003086  -2.118    0.035 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.1648 on 285 degrees of freedom
+Multiple R-squared:  0.5894,    Adjusted R-squared:  0.5866 
+F-statistic: 204.6 on 2 and 285 DF,  p-value: &lt; 2.2e-16</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuQUlDKG1vZDEpXG5gYGAifQ== -->
+<pre class="r"><code>AIC(mod1)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIC0yMTYuMzg2NVxuIn0= -->
+<pre><code>[1] -216.3865</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>All parameters are significant.</p>
+<p>Adding wind direction:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kND1sbShwb3cub2JzLm5vcm1+IHdzMzArd2QzMCtJKHdzMzBeMikrSSh3ZDMwXjIpLCBkYXRhPWRhdGEpXG5zdW1tYXJ5KG1vZDQpXG5gYGAifQ== -->
+<pre class="r"><code>mod4=lm(pow.obs.norm~ ws30+wd30+I(ws30^2)+I(wd30^2), data=data)
+summary(mod4)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5DYWxsOlxubG0oZm9ybXVsYSA9IHBvdy5vYnMubm9ybSB+IHdzMzAgKyB3ZDMwICsgSSh3czMwXjIpICsgSSh3ZDMwXjIpLCBcbiAgICBkYXRhID0gZGF0YSlcblxuUmVzaWR1YWxzOlxuICAgIE1pbiAgICAgIDFRICBNZWRpYW4gICAgICAzUSAgICAgTWF4IFxuLTAuNDkxOCAtMC4xMDQ1IC0wLjAxNTMgIDAuMDkxMiAgMC42MzI4IFxuXG5Db2VmZmljaWVudHM6XG4gICAgICAgICAgICAgIEVzdGltYXRlIFN0ZC4gRXJyb3IgdCB2YWx1ZSBQcig+fHR8KSAgICBcbihJbnRlcmNlcHQpIC0wLjIyMDU3ODMgIDAuMDQ3Mzc0MCAgLTQuNjU2IDQuOTZlLTA2ICoqKlxud3MzMCAgICAgICAgIDAuMDU3Mzc2NiAgMC4wMDc0NzI5ICAgNy42NzggMi42NGUtMTMgKioqXG53ZDMwICAgICAgICAgMC4wNDY0ODAyICAwLjAyMjQwMzEgICAyLjA3NSAgIDAuMDM4OSAqICBcbkkod3MzMF4yKSAgIC0wLjAwMDYxNDkgIDAuMDAwMzA2OCAgLTIuMDA0ICAgMC4wNDYwICogIFxuSSh3ZDMwXjIpICAgLTAuMDA4MTIzNiAgMC4wMDM0NTc4ICAtMi4zNDkgICAwLjAxOTUgKiAgXG4tLS1cblNpZ25pZi4gY29kZXM6ICAwIOKAmCoqKuKAmSAwLjAwMSDigJgqKuKAmSAwLjAxIOKAmCrigJkgMC4wNSDigJgu4oCZIDAuMSDigJgg4oCZIDFcblxuUmVzaWR1YWwgc3RhbmRhcmQgZXJyb3I6IDAuMTYzNiBvbiAyODMgZGVncmVlcyBvZiBmcmVlZG9tXG5NdWx0aXBsZSBSLXNxdWFyZWQ6ICAwLjU5ODEsXHRBZGp1c3RlZCBSLXNxdWFyZWQ6ICAwLjU5MjQgXG5GLXN0YXRpc3RpYzogMTA1LjMgb24gNCBhbmQgMjgzIERGLCAgcC12YWx1ZTogPCAyLjJlLTE2XG4ifQ== -->
+<pre><code>
+Call:
+lm(formula = pow.obs.norm ~ ws30 + wd30 + I(ws30^2) + I(wd30^2), 
+    data = data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-0.4918 -0.1045 -0.0153  0.0912  0.6328 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -0.2205783  0.0473740  -4.656 4.96e-06 ***
+ws30         0.0573766  0.0074729   7.678 2.64e-13 ***
+wd30         0.0464802  0.0224031   2.075   0.0389 *  
+I(ws30^2)   -0.0006149  0.0003068  -2.004   0.0460 *  
+I(wd30^2)   -0.0081236  0.0034578  -2.349   0.0195 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.1636 on 283 degrees of freedom
+Multiple R-squared:  0.5981,    Adjusted R-squared:  0.5924 
+F-statistic: 105.3 on 4 and 283 DF,  p-value: &lt; 2.2e-16</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuQUlDKG1vZDQpXG5gYGAifQ== -->
+<pre class="r"><code>AIC(mod4)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIC0yMTguNTI5XG4ifQ== -->
+<pre><code>[1] -218.529</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kMj1nbG0ocG93Lm9icy5ub3JtfiB3czMwLGZhbWlseT1HYW1tYSwgIGRhdGE9ZGF0YSlcbnN1bW1hcnkobW9kMilcbmBgYCJ9 -->
+<pre class="r"><code>mod2=glm(pow.obs.norm~ ws30,family=Gamma,  data=data)
+summary(mod2)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5DYWxsOlxuZ2xtKGZvcm11bGEgPSBwb3cub2JzLm5vcm0gfiB3czMwLCBmYW1pbHkgPSBHYW1tYSwgZGF0YSA9IGRhdGEpXG5cbkRldmlhbmNlIFJlc2lkdWFsczogXG4gICAgTWluICAgICAgIDFRICAgTWVkaWFuICAgICAgIDNRICAgICAgTWF4ICBcbi0zLjk1MDggIC0xLjExMTAgIC0wLjE3OTUgICAwLjQ5NTkgICAxLjg5MDQgIFxuXG5Db2VmZmljaWVudHM6XG4gICAgICAgICAgICBFc3RpbWF0ZSBTdGQuIEVycm9yIHQgdmFsdWUgUHIoPnx0fCkgICAgXG4oSW50ZXJjZXB0KSAgNi43NjIzNiAgICAwLjM2NjE1ICAgMTguNDcgICA8MmUtMTYgKioqXG53czMwICAgICAgICAtMC4yNTQ4NyAgICAwLjAxNzU4ICAtMTQuNDkgICA8MmUtMTYgKioqXG4tLS1cblNpZ25pZi4gY29kZXM6ICAwIOKAmCoqKuKAmSAwLjAwMSDigJgqKuKAmSAwLjAxIOKAmCrigJkgMC4wNSDigJgu4oCZIDAuMSDigJgg4oCZIDFcblxuKERpc3BlcnNpb24gcGFyYW1ldGVyIGZvciBHYW1tYSBmYW1pbHkgdGFrZW4gdG8gYmUgMC42OTk0MDM4KVxuXG4gICAgTnVsbCBkZXZpYW5jZTogNTAzLjMyICBvbiAyODcgIGRlZ3JlZXMgb2YgZnJlZWRvbVxuUmVzaWR1YWwgZGV2aWFuY2U6IDQxOS4zNCAgb24gMjg2ICBkZWdyZWVzIG9mIGZyZWVkb21cbkFJQzogLTI0Ni40MlxuXG5OdW1iZXIgb2YgRmlzaGVyIFNjb3JpbmcgaXRlcmF0aW9uczogNlxuIn0= -->
+<pre><code>
+Call:
+glm(formula = pow.obs.norm ~ ws30, family = Gamma, data = data)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-3.9508  -1.1110  -0.1795   0.4959   1.8904  
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  6.76236    0.36615   18.47   &lt;2e-16 ***
+ws30        -0.25487    0.01758  -14.49   &lt;2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for Gamma family taken to be 0.6994038)
+
+    Null deviance: 503.32  on 287  degrees of freedom
+Residual deviance: 419.34  on 286  degrees of freedom
+AIC: -246.42
+
+Number of Fisher Scoring iterations: 6</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuQUlDKG1vZDIpXG5gYGAifQ== -->
+<pre class="r"><code>AIC(mod2)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIC0yNDYuNDI0MlxuIn0= -->
+<pre><code>[1] -246.4242</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Using transformation 1, from project 1:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudHJhbnMxIDwtIGZ1bmN0aW9uKGxhbWJkYSx5KXtcbiAgICB5LmwgPC0gMS9sYW1iZGEqbG9nKCh5XmxhbWJkYSkvKDEteV5sYW1iZGEpKVxuICAgIHJldHVybih5LmwpfVxuXG4jIyBwcm9maWxlIGxpa2VsaWhvb2QgZm9yIGxhbWJkYVxubHAubGFtYmRhMSA8LSBmdW5jdGlvbihsYW1iZGEseSl7XG4gICAgbiA8LSBsZW5ndGgoeSlcbiAgICB5LmwgPC0gdHJhbnMxKGxhbWJkYSAseSlcbiAgICBzaWdtYXNxIDwtIDEvbiAqIHN1bSgoeS5sLW1lYW4oeS5sKSleMilcbiAgICAtbi8yICogbG9nKHNpZ21hc3EpICsgc3VtKGxvZyhhYnMoLTEvKHkqKC0xICsgeV5sYW1iZGEpKSkpKX1cblxuKG9wdC5sYW1iZGEudHJhbnMxPW9wdGltaXplKGxwLmxhbWJkYTEsYygwLjAwMDAwMSw3MCkseT1kYXRhJHBvdy5vYnMubm9ybSwgbWF4aW11bT1UUlVFKSlcbmBgYCJ9 -->
+<pre class="r"><code>trans1 &lt;- function(lambda,y){
+    y.l &lt;- 1/lambda*log((y^lambda)/(1-y^lambda))
+    return(y.l)}
+
+## profile likelihood for lambda
+lp.lambda1 &lt;- function(lambda,y){
+    n &lt;- length(y)
+    y.l &lt;- trans1(lambda ,y)
+    sigmasq &lt;- 1/n * sum((y.l-mean(y.l))^2)
+    -n/2 * log(sigmasq) + sum(log(abs(-1/(y*(-1 + y^lambda)))))}
+
+(opt.lambda.trans1=optimize(lp.lambda1,c(0.000001,70),y=data$pow.obs.norm, maximum=TRUE))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiJG1heGltdW1cblsxXSAwLjI2MjA4NDZcblxuJG9iamVjdGl2ZVxuWzFdIDUzMS4wMDExXG4ifQ== -->
+<pre><code>$maximum
+[1] 0.2620846
+
+$objective
+[1] 531.0011</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kMz1nbG0odHJhbnMxKG9wdC5sYW1iZGEudHJhbnMxJG1heGltdW0sZGF0YSRwb3cub2JzLm5vcm0pfiB3czMwLGZhbWlseT1nYXVzc2lhbiwgIGRhdGE9ZGF0YSlcbnN1bW1hcnkobW9kMylcbmBgYCJ9 -->
+<pre class="r"><code>mod3=glm(trans1(opt.lambda.trans1$maximum,data$pow.obs.norm)~ ws30,family=gaussian,  data=data)
+summary(mod3)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5DYWxsOlxuZ2xtKGZvcm11bGEgPSB0cmFuczEob3B0LmxhbWJkYS50cmFuczEkbWF4aW11bSwgZGF0YSRwb3cub2JzLm5vcm0pIH4gXG4gICAgd3MzMCwgZmFtaWx5ID0gZ2F1c3NpYW4sIGRhdGEgPSBkYXRhKVxuXG5EZXZpYW5jZSBSZXNpZHVhbHM6IFxuICAgIE1pbiAgICAgICAxUSAgIE1lZGlhbiAgICAgICAzUSAgICAgIE1heCAgXG4tOC44OTY3ICAtMS42MDIzICAgMC4yNTAyICAgMS45MDQxICAxMi4wMTQ5ICBcblxuQ29lZmZpY2llbnRzOlxuICAgICAgICAgICAgRXN0aW1hdGUgU3RkLiBFcnJvciB0IHZhbHVlIFByKD58dHwpICAgIFxuKEludGVyY2VwdCkgLTQuNDU5MjYgICAgMC40MTU3NSAgLTEwLjczICAgPDJlLTE2ICoqKlxud3MzMCAgICAgICAgIDAuNzY3NjQgICAgMC4wNDA4MiAgIDE4LjgwICAgPDJlLTE2ICoqKlxuLS0tXG5TaWduaWYuIGNvZGVzOiAgMCDigJgqKirigJkgMC4wMDEg4oCYKirigJkgMC4wMSDigJgq4oCZIDAuMDUg4oCYLuKAmSAwLjEg4oCYIOKAmSAxXG5cbihEaXNwZXJzaW9uIHBhcmFtZXRlciBmb3IgZ2F1c3NpYW4gZmFtaWx5IHRha2VuIHRvIGJlIDkuOTM4MjUzKVxuXG4gICAgTnVsbCBkZXZpYW5jZTogNjM1Ni45ICBvbiAyODcgIGRlZ3JlZXMgb2YgZnJlZWRvbVxuUmVzaWR1YWwgZGV2aWFuY2U6IDI4NDIuMyAgb24gMjg2ICBkZWdyZWVzIG9mIGZyZWVkb21cbkFJQzogMTQ4Mi43XG5cbk51bWJlciBvZiBGaXNoZXIgU2NvcmluZyBpdGVyYXRpb25zOiAyXG4ifQ== -->
+<pre><code>
+Call:
+glm(formula = trans1(opt.lambda.trans1$maximum, data$pow.obs.norm) ~ 
+    ws30, family = gaussian, data = data)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-8.8967  -1.6023   0.2502   1.9041  12.0149  
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -4.45926    0.41575  -10.73   &lt;2e-16 ***
+ws30         0.76764    0.04082   18.80   &lt;2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for gaussian family taken to be 9.938253)
+
+    Null deviance: 6356.9  on 287  degrees of freedom
+Residual deviance: 2842.3  on 286  degrees of freedom
+AIC: 1482.7
+
+Number of Fisher Scoring iterations: 2</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuQUlDKG1vZDMpXG5gYGAifQ== -->
+<pre class="r"><code>AIC(mod3)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDE0ODIuNjYyXG4ifQ== -->
+<pre><code>[1] 1482.662</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Trying an exponential model:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kNT1sbShsb2coZGF0YSRwb3cub2JzLm5vcm0pfmRhdGEkd3MzMClcbnN1bW1hcnkobW9kNSlcbmBgYCJ9 -->
+<pre class="r"><code>mod5=lm(log(data$pow.obs.norm)~data$ws30)
+summary(mod5)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5DYWxsOlxubG0oZm9ybXVsYSA9IGxvZyhkYXRhJHBvdy5vYnMubm9ybSkgfiBkYXRhJHdzMzApXG5cblJlc2lkdWFsczpcbiAgICBNaW4gICAgICAxUSAgTWVkaWFuICAgICAgM1EgICAgIE1heCBcbi02Ljc3OTkgLTAuMzgxNSAgMC40MTg1ICAwLjg2NDEgIDIuODI0MyBcblxuQ29lZmZpY2llbnRzOlxuICAgICAgICAgICAgRXN0aW1hdGUgU3RkLiBFcnJvciB0IHZhbHVlIFByKD58dHwpICAgIFxuKEludGVyY2VwdCkgLTQuNTE1ODEgICAgMC4yMDAyNyAgLTIyLjU1ICAgPDJlLTE2ICoqKlxuZGF0YSR3czMwICAgIDAuMjU4NTIgICAgMC4wMTk2NiAgIDEzLjE1ICAgPDJlLTE2ICoqKlxuLS0tXG5TaWduaWYuIGNvZGVzOiAgMCDigJgqKirigJkgMC4wMDEg4oCYKirigJkgMC4wMSDigJgq4oCZIDAuMDUg4oCYLuKAmSAwLjEg4oCYIOKAmSAxXG5cblJlc2lkdWFsIHN0YW5kYXJkIGVycm9yOiAxLjUxOSBvbiAyODYgZGVncmVlcyBvZiBmcmVlZG9tXG5NdWx0aXBsZSBSLXNxdWFyZWQ6ICAwLjM3NjcsXHRBZGp1c3RlZCBSLXNxdWFyZWQ6ICAwLjM3NDUgXG5GLXN0YXRpc3RpYzogMTcyLjkgb24gMSBhbmQgMjg2IERGLCAgcC12YWx1ZTogPCAyLjJlLTE2XG4ifQ== -->
+<pre><code>
+Call:
+lm(formula = log(data$pow.obs.norm) ~ data$ws30)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-6.7799 -0.3815  0.4185  0.8641  2.8243 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -4.51581    0.20027  -22.55   &lt;2e-16 ***
+data$ws30    0.25852    0.01966   13.15   &lt;2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 1.519 on 286 degrees of freedom
+Multiple R-squared:  0.3767,    Adjusted R-squared:  0.3745 
+F-statistic: 172.9 on 1 and 286 DF,  p-value: &lt; 2.2e-16</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuQUlDKG1vZDUpXG5gYGAifQ== -->
+<pre class="r"><code>AIC(mod5)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDEwNjEuOTMyXG4ifQ== -->
+<pre><code>[1] 1061.932</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
 </div>
-<div id="fitting-data-to-binomial-distribution-i.e.-consider-all-data-as-coming-from-the-same-population" class="section level3">
-<h3>Fitting data to binomial distribution (i.e. consider all data as coming from the same population)</h3>
-<p>The log-likelihood of the binomial distribution is: <span class="math display">\[l(\theta)=\sum_{k=0}^{n}k\cdot log(\theta)+(n-k)\cdot log(1-\theta)+c(n,k)\]</span> where n is the number of patients, k is the number of patient with AIDS. Since it is considered as coming from the same population i.e. follow the same distribution, the data is fitted to one binomial distribution.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG4jRm9ybXVsYXRpbmcgdGhlIGxpa2VsaWhvb2QgZnVuY3Rpb25cbmJpbm9taWFsLmxvZy5saWtlbGlob29kID0gZnVuY3Rpb24oeCxzaXplLHRoZXRhKXtcbiAgLShzdW0oZGJpbm9tKHg9eCxzaXplPXNpemUscHJvYj10aGV0YSwgbG9nPVRSVUUpKSl9XG5cbih0aGV0YS5vcHQ9b3B0aW1pemUoYmlub21pYWwubG9nLmxpa2VsaWhvb2QsIGMoMC4wMSwwLjk5KSx4PXN1bShkYXRhJEFJRFNfeWVzKSxzaXplPXN1bShkYXRhJG4pKSRtaW5pbXVtKVxuYGBgIn0= -->
-<pre class="r"><code>
-#Formulating the likelihood function
-binomial.log.likelihood = function(x,size,theta){
-  -(sum(dbinom(x=x,size=size,prob=theta, log=TRUE)))}
-
-(theta.opt=optimize(binomial.log.likelihood, c(0.01,0.99),x=sum(data$AIDS_yes),size=sum(data$n))$minimum)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMjA0MTQ3MlxuIn0= -->
-<pre><code>[1] 0.2041472</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="fit-the-binomial-separately-to-the-two-distributions-and-test-if-there-is-a-difference-between-the-groups." class="section level3">
-<h3>Fit the Binomial separately to the two distributions and test if there is a difference between the groups.</h3>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI1RoZXRhIGZvciBwYXRpZW50cyB0cmVhdGVkIHdpdGggQVpULiBUaGlzIGlzIHRoZSBwcm9iYWJpbGl0eSBvZiBoYXZpbmcgQUlEUyB3aGVuIHRyZWF0ZWQgd2l0aCBBWlQuIFxuKHRoZXRhX0FaVF95ZXMub3B0PW9wdGltaXplKGJpbm9taWFsLmxvZy5saWtlbGlob29kLCBjKDAuMDEsMC45OSkseD1kYXRhJEFJRFNfeWVzWzFdLHNpemU9ZGF0YSRuWzFdKSRtaW5pbXVtKVxuYGBgIn0= -->
-<pre class="r"><code>#Theta for patients treated with AZT. This is the probability of having AIDS when treated with AZT. 
-(theta_AZT_yes.opt=optimize(binomial.log.likelihood, c(0.01,0.99),x=data$AIDS_yes[1],size=data$n[1])$minimum)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMTQ3MDU2XG4ifQ== -->
-<pre><code>[1] 0.147056</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI1RoZXRhIGZvciBwYXRpZW50cyB0cmVhdGVkIHdpdGhvdXQgQVpULiBUaGlzIGlzIHRoZSBwcm9iYWJpbGl0eSBvZiBoYXZpbmcgQUlEUyB3aXRob3V0IHRyZWF0bWVudC4gXG4odGhldGFfQVpUX25vLm9wdD1vcHRpbWl6ZShiaW5vbWlhbC5sb2cubGlrZWxpaG9vZCwgYygwLjAxLDAuOTkpLHg9ZGF0YSRBSURTX3llc1syXSxzaXplPWRhdGEkblsyXSkkbWluaW11bSlcbmBgYCJ9 -->
-<pre class="r"><code>#Theta for patients treated without AZT. This is the probability of having AIDS without treatment. 
-(theta_AZT_no.opt=optimize(binomial.log.likelihood, c(0.01,0.99),x=data$AIDS_yes[2],size=data$n[2])$minimum)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMjYxOTE0OVxuIn0= -->
-<pre><code>[1] 0.2619149</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>The null hypothesis is that the two distributions are equal meaning that if AZT_yes follows <span class="math inline">\(B(m,\pi_x)\)</span> and AZT_no follows <span class="math inline">\(B(n,\pi_y)\)</span> <span class="math inline">\(\pi_x=\pi_y\)</span>.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxueD1kYXRhJEFJRFNfeWVzWzFdXG55PWRhdGEkQUlEU19ub1sxXVxubT1zdW0oZGF0YSRBSURTX3llcylcbm49c3VtKGRhdGEkQUlEU19ubylcbk49bStuXG50PXgreVxuXG4jVGhlIHN0YW5kYXJkIHRlc3Qgb2YgZXF1YWxpdHkgb2YgcHJvcG9ydGlvbnMgaXMgdGhlIGZhbW91cyBjaGktc3F1YXJlZCB0ZXN0XG4oY2hpLnNxdWFyZWQudGVzdD1OKih4KihuLXkpLXkqKG0teCkpXjIvKG0qbip0KihOLXQpKSlcbmBgYCJ9 -->
-<pre class="r"><code>x=data$AIDS_yes[1]
-y=data$AIDS_no[1]
-m=sum(data$AIDS_yes)
-n=sum(data$AIDS_no)
-N=m+n
-t=x+y
-
-#The standard test of equality of proportions is the famous chi-squared test
-(chi.squared.test=N*(x*(n-y)-y*(m-x))^2/(m*n*t*(N-t)))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDYuODU5Njk1XG4ifQ== -->
-<pre><code>[1] 6.859695</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuKHBjaGlzcShjaGkuc3F1YXJlZC50ZXN0LCBkZj0xLCBsb3dlci50YWlsPUZBTFNFKSlcbmBgYCJ9 -->
-<pre class="r"><code>(pchisq(chi.squared.test, df=1, lower.tail=FALSE))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDA4ODE2MTU5XG4ifQ== -->
-<pre><code>[1] 0.008816159</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>With a p-value of 0.008816159 we have strong evidence against the null hypothesis meaning that the two groups do not follow the same distribution.</p>
-<p>To proceed with a likelihood analysis, the number of people with AIDS (X) in the group treated with AZT is <span class="math inline">\(B(m,\pi_x)\)</span> and independently the number of people with AIDS (Y) in the second group is <span class="math inline">\(B(n,\pi_y)\)</span>.</p>
-<p>On observing x and y the joint likelihood of <span class="math inline">\((\pi_x,\pi_y)\)</span>: <span class="math display">\[L(\pi_x, \pi_y)=\pi_x^x*(1-\pi_x)^{m-x}\pi_y^y(1-\pi_y)^{n-y}\]</span></p>
-<p>The log odds-ratio is defined by: <span class="math display">\[\theta=\log \frac{\pi_{x} /\left(1-\pi_{x}\right)}{\pi_{y} /\left(1-\pi_{y}\right)}\]</span></p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuKHRoZXRhLmNvbXBhcmUgPSBsb2coKHRoZXRhX0FaVF95ZXMub3B0LygxLXRoZXRhX0FaVF95ZXMub3B0KSkvKHRoZXRhX0FaVF9uby5vcHQvKDEtIHRoZXRhX0FaVF9uby5vcHQpKSkpXG5gYGAifQ== -->
-<pre class="r"><code>(theta.compare = log((theta_AZT_yes.opt/(1-theta_AZT_yes.opt))/(theta_AZT_no.opt/(1- theta_AZT_no.opt))))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIC0wLjcyMTg0MDlcbiJ9 -->
-<pre><code>[1] -0.7218409</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>To make a profile likelihood function for <span class="math inline">\(\theta\)</span> as stated above, the eta is calculated:</p>
-<p><span class="math display">\[\eta=\log \frac{\pi_{y}}{1-\pi_{y}}\]</span> With <span class="math inline">\(\eta\)</span> the joint likelihood function for <span class="math inline">\(\theta\)</span> and <span class="math inline">\(\eta\)</span> can be found:</p>
-<p><span class="math display">\[L(\theta, \eta)=e^{\theta x} e^{\eta(x+y)}\left(1+e^{\theta+\eta}\right)^{-m}\left(1+e^{\eta}\right)^{-n}\]</span> The MLE for this likelihood function is: <span class="math display">\[\hat{\theta}=log(\frac{x/(m-x)}{y/(n-y)})\]</span> Calculate optimal theta for the joint likelihood</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuKHRoYXQ9IGxvZyh4LyhtLXgpKihuLXkpL3kpKVxuYGBgIn0= -->
-<pre class="r"><code>(that= log(x/(m-x)*(n-y)/y))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIC0wLjcyMTc2NlxuIn0= -->
-<pre><code>[1] -0.721766</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2UyPC0gMS94ICsgMS8obS14KSArIDEveSArIDEvKG4teSlcbnNlPC0gc3FydChzZTIpXG5cbmBgYCJ9 -->
-<pre class="r"><code>se2&lt;- 1/x + 1/(m-x) + 1/y + 1/(n-y)
-se&lt;- sqrt(se2)
-</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p><span class="math inline">\(\hat{\theta}}=-0.721766\)</span> Plot the joint likelihood</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZWhhdDwtIGxvZyh5LyhuLXkpKVxuICAjcHJpbnQoYyh0aGF0LGVoYXQpKVxuICBjYXQoJ3RoZXRhLWhhdD0nLHRoYXQsJywgIHNlPScsc2UsJ1xcbicpXG5gYGAifQ== -->
-<pre class="r"><code>ehat&lt;- log(y/(n-y))
-  #print(c(that,ehat))
-  cat(&#39;theta-hat=&#39;,that,&#39;,  se=&#39;,se,&#39;\n&#39;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoidGhldGEtaGF0PSAtMC43MjE3NjYgLCAgc2U9IDAuMjc4NzI2MyBcbiJ9 -->
-<pre><code>theta-hat= -0.721766 ,  se= 0.2787263 </code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBwbG90c1xucGFyKG1mcm93PWMoMSwxKSlcbnRoPC0gc2VxKHRoYXQtMipzZSx0aGF0KzMqc2UsbGVuPTMwKVxuZXQ8LSBzZXEoZWhhdC00LGVoYXQrMixsZW49MzApXG5cbmZ1bjE8LSBmdW5jdGlvbih0aGV0YSxldGEpe1xuICAgICAgYSA8LSBleHAodGhldGErZXRhKVxuICAgICAgYjwtIGV4cChldGEpXG4gICAgICB4KnRoZXRhICsgKHgreSkqZXRhIC0gbSpsb2coMSthKSAtIG4qbG9nKDErYilcbiAgICAgIH1cblxubGw8LSBvdXRlcih0aCxldCwnZnVuMScpXG5saWtlPC0gZXhwKGxsLW1heChsbCkpXG5cbmxpazE8LSBhcHBseShsaWtlLDEsbWF4KVxucGxvdCh0aCxsaWsxLHR5cGU9J24nLHhsYWI9ZXhwcmVzc2lvbih0aGV0YSksXG4gICAgIHlsYWI9J0xpa2VsaWhvb2QnKVxuICBsaW5lcyh0aCxsaWsxKVxuYGBgIn0= -->
-<pre class="r"><code># plots
-par(mfrow=c(1,1))
-th&lt;- seq(that-2*se,that+3*se,len=30)
-et&lt;- seq(ehat-4,ehat+2,len=30)
-
-fun1&lt;- function(theta,eta){
-      a &lt;- exp(theta+eta)
-      b&lt;- exp(eta)
-      x*theta + (x+y)*eta - m*log(1+a) - n*log(1+b)
-      }
-
-ll&lt;- outer(th,et,&#39;fun1&#39;)
-like&lt;- exp(ll-max(ll))
-
-lik1&lt;- apply(like,1,max)
-plot(th,lik1,type=&#39;n&#39;,xlab=expression(theta),
-     ylab=&#39;Likelihood&#39;)
-  lines(th,lik1)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuICBhYmxpbmUoaD0uMTUsbHdkPS40KVxuICBhYmxpbmUodj0wKVxuYGBgIn0= -->
-<pre class="r"><code>  abline(h=.15,lwd=.4)
-  abline(v=0)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuICB0aXRsZShleHByZXNzaW9uKCcoYikgUHJvZmlsZSBsaWtlbGlob29kJykpXG5gYGAifQ== -->
-<pre class="r"><code>  title(expression(&#39;(b) Profile likelihood&#39;))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-plot-begin eyJoZWlnaHQiOjQzMi42MzI5LCJ3aWR0aCI6NzAwLCJzaXplX2JlaGF2aW9yIjowLCJjb25kaXRpb25zIjpbXX0= -->
-<p><img src="data:image/png;base64,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" /></p>
-<!-- rnb-plot-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuTkFcbk5BXG5OQVxuYGBgIn0= -->
-<pre class="r"><code>NA
-NA
-NA</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>The null hypothesis is <span class="math inline">\(H_0: \theta=0\)</span>. Since <span class="math inline">\(\theta\)</span> is significantly different from zero, the null-hypothesis is rejected and it is concluded that the groups are significantly different from each other. This means that there is a difference in if a patient receives treament with AZT or not.</p>
-</div>
-<div id="estimate-parameters-in-the-model-p0-probability-of-aids-in-control-group-p1-probability-of-aids-in-treatment-group-and-report-a-confidence-interval-for-the-parameter-describing-the-dif--ference-compare-with-the-result-above." class="section level3">
-<h3>Estimate parameters in the model (p0 probability of AIDS in control group, p1 probability of AIDS in treatment group) and report a confidence interval for the parameter describing the dif- ference, compare with the result above.</h3>
-<p>The parameters <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> can be estimated with the logistic regression model. Here <span class="math inline">\(p_0\)</span> denotes the probability of success (i.e. getting AIDS) in the control treatment and <span class="math inline">\(p_1\)</span> denotes the probability of succes in the new treatment.</p>
-<p><span class="math display">\[p_{0}=\frac{e^{\beta_{0}}}{1+e^{\beta_{0}}}, \quad p_{1}=\frac{e^{\beta_{0}+\beta_{1}}}{1+e^{\beta_{0}+\beta_{1}}}\]</span> In the above <span class="math inline">\(\beta_1\)</span> describes the difference between the treatments. Thus if <span class="math inline">\(\beta_1 = 0\)</span> then there is no difference between the two treatments. The likelihood for the logistic regression can be written as:</p>
-<p><span class="math display">\[L(\beta_0, \beta_1) = \Pi_i p_i^{y_i}(1-p_i)^{1-y_i}\]</span> Here <span class="math inline">\(y_i\)</span> is the succes in treatment i. We have that <span class="math inline">\(i=0\)</span> control treatment, <span class="math inline">\(i=1\)</span> test treatment. The log-likelighood is given as <span class="math display">\[logL(\beta_0, \beta_1) = \sum_i \left[(\beta_0 + \beta_1 \cdot treatment_i)y_i - log(1 + exp(\beta_0 + \beta_1 \cdot treatment_i)) \right]\]</span></p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShtYWdyaXR0cilcbmxvZ19kYXRhID0gZGF0YVxubG9nTF9wYXJ0aWFsIDwtIGZ1bmN0aW9uKGIwLCBiMSwgZGF0YSwgQVpUID0gVFJVRSl7XG4gICAgeSA9IGlmIChBWlQpIHtkYXRhWzEsMl19IGVsc2Uge2RhdGFbMiwyXX0gJT4lIGFzLm51bWVyaWMoKVxuICAgIG4gPSBpZiAoQVpUKSB7ZGF0YVsxLDNdfSBlbHNlIHtkYXRhWzIsM119ICU+JSBhcy5udW1lcmljKClcbiAgICBmYWxzZSA9IG4teVxuICAgIFxuICAgIHkqKChiMCArIGIxICogQVpUKSAqIDEgLSBsb2coMStleHAoYjArYjEqQVpUKSkpICsgZmFsc2UqKChiMCArIGIxICogQVpUKSAqIDAgLSBsb2coMStleHAoYjArYjEqQVpUKSkpXG59XG5cbmxvZ0wgPC0gZnVuY3Rpb24odGhldGEsIGRhdGEpe1xuICAgICAtIChsb2dMX3BhcnRpYWwodGhldGFbMV0sIHRoZXRhWzJdLGRhdGEsIEYpICsgbG9nTF9wYXJ0aWFsKHRoZXRhWzFdLHRoZXRhWzJdLGRhdGEsIFQpKVxufVxuXG5cbm9wdCA8LSBubG1pbmIoYygwLCAwKSwgbG9nTCwgbG93ZXIgPSBjKC1JbmYsLUluZiksIGRhdGEgPSBsb2dfZGF0YSlcblxucDAgPC0gZXhwKG9wdCRwYXJbMV0pLygxK2V4cChvcHQkcGFyWzFdKSlcbnAxIDwtIGV4cChvcHQkcGFyWzFdICsgb3B0JHBhclsyXSkvKDErZXhwKG9wdCRwYXJbMV0gKyBvcHQkcGFyWzJdKSlcblxuXG5cblxuXG5sb2dMX2IxIDwtIGZ1bmN0aW9uKHRoZXRhLCBiMSwgZGF0YSl7XG4gICAgICAtKGxvZ0xfcGFydGlhbCh0aGV0YVsxXSwgYjEsZGF0YSwgRikgKyBsb2dMX3BhcnRpYWwodGhldGFbMV0sYjEsZGF0YSwgVCkpXG59XG5cbnByb2ZpbGVfYjEgPC0gZnVuY3Rpb24oYjEsIGRhdGEpe1xuICBvcHQgPC0gbmxtaW5iKGMoMCksIGxvZ0xfYjEsIGxvd2VyID0gYygtSW5mKSwgZGF0YSA9IGxvZ19kYXRhLCBiMSA9IGIxKVxuICAjIG9wdGltaXplKGxvZ0wpXG4gIGIwIDwtIG9wdCRwYXJcbiAgLWxvZ0xfYjEoYyhiMCksYjEsZGF0YSlcbn1cblxuXG5iMSA8LSBzZXEoLTUsNSwwLjAxKVxuYWxwaGEgPC0gMC4wNVxuYyA8LSBleHAoLTEvMipxY2hpc3EoMS1hbHBoYSwxKSlcbnAgPSBjKClcbmZvciAoaSBpbiAxOmxlbmd0aChiMSkpe1xuICBwW2ldID0gZXhwKHByb2ZpbGVfYjEoYjFbaV0sIGxvZ19kYXRhKSlcbn1cblxuTUxFX2IxIDwtIG9wdGltaXplKHByb2ZpbGVfYjEsIGMoLTUsNSksIGRhdGEgPSBsb2dfZGF0YSwgbWF4aW11bSA9IFQpJG1heGltdW1cblxucGxvdChiMSwgcC9tYXgocCksICdsJylcbmFibGluZShjLCAwKVxuYGBgIn0= -->
-<pre class="r"><code>library(magrittr)
-log_data = data
-logL_partial &lt;- function(b0, b1, data, AZT = TRUE){
-    y = if (AZT) {data[1,2]} else {data[2,2]} %&gt;% as.numeric()
-    n = if (AZT) {data[1,3]} else {data[2,3]} %&gt;% as.numeric()
-    false = n-y
-    
-    y*((b0 + b1 * AZT) * 1 - log(1+exp(b0+b1*AZT))) + false*((b0 + b1 * AZT) * 0 - log(1+exp(b0+b1*AZT)))
-}
-
-logL &lt;- function(theta, data){
-     - (logL_partial(theta[1], theta[2],data, F) + logL_partial(theta[1],theta[2],data, T))
-}
-
-
-opt &lt;- nlminb(c(0, 0), logL, lower = c(-Inf,-Inf), data = log_data)
-
-p0 &lt;- exp(opt$par[1])/(1+exp(opt$par[1]))
-p1 &lt;- exp(opt$par[1] + opt$par[2])/(1+exp(opt$par[1] + opt$par[2]))
-
-
-
-
-
-logL_b1 &lt;- function(theta, b1, data){
-      -(logL_partial(theta[1], b1,data, F) + logL_partial(theta[1],b1,data, T))
-}
-
-profile_b1 &lt;- function(b1, data){
-  opt &lt;- nlminb(c(0), logL_b1, lower = c(-Inf), data = log_data, b1 = b1)
-  # optimize(logL)
-  b0 &lt;- opt$par
-  -logL_b1(c(b0),b1,data)
-}
-
-
-b1 &lt;- seq(-5,5,0.01)
-alpha &lt;- 0.05
-c &lt;- exp(-1/2*qchisq(1-alpha,1))
-p = c()
-for (i in 1:length(b1)){
-  p[i] = exp(profile_b1(b1[i], log_data))
-}
-
-MLE_b1 &lt;- optimize(profile_b1, c(-5,5), data = log_data, maximum = T)$maximum
-
-plot(b1, p/max(p), &#39;l&#39;)
-abline(c, 0)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYWJsaW5lKHYgPSBNTEVfYjEpXG5gYGAifQ== -->
-<pre class="r"><code>abline(v = MLE_b1)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-plot-begin eyJoZWlnaHQiOjQzMi42MzI5LCJ3aWR0aCI6NzAwLCJzaXplX2JlaGF2aW9yIjowLCJjb25kaXRpb25zIjpbXX0= -->
-<p><img src="data:image/png;base64,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" /></p>
-<!-- rnb-plot-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5cblxuYV9iMSA8LSBiMVtwL21heChwKSA+IGNdXG5DSV9iMSA8LSBjKG1pbihhX2IxKSwgbWF4KGFfYjEpKVxuXG5cbmNhdChcIlRoZSBtYXhpbXVtIGxpa2VsaWhvb2QgZXN0aW1hdGVzIG9mIHAwIGFuZCBwMSBhcmU6IHAwID0gXCIsIHAwLCBcIiBwMSA9IFwiLCBwMSwgXCJcXG5cIilcbmBgYCJ9 -->
-<pre class="r"><code>
-
-
-a_b1 &lt;- b1[p/max(p) &gt; c]
-CI_b1 &lt;- c(min(a_b1), max(a_b1))
-
-
-cat(&quot;The maximum likelihood estimates of p0 and p1 are: p0 = &quot;, p0, &quot; p1 = &quot;, p1, &quot;\n&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiVGhlIG1heGltdW0gbGlrZWxpaG9vZCBlc3RpbWF0ZXMgb2YgcDAgYW5kIHAxIGFyZTogcDAgPSAgMC4yNjE5MDQ4ICBwMSA9ICAwLjE0NzA1ODggXG4ifQ== -->
-<pre><code>The maximum likelihood estimates of p0 and p1 are: p0 =  0.2619048  p1 =  0.1470588 </code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2F0KFwiVGhlIG1heGltdW0gcHJvZmlsZSBsaWtlbGlob29kIGVzdGltYXRlIG9mIGIxIGlzOiAgXCIsIE1MRV9iMSwgXCJcXG5cIilcbmBgYCJ9 -->
-<pre class="r"><code>cat(&quot;The maximum profile likelihood estimate of b1 is:  &quot;, MLE_b1, &quot;\n&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiVGhlIG1heGltdW0gcHJvZmlsZSBsaWtlbGlob29kIGVzdGltYXRlIG9mIGIxIGlzOiAgIC0wLjcyMTc2NTYgXG4ifQ== -->
-<pre><code>The maximum profile likelihood estimate of b1 is:   -0.7217656 </code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2F0KFwiV2l0aCBjb25maWRlbmNlIGludGVydmFsczogXCIsIENJX2IxLCBcIlxcblwiKVxuYGBgIn0= -->
-<pre class="r"><code>cat(&quot;With confidence intervals: &quot;, CI_b1, &quot;\n&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiV2l0aCBjb25maWRlbmNlIGludGVydmFsczogIC0xLjI3IC0wLjE5IFxuIn0= -->
-<pre><code>With confidence intervals:  -1.27 -0.19 </code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>#Analysis of the survival time data</p>
-</div>
-<div id="read-the-data-act320.txt-into-r." class="section level3">
-<h3>Read the data act320.txt into R.</h3>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG4jTG9hZCBkYXRhXG5kYXRhLnRpbWUgPC0gcmVhZC5kZWxpbShcImFjdGczMjAudHh0XCIsaGVhZGVyID0gVFJVRSwgc2VwID0gXCJcIiwgZGVjID0gXCIuXCIpXG5oZWFkKGRhdGEudGltZSwyKSBcbmBgYCJ9 -->
-<pre class="r"><code>
-#Load data
-data.time &lt;- read.delim(&quot;actg320.txt&quot;,header = TRUE, sep = &quot;&quot;, dec = &quot;.&quot;)
-head(data.time,2) </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6MiwibmNvbCI6OX0sInJkZiI6Ikg0c0lBQUFBQUFBQUJuVlJVV29DTVJETlpuY3RCaXBDRDFEcHZ3dmQybitoUFVEcGwvUXZKbEdEYXlMWjJIcXNYcUJYczUzc1prUUREUXg1YnpJdmVUTjVmMTA4c1FVamhPU2tJSlRrSlVBeWVIbDdySjlyUWdvS0xJT1RZZGlQVUhVSElKQmJpUDZ3MzVIL1FPcitndVA2ajZmNmxFdUlENGhSNEhNMTZjVHo1WGQ2ejBNZlY0Wkx3M2VxQlREdVRQZEpxbVZFaGRjN2hhWHFVeG1QSmY0WVVkNHFoQVBIaGZJYlpGdnVqRjFobVpBemhIeXRFaHREWjc4cXRKTDBlZTFYTkx4RnY1aGtrbnRlclJ6b2daMFN5WTNkZTIwTmlHajRtVElSWnk1SmpBOG1PSkZUc1RtWTdiU2VoUmVpblN6YXUveUNyUC91OENiOWpYZVZPQU5sMXRxY0o5andwV29pR1VITFhjZlYzdW56WEJsazI4cGJ6N0dPQ2R0Z3BtdU9uUDRBV1ZBT0JaSUNBQUE9In0= -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["id"],"name":[1],"type":["int"],"align":["right"]},{"label":["time"],"name":[2],"type":["int"],"align":["right"]},{"label":["event"],"name":[3],"type":["int"],"align":["right"]},{"label":["tx"],"name":[4],"type":["int"],"align":["right"]},{"label":["sex"],"name":[5],"type":["int"],"align":["right"]},{"label":["raceth"],"name":[6],"type":["int"],"align":["right"]},{"label":["karnof"],"name":[7],"type":["int"],"align":["right"]},{"label":["cd4"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["age"],"name":[9],"type":["int"],"align":["right"]}],"data":[{"1":"1","2":"189","3":"0","4":"0","5":"1","6":"1","7":"100","8":"169.0","9":"34","_rn_":"1"},{"1":"2","2":"287","3":"0","4":"0","5":"2","6":"2","7":"90","8":"149.5","9":"34","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10],"total":[9]},"rows":{"min":[10],"max":[10],"total":[2]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="how-many-patients-got-aids-or-dies-in-the-two-treatment-groups" class="section level3">
-<h3>How many patients got AIDS or dies in the two treatment groups?</h3>
-</div>
-<div id="what-is-the-proportion-of-patients-that-got-aids-or-died-in-the-two-groups" class="section level3">
-<h3>What is the proportion of patients that got AIDS or died in the two groups?</h3>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI0NvdW50IG51bWJlciBvZiBwYXRpZW50IHdpdGhvdXQgdHJlYXRtZW50IGFuZCB3aXRob3V0IEFJRFNcbihzdW0oZGF0YS50aW1lJHR4ID09IDAgJiBkYXRhLnRpbWUkZXZlbnQgPT0gMCkpXG5gYGAifQ== -->
-<pre class="r"><code>#Count number of patient without treatment and without AIDS
-(sum(data.time$tx == 0 &amp; data.time$event == 0))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDUxNFxuIn0= -->
-<pre><code>[1] 514</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI0NvdW50IG51bWJlciBvZiBwYXRpZW50IHdpdGhvdXQgdHJlYXRtZW50IGFuZCBBSURTXG4oc3VtKGRhdGEudGltZSR0eCA9PSAwICYgZGF0YS50aW1lJGV2ZW50ID09IDEpKVxuYGBgIn0= -->
-<pre class="r"><code>#Count number of patient without treatment and AIDS
-(sum(data.time$tx == 0 &amp; data.time$event == 1))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDYzXG4ifQ== -->
-<pre><code>[1] 63</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI0NvdW50IG51bWJlciBvZiBwYXRpZW50IHdpdGggdHJlYXRtZW50IGFuZCB3aXRob3V0IEFJRFNcbihzdW0oZGF0YS50aW1lJHR4ID09IDEgJiBkYXRhLnRpbWUkZXZlbnQgPT0gMCkpXG5gYGAifQ== -->
-<pre class="r"><code>#Count number of patient with treatment and without AIDS
-(sum(data.time$tx == 1 &amp; data.time$event == 0))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDU0MVxuIn0= -->
-<pre><code>[1] 541</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBDb3VudCBudW1iZXIgb2YgcGF0aWVudCB3aXRoIHRyZWF0bWVudCBhbmQgQUlEU1xuKHN1bShkYXRhLnRpbWUkdHggPT0gMSAmIGRhdGEudGltZSRldmVudCA9PSAxKSlcbmBgYCJ9 -->
-<pre class="r"><code># Count number of patient with treatment and AIDS
-(sum(data.time$tx == 1 &amp; data.time$event == 1))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDMzXG4ifQ== -->
-<pre><code>[1] 33</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI0NhbGN1bGF0aW5nIHByb3BvcnRpb25zXG5cbiNObyBhaWRzIG91dCBvZiBwZW9wbGUgd2l0aG91dCB0cmVhdG1lbnRcbihzdW0oZGF0YS50aW1lJHR4ID09IDAgJiBkYXRhLnRpbWUkZXZlbnQgPT0gMCkpL3N1bShkYXRhLnRpbWUkdHggPT0gMClcbmBgYCJ9 -->
-<pre class="r"><code>#Calculating proportions
-
-#No aids out of people without treatment
-(sum(data.time$tx == 0 &amp; data.time$event == 0))/sum(data.time$tx == 0)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuODkwODE0NlxuIn0= -->
-<pre><code>[1] 0.8908146</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuKHN1bShkYXRhLnRpbWUkdHggPT0gMCAmIGRhdGEudGltZSRldmVudCA9PSAxKSkvc3VtKGRhdGEudGltZSR0eCA9PSAwKVxuYGBgIn0= -->
-<pre class="r"><code>(sum(data.time$tx == 0 &amp; data.time$event == 1))/sum(data.time$tx == 0)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMTA5MTg1NFxuIn0= -->
-<pre><code>[1] 0.1091854</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuKHN1bShkYXRhLnRpbWUkdHggPT0gMSAmIGRhdGEudGltZSRldmVudCA9PSAwKSkvc3VtKGRhdGEudGltZSR0eCA9PSAxKVxuYGBgIn0= -->
-<pre class="r"><code>(sum(data.time$tx == 1 &amp; data.time$event == 0))/sum(data.time$tx == 1)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuOTQyNTA4N1xuIn0= -->
-<pre><code>[1] 0.9425087</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuKHN1bShkYXRhLnRpbWUkdHggPT0gMSAmIGRhdGEudGltZSRldmVudCA9PSAxKSkvc3VtKGRhdGEudGltZSR0eCA9PSAxKVxuYGBgIn0= -->
-<pre class="r"><code>(sum(data.time$tx == 1 &amp; data.time$event == 1))/sum(data.time$tx == 1)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDU3NDkxMjlcbiJ9 -->
-<pre><code>[1] 0.05749129</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="fit-an-exponential-distribution-to-all-the-data." class="section level3">
-<h3>Fit an exponential distribution to all the data.</h3>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZXhwLmxpa2VsaWhvb2Q9ZnVuY3Rpb24ocmF0ZSl7XG4gIC1zdW0oZGV4cCh4PWRhdGEudGltZSR0aW1lW2RhdGEudGltZSRldmVudD09MV0sIHJhdGU9cmF0ZSwgbG9nPVRSVUUpKS0gc3VtKHBleHAocT1kYXRhLnRpbWUkdGltZVtkYXRhLnRpbWUkZXZlbnQ9PTBdLCBsb3dlci50YWlsID0gRkFMU0UsIHJhdGU9cmF0ZSwgbG9nPVRSVUUpKVxuICB9XG5cblxuKG5sbWluYihzdGFydD0wLjUsb2JqZWN0aXZlID0gZXhwLmxpa2VsaWhvb2QsbG93ZXI9MCkkcGFyKVxuYGBgIn0= -->
-<pre class="r"><code>exp.likelihood=function(rate){
-  -sum(dexp(x=data.time$time[data.time$event==1], rate=rate, log=TRUE))- sum(pexp(q=data.time$time[data.time$event==0], lower.tail = FALSE, rate=rate, log=TRUE))
-  }
-
-
-(nlminb(start=0.5,objective = exp.likelihood,lower=0)$par)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDAwMzYyMzQ0OFxuIn0= -->
-<pre><code>[1] 0.0003623448</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuKG5sbWluYihzdGFydD0wLjUsb2JqZWN0aXZlID0gZXhwLmxpa2VsaWhvb2QsbG93ZXI9MCkkb2JqZWN0aXZlKVxuYGBgIn0= -->
-<pre class="r"><code>(nlminb(start=0.5,objective = exp.likelihood,lower=0)$objective)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDg1Ni41OTk4XG4ifQ== -->
-<pre><code>[1] 856.5998</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyhvcHRpbWl6ZShleHAubGlrZWxpaG9vZCxjKDAsIDEwMCksbWF4aW11bT1UUlVFKSRtYXhpbXVtKVxuXG5gYGAifQ== -->
-<pre class="r"><code>#(optimize(exp.likelihood,c(0, 100),maximum=TRUE)$maximum)
-</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Fit an exponential distribution to each group.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5leHAubGlrZWxpaG9vZF9ub190cmVhdD1mdW5jdGlvbihyYXRlKXtcbiAgLXN1bShkZXhwKHg9ZGF0YS50aW1lJHRpbWVbZGF0YS50aW1lJGV2ZW50PT0xICYgZGF0YS50aW1lJHR4ID09IDBdLCByYXRlPXJhdGUsIGxvZz1UUlVFKSktIHN1bShwZXhwKHE9ZGF0YS50aW1lJHRpbWVbZGF0YS50aW1lJGV2ZW50PT0wICYgZGF0YS50aW1lJHR4ID09IDBdLCBsb3dlci50YWlsID0gRkFMU0UsIHJhdGU9cmF0ZSwgbG9nPVRSVUUpKVxufVxuXG4obmxtaW5iKHN0YXJ0PTAuNSxvYmplY3RpdmUgPSBleHAubGlrZWxpaG9vZF9ub190cmVhdCxsb3dlcj0wKSRwYXIpXG5gYGAifQ== -->
-<pre class="r"><code>
-exp.likelihood_no_treat=function(rate){
-  -sum(dexp(x=data.time$time[data.time$event==1 &amp; data.time$tx == 0], rate=rate, log=TRUE))- sum(pexp(q=data.time$time[data.time$event==0 &amp; data.time$tx == 0], lower.tail = FALSE, rate=rate, log=TRUE))
-}
-
-(nlminb(start=0.5,objective = exp.likelihood_no_treat,lower=0)$par)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDAwNDg4NDA2MlxuIn0= -->
-<pre><code>[1] 0.0004884062</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuKG5sbWluYihzdGFydD0wLjUsb2JqZWN0aXZlID0gZXhwLmxpa2VsaWhvb2Rfbm9fdHJlYXQsbG93ZXI9MCkkb2JqZWN0aXZlKVxuYGBgIn0= -->
-<pre class="r"><code>(nlminb(start=0.5,objective = exp.likelihood_no_treat,lower=0)$objective)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDU0My4zMzQ5XG4ifQ== -->
-<pre><code>[1] 543.3349</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZXhwLmxpa2VsaWhvb2Rfd2l0aF90cmVhdD1mdW5jdGlvbihyYXRlKXtcbiAgLXN1bShkZXhwKHg9ZGF0YS50aW1lJHRpbWVbZGF0YS50aW1lJGV2ZW50PT0xICYgZGF0YS50aW1lJHR4ID09IDFdLCByYXRlPXJhdGUsIGxvZz1UUlVFKSktIHN1bShwZXhwKHE9ZGF0YS50aW1lJHRpbWVbZGF0YS50aW1lJGV2ZW50PT0wICYgZGF0YS50aW1lJHR4ID09IDFdLCBsb3dlci50YWlsID0gRkFMU0UsIHJhdGU9cmF0ZSwgbG9nPVRSVUUpKVxufVxuXG4obmxtaW5iKHN0YXJ0PTAuNSxvYmplY3RpdmUgPSBleHAubGlrZWxpaG9vZF93aXRoX3RyZWF0LGxvd2VyPTApJHBhcilcbmBgYCJ9 -->
-<pre class="r"><code>exp.likelihood_with_treat=function(rate){
-  -sum(dexp(x=data.time$time[data.time$event==1 &amp; data.time$tx == 1], rate=rate, log=TRUE))- sum(pexp(q=data.time$time[data.time$event==0 &amp; data.time$tx == 1], lower.tail = FALSE, rate=rate, log=TRUE))
-}
-
-(nlminb(start=0.5,objective = exp.likelihood_with_treat,lower=0)$par)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDAwMjQyNzM2M1xuIn0= -->
-<pre><code>[1] 0.0002427363</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuKG5sbWluYihzdGFydD0wLjUsb2JqZWN0aXZlID0gZXhwLmxpa2VsaWhvb2Rfd2l0aF90cmVhdCxsb3dlcj0wKSRvYmplY3RpdmUgKVxuYGBgIn0= -->
-<pre class="r"><code>(nlminb(start=0.5,objective = exp.likelihood_with_treat,lower=0)$objective )</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDMwNy42NzY3XG4ifQ== -->
-<pre><code>[1] 307.6767</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>It can be seen that the model fits the data better when the data is separated into the two treatment groups.</p>
-</div>
-<div id="formulate-af-model-where-one-parameter-indicate-the-treatment-effect" class="section level3">
-<h3>Formulate af model where one parameter indicate the treatment effect</h3>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBJbXBsZW1lbnQgbmVnYXRpdmUgbG9nIGxpa2VsaWhvb2QgZnVuY3Rpb25cblxubmxsLmV4cCA8LSBmdW5jdGlvbihyYXRlKXtcbiAgXG4gIHZhbDEgPC0gLXN1bShkZXhwKHg9ZGF0YS50aW1lJHRpbWVbZGF0YS50aW1lJGV2ZW50PT0xXSxyYXRlPXJhdGVbMV0rcmF0ZVsyXSpkYXRhLnRpbWUkdHhbZGF0YS50aW1lJGV2ZW50PT0xXSxsb2c9VFJVRSkpXG4gIFxuICB2YWwyIDwtIC1zdW0ocGV4cChxPWRhdGEudGltZSR0aW1lW2RhdGEudGltZSRldmVudD09MF0scmF0ZT1yYXRlWzFdK3JhdGVbMl0qZGF0YS50aW1lJHR4W2RhdGEudGltZSRldmVudD09MF0sbG93ZXIudGFpbD1GLGxvZz1UUlVFKSlcbiAgXG4gIHZhbDErdmFsMlxufVxuXG5vcHQuZXhwIDwtIG5sbWluYihzdGFydD1jKDAuMDAxLDAuMDA1KSxvYmplY3RpdmU9bmxsLmV4cCxsb3dlcj1jKC1JbmYsLUluZikpXG5gYGAifQ== -->
-<pre class="r"><code># Implement negative log likelihood function
-
-nll.exp &lt;- function(rate){
-  
-  val1 &lt;- -sum(dexp(x=data.time$time[data.time$event==1],rate=rate[1]+rate[2]*data.time$tx[data.time$event==1],log=TRUE))
-  
-  val2 &lt;- -sum(pexp(q=data.time$time[data.time$event==0],rate=rate[1]+rate[2]*data.time$tx[data.time$event==0],lower.tail=F,log=TRUE))
-  
-  val1+val2
-}
-
-opt.exp &lt;- nlminb(start=c(0.001,0.005),objective=nll.exp,lower=c(-Inf,-Inf))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiTmFOcyBwcm9kdWNlZE5hTnMgcHJvZHVjZWROQS9OYU4gZnVuY3Rpb24gZXZhbHVhdGlvbk5hTnMgcHJvZHVjZWROYU5zIHByb2R1Y2VkTkEvTmFOIGZ1bmN0aW9uIGV2YWx1YXRpb25OYU5zIHByb2R1Y2VkTmFOcyBwcm9kdWNlZE5BL05hTiBmdW5jdGlvbiBldmFsdWF0aW9uTmFOcyBwcm9kdWNlZE5hTnMgcHJvZHVjZWROQS9OYU4gZnVuY3Rpb24gZXZhbHVhdGlvbk5hTnMgcHJvZHVjZWROYU5zIHByb2R1Y2VkTkEvTmFOIGZ1bmN0aW9uIGV2YWx1YXRpb25cbiJ9 -->
-<pre><code>NaNs producedNaNs producedNA/NaN function evaluationNaNs producedNaNs producedNA/NaN function evaluationNaNs producedNaNs producedNA/NaN function evaluationNaNs producedNaNs producedNA/NaN function evaluationNaNs producedNaNs producedNA/NaN function evaluation</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuKG9wdC5leHAkcGFyWzJdKVxuYGBgIn0= -->
-<pre class="r"><code>(opt.exp$par[2])</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIC0wLjAwMDI0NTY2OTlcbiJ9 -->
-<pre><code>[1] -0.0002456699</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="making-the-wald-confidence-interval" class="section level3">
-<h3>Making the Wald confidence interval</h3>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG4jTWFraW5nIGEgY29uZmlkZW5jZSBpbnRlcnZhbFxuXG5JIDwtIGhlc3NpYW4obmxsLmV4cCxvcHQuZXhwJHBhcilcbnNlIDwtIDEvc3FydChJKVxuKG9wdC5leHAkcGFyK2MoLTEsMSkqcW5vcm0oMC45NzUpKnNlL3NxcnQobikpXG5gYGAifQ== -->
-<pre class="r"><code>
-#Making a confidence interval
-
-I &lt;- hessian(nll.exp,opt.exp$par)
-se &lt;- 1/sqrt(I)
-(opt.exp$par+c(-1,1)*qnorm(0.975)*se/sqrt(n))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICAgICBbLDFdICAgICAgICAgIFssMl1cblsxLF0gIDAuMDAwNDg0MjQzNiAgMC4wMDA0ODMzNTY2XG5bMixdIC0wLjAwMDI0MDYyMDQgLTAuMDAwMjQwNjIwNFxuIn0= -->
-<pre><code>              [,1]          [,2]
-[1,]  0.0004842436  0.0004833566
-[2,] -0.0002406204 -0.0002406204</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkFzc2lnbm1lbnQgU3Vydml2YWwgRGF0YSINCm91dHB1dDoNCiAgcGRmX2RvY3VtZW50OiBkZWZhdWx0DQogIGh0bWxfbm90ZWJvb2s6IGRlZmF1bHQNCi0tLQ0KDQojQW5hbHlzaXMgb2YgYmluYXJ5IGRhdGENCg0KIyMjICBSZWFkIHRoZSBMb2dpc3RpYy50eHQgaW50byBSLg0KDQpgYGB7cn0NCmRhdGEgPC0gcmVhZC5kZWxpbSgiTG9naXN0aWMudHh0IixoZWFkZXIgPSBUUlVFLCBzZXAgPSAiIiwgZGVjID0gIi4iKQ0KZGF0YSRBSURTX25vPWRhdGEkbi1kYXRhJEFJRFNfeWVzDQpoZWFkKGRhdGEsMikgDQpgYGANClRoZSBkYXRhIGNvbnNpc3Qgb2YgcGF0aWVudHMgYmVpbmcgdHJlYXRlZCB3aXRoIEFaVCBhbmQgdGhlIG51bWJlciBvZiBwYXRpZW50cyB3aXRoIEFJRFMsIGFzIHdlbGwgYXMgcGF0aWVudHMgbm90IGJlaW5nIHRyZWF0ZWQgd2l0aCBBWlQgYW5kIHRoZSBudW1iZXIgb2YgcGF0aWVudHMgaGF2aW5nIEFJRFMuIEl0IGxvb2tzIGxpa2UgbW9yZSBwYXRpZW50cyBnZXQgQUlEUyBpZiB0aGV5IGFyZSBub3QgdHJlYXRlZCB3aXRoIEFaVC4NCg0KIyMjIEZpdHRpbmcgZGF0YSB0byBiaW5vbWlhbCBkaXN0cmlidXRpb24gKGkuZS4gY29uc2lkZXIgYWxsIGRhdGEgYXMgY29taW5nIGZyb20gdGhlIHNhbWUgcG9wdWxhdGlvbikNClRoZSBsb2ctbGlrZWxpaG9vZCBvZiB0aGUgYmlub21pYWwgZGlzdHJpYnV0aW9uIGlzOg0KJCRsKFx0aGV0YSk9XHN1bV97az0wfV57bn1rXGNkb3QgbG9nKFx0aGV0YSkrKG4taylcY2RvdCBsb2coMS1cdGhldGEpK2MobixrKSQkDQp3aGVyZSBuIGlzIHRoZSBudW1iZXIgb2YgcGF0aWVudHMsIGsgaXMgdGhlIG51bWJlciBvZiBwYXRpZW50IHdpdGggQUlEUy4gU2luY2UgaXQgaXMgY29uc2lkZXJlZCBhcyBjb21pbmcgZnJvbSB0aGUgc2FtZSBwb3B1bGF0aW9uIGkuZS4gZm9sbG93IHRoZSBzYW1lIGRpc3RyaWJ1dGlvbiwgdGhlIGRhdGEgaXMgZml0dGVkIHRvIG9uZSBiaW5vbWlhbCBkaXN0cmlidXRpb24uDQoNCmBgYHtyfQ0KDQojRm9ybXVsYXRpbmcgdGhlIGxpa2VsaWhvb2QgZnVuY3Rpb24NCmJpbm9taWFsLmxvZy5saWtlbGlob29kID0gZnVuY3Rpb24oeCxzaXplLHRoZXRhKXsNCiAgLShzdW0oZGJpbm9tKHg9eCxzaXplPXNpemUscHJvYj10aGV0YSwgbG9nPVRSVUUpKSl9DQoNCih0aGV0YS5vcHQ9b3B0aW1pemUoYmlub21pYWwubG9nLmxpa2VsaWhvb2QsIGMoMC4wMSwwLjk5KSx4PXN1bShkYXRhJEFJRFNfeWVzKSxzaXplPXN1bShkYXRhJG4pKSRtaW5pbXVtKQ0KDQpgYGANCg0KIyMjIEZpdCB0aGUgQmlub21pYWwgc2VwYXJhdGVseSB0byB0aGUgdHdvIGRpc3RyaWJ1dGlvbnMgYW5kIHRlc3QgaWYgdGhlcmUgaXMgYSBkaWZmZXJlbmNlIGJldHdlZW4gdGhlIGdyb3Vwcy4NCg0KYGBge3J9DQojVGhldGEgZm9yIHBhdGllbnRzIHRyZWF0ZWQgd2l0aCBBWlQuIFRoaXMgaXMgdGhlIHByb2JhYmlsaXR5IG9mIGhhdmluZyBBSURTIHdoZW4gdHJlYXRlZCB3aXRoIEFaVC4gDQoodGhldGFfQVpUX3llcy5vcHQ9b3B0aW1pemUoYmlub21pYWwubG9nLmxpa2VsaWhvb2QsIGMoMC4wMSwwLjk5KSx4PWRhdGEkQUlEU195ZXNbMV0sc2l6ZT1kYXRhJG5bMV0pJG1pbmltdW0pDQoNCiNUaGV0YSBmb3IgcGF0aWVudHMgdHJlYXRlZCB3aXRob3V0IEFaVC4gVGhpcyBpcyB0aGUgcHJvYmFiaWxpdHkgb2YgaGF2aW5nIEFJRFMgd2l0aG91dCB0cmVhdG1lbnQuIA0KKHRoZXRhX0FaVF9uby5vcHQ9b3B0aW1pemUoYmlub21pYWwubG9nLmxpa2VsaWhvb2QsIGMoMC4wMSwwLjk5KSx4PWRhdGEkQUlEU195ZXNbMl0sc2l6ZT1kYXRhJG5bMl0pJG1pbmltdW0pDQpgYGANCg0KDQpUaGUgbnVsbCBoeXBvdGhlc2lzIGlzIHRoYXQgdGhlIHR3byBkaXN0cmlidXRpb25zIGFyZSBlcXVhbCBtZWFuaW5nIHRoYXQgaWYgQVpUX3llcyBmb2xsb3dzICRCKG0sXHBpX3gpJCBhbmQgQVpUX25vIGZvbGxvd3MgJEIobixccGlfeSkkICRccGlfeD1ccGlfeSQuDQpgYGB7cn0NCng9ZGF0YSRBSURTX3llc1sxXQ0KeT1kYXRhJEFJRFNfbm9bMV0NCm09c3VtKGRhdGEkQUlEU195ZXMpDQpuPXN1bShkYXRhJEFJRFNfbm8pDQpOPW0rbg0KdD14K3kNCg0KI1RoZSBzdGFuZGFyZCB0ZXN0IG9mIGVxdWFsaXR5IG9mIHByb3BvcnRpb25zIGlzIHRoZSBmYW1vdXMgY2hpLXNxdWFyZWQgdGVzdA0KKGNoaS5zcXVhcmVkLnRlc3Q9TiooeCoobi15KS15KihtLXgpKV4yLyhtKm4qdCooTi10KSkpDQoNCihwY2hpc3EoY2hpLnNxdWFyZWQudGVzdCwgZGY9MSwgbG93ZXIudGFpbD1GQUxTRSkpDQpgYGANCldpdGggYSBwLXZhbHVlIG9mIDAuMDA4ODE2MTU5IHdlIGhhdmUgc3Ryb25nIGV2aWRlbmNlIGFnYWluc3QgdGhlIG51bGwgaHlwb3RoZXNpcyBtZWFuaW5nIHRoYXQgdGhlIHR3byBncm91cHMgZG8gbm90IGZvbGxvdyB0aGUgc2FtZSBkaXN0cmlidXRpb24uDQoNClRvIHByb2NlZWQgd2l0aCBhIGxpa2VsaWhvb2QgYW5hbHlzaXMsIHRoZSBudW1iZXIgb2YgcGVvcGxlIHdpdGggQUlEUyAoWCkgaW4gdGhlIGdyb3VwIHRyZWF0ZWQgd2l0aCBBWlQgaXMgJEIobSxccGlfeCkkIGFuZCBpbmRlcGVuZGVudGx5IHRoZSBudW1iZXIgb2YgcGVvcGxlIHdpdGggQUlEUyAoWSkgIGluIHRoZSBzZWNvbmQgZ3JvdXAgaXMgJEIobixccGlfeSkkLg0KDQpPbiBvYnNlcnZpbmcgeCBhbmQgeSB0aGUgam9pbnQgbGlrZWxpaG9vZCBvZiAkKFxwaV94LFxwaV95KSQ6DQokJEwoXHBpX3gsIFxwaV95KT1ccGlfeF54KigxLVxwaV94KV57bS14fVxwaV95XnkoMS1ccGlfeSlee24teX0kJA0KDQpUaGUgbG9nIG9kZHMtcmF0aW8gaXMgZGVmaW5lZCBieToNCiQkXHRoZXRhPVxsb2cgXGZyYWN7XHBpX3t4fSAvXGxlZnQoMS1ccGlfe3h9XHJpZ2h0KX17XHBpX3t5fSAvXGxlZnQoMS1ccGlfe3l9XHJpZ2h0KX0kJA0KYGBge3J9DQoodGhldGEuY29tcGFyZSA9IGxvZygodGhldGFfQVpUX3llcy5vcHQvKDEtdGhldGFfQVpUX3llcy5vcHQpKS8odGhldGFfQVpUX25vLm9wdC8oMS0gdGhldGFfQVpUX25vLm9wdCkpKSkNCg0KYGBgDQpUbyBtYWtlIGEgcHJvZmlsZSBsaWtlbGlob29kIGZ1bmN0aW9uIGZvciAkXHRoZXRhJCBhcyBzdGF0ZWQgYWJvdmUsIHRoZSBldGEgaXMgY2FsY3VsYXRlZDoNCg0KJCRcZXRhPVxsb2cgXGZyYWN7XHBpX3t5fX17MS1ccGlfe3l9fSQkDQpXaXRoICRcZXRhJCB0aGUgam9pbnQgbGlrZWxpaG9vZCBmdW5jdGlvbiBmb3IgJFx0aGV0YSQgYW5kICRcZXRhJCBjYW4gYmUgZm91bmQ6DQoNCiQkTChcdGhldGEsIFxldGEpPWVee1x0aGV0YSB4fSBlXntcZXRhKHgreSl9XGxlZnQoMStlXntcdGhldGErXGV0YX1ccmlnaHQpXnstbX1cbGVmdCgxK2Vee1xldGF9XHJpZ2h0KV57LW59JCQNClRoZSBNTEUgZm9yIHRoaXMgbGlrZWxpaG9vZCBmdW5jdGlvbiBpczoNCiQkXGhhdHtcdGhldGF9PWxvZyhcZnJhY3t4LyhtLXgpfXt5LyhuLXkpfSkkJA0KQ2FsY3VsYXRlIG9wdGltYWwgdGhldGEgZm9yIHRoZSBqb2ludCBsaWtlbGlob29kDQpgYGB7cn0NCih0aGF0PSBsb2coeC8obS14KSoobi15KS95KSkNCnNlMjwtIDEveCArIDEvKG0teCkgKyAxL3kgKyAxLyhuLXkpDQpzZTwtIHNxcnQoc2UyKQ0KDQpgYGANCg0KJFxoYXR7XHRoZXRhfX09LTAuNzIxNzY2JA0KUGxvdCB0aGUgam9pbnQgbGlrZWxpaG9vZA0KYGBge3J9DQplaGF0PC0gbG9nKHkvKG4teSkpDQogICNwcmludChjKHRoYXQsZWhhdCkpDQogIGNhdCgndGhldGEtaGF0PScsdGhhdCwnLCAgc2U9JyxzZSwnXG4nKQ0KDQojIHBsb3RzDQpwYXIobWZyb3c9YygxLDEpKQ0KdGg8LSBzZXEodGhhdC0yKnNlLHRoYXQrMypzZSxsZW49MzApDQpldDwtIHNlcShlaGF0LTQsZWhhdCsyLGxlbj0zMCkNCg0KZnVuMTwtIGZ1bmN0aW9uKHRoZXRhLGV0YSl7DQogICAgICBhIDwtIGV4cCh0aGV0YStldGEpDQogICAgICBiPC0gZXhwKGV0YSkNCiAgICAgIHgqdGhldGEgKyAoeCt5KSpldGEgLSBtKmxvZygxK2EpIC0gbipsb2coMStiKQ0KICAgICAgfQ0KDQpsbDwtIG91dGVyKHRoLGV0LCdmdW4xJykNCmxpa2U8LSBleHAobGwtbWF4KGxsKSkNCg0KbGlrMTwtIGFwcGx5KGxpa2UsMSxtYXgpDQpwbG90KHRoLGxpazEsdHlwZT0nbicseGxhYj1leHByZXNzaW9uKHRoZXRhKSwNCiAgICAgeWxhYj0nTGlrZWxpaG9vZCcpDQogIGxpbmVzKHRoLGxpazEpDQogIGFibGluZShoPS4xNSxsd2Q9LjQpDQogIGFibGluZSh2PTApDQogIHRpdGxlKGV4cHJlc3Npb24oJyhiKSBQcm9maWxlIGxpa2VsaWhvb2QnKSkNCiAgDQoNCg0KYGBgDQoNCg0KVGhlIG51bGwgaHlwb3RoZXNpcyBpcyAkSF8wOiBcdGhldGE9MCQuIFNpbmNlICRcdGhldGEkIGlzIHNpZ25pZmljYW50bHkgZGlmZmVyZW50IGZyb20gemVybywgdGhlIG51bGwtaHlwb3RoZXNpcyBpcyByZWplY3RlZCBhbmQgaXQgaXMgY29uY2x1ZGVkIHRoYXQgdGhlIGdyb3VwcyBhcmUgc2lnbmlmaWNhbnRseSBkaWZmZXJlbnQgZnJvbSBlYWNoIG90aGVyLiBUaGlzIG1lYW5zIHRoYXQgdGhlcmUgaXMgYSBkaWZmZXJlbmNlIGluIGlmIGEgcGF0aWVudCByZWNlaXZlcyB0cmVhbWVudCB3aXRoIEFaVCBvciBub3QuIA0KDQoNCiMjIyBFc3RpbWF0ZSBwYXJhbWV0ZXJzIGluIHRoZSBtb2RlbCAocDAgcHJvYmFiaWxpdHkgb2YgQUlEUyBpbiBjb250cm9sIGdyb3VwLCBwMSBwcm9iYWJpbGl0eSBvZiBBSURTIGluIHRyZWF0bWVudCBncm91cCkgYW5kIHJlcG9ydCBhIGNvbmZpZGVuY2UgaW50ZXJ2YWwgZm9yIHRoZSBwYXJhbWV0ZXIgZGVzY3JpYmluZyB0aGUgZGlmLSBmZXJlbmNlLCBjb21wYXJlIHdpdGggdGhlIHJlc3VsdCBhYm92ZS4NCg0KVGhlIHBhcmFtZXRlcnMgJFxiZXRhXzAkIGFuZCAkXGJldGFfMSQgY2FuIGJlIGVzdGltYXRlZCB3aXRoIHRoZSBsb2dpc3RpYyByZWdyZXNzaW9uIG1vZGVsLiBIZXJlICRwXzAkIGRlbm90ZXMgdGhlIHByb2JhYmlsaXR5IG9mIHN1Y2Nlc3MgKGkuZS4gZ2V0dGluZyBBSURTKSBpbiB0aGUgY29udHJvbCB0cmVhdG1lbnQgYW5kICRwXzEkIGRlbm90ZXMgdGhlIHByb2JhYmlsaXR5IG9mIHN1Y2NlcyBpbiB0aGUgbmV3IHRyZWF0bWVudC4gDQoNCiQkcF97MH09XGZyYWN7ZV57XGJldGFfezB9fX17MStlXntcYmV0YV97MH19fSwgXHF1YWQgcF97MX09XGZyYWN7ZV57XGJldGFfezB9K1xiZXRhX3sxfX19ezErZV57XGJldGFfezB9K1xiZXRhX3sxfX19JCQNCkluIHRoZSBhYm92ZSAkXGJldGFfMSQgZGVzY3JpYmVzIHRoZSBkaWZmZXJlbmNlIGJldHdlZW4gdGhlIHRyZWF0bWVudHMuIFRodXMgaWYgJFxiZXRhXzEgPSAwJCB0aGVuIHRoZXJlIGlzIG5vIGRpZmZlcmVuY2UgYmV0d2VlbiB0aGUgdHdvIHRyZWF0bWVudHMuDQpUaGUgbGlrZWxpaG9vZCBmb3IgdGhlIGxvZ2lzdGljIHJlZ3Jlc3Npb24gY2FuIGJlIHdyaXR0ZW4gYXM6DQoNCiQkTChcYmV0YV8wLCBcYmV0YV8xKSA9IFxQaV9pIHBfaV57eV9pfSgxLXBfaSleezEteV9pfSQkDQpIZXJlICR5X2kkIGlzIHRoZSBzdWNjZXMgaW4gdHJlYXRtZW50IGkuIFdlIGhhdmUgdGhhdCAkaT0wJCBjb250cm9sIHRyZWF0bWVudCwgJGk9MSQgdGVzdCB0cmVhdG1lbnQuDQpUaGUgbG9nLWxpa2VsaWdob29kIGlzIGdpdmVuIGFzDQokJGxvZ0woXGJldGFfMCwgXGJldGFfMSkgPSBcc3VtX2kgXGxlZnRbKFxiZXRhXzAgKyBcYmV0YV8xIFxjZG90IHRyZWF0bWVudF9pKXlfaSAtIGxvZygxICsgZXhwKFxiZXRhXzAgKyBcYmV0YV8xIFxjZG90IHRyZWF0bWVudF9pKSkgXHJpZ2h0XSQkDQpgYGB7cn0NCmxpYnJhcnkobWFncml0dHIpDQpsb2dfZGF0YSA9IGRhdGENCmxvZ0xfcGFydGlhbCA8LSBmdW5jdGlvbihiMCwgYjEsIGRhdGEsIEFaVCA9IFRSVUUpew0KICAgIHkgPSBpZiAoQVpUKSB7ZGF0YVsxLDJdfSBlbHNlIHtkYXRhWzIsMl19ICU+JSBhcy5udW1lcmljKCkNCiAgICBuID0gaWYgKEFaVCkge2RhdGFbMSwzXX0gZWxzZSB7ZGF0YVsyLDNdfSAlPiUgYXMubnVtZXJpYygpDQogICAgZmFsc2UgPSBuLXkNCiAgICANCiAgICB5KigoYjAgKyBiMSAqIEFaVCkgKiAxIC0gbG9nKDErZXhwKGIwK2IxKkFaVCkpKSArIGZhbHNlKigoYjAgKyBiMSAqIEFaVCkgKiAwIC0gbG9nKDErZXhwKGIwK2IxKkFaVCkpKQ0KfQ0KDQpsb2dMIDwtIGZ1bmN0aW9uKHRoZXRhLCBkYXRhKXsNCiAgICAgLSAobG9nTF9wYXJ0aWFsKHRoZXRhWzFdLCB0aGV0YVsyXSxkYXRhLCBGKSArIGxvZ0xfcGFydGlhbCh0aGV0YVsxXSx0aGV0YVsyXSxkYXRhLCBUKSkNCn0NCg0KDQpvcHQgPC0gbmxtaW5iKGMoMCwgMCksIGxvZ0wsIGxvd2VyID0gYygtSW5mLC1JbmYpLCBkYXRhID0gbG9nX2RhdGEpDQoNCnAwIDwtIGV4cChvcHQkcGFyWzFdKS8oMStleHAob3B0JHBhclsxXSkpDQpwMSA8LSBleHAob3B0JHBhclsxXSArIG9wdCRwYXJbMl0pLygxK2V4cChvcHQkcGFyWzFdICsgb3B0JHBhclsyXSkpDQoNCg0KDQoNCg0KbG9nTF9iMSA8LSBmdW5jdGlvbih0aGV0YSwgYjEsIGRhdGEpew0KICAgICAgLShsb2dMX3BhcnRpYWwodGhldGFbMV0sIGIxLGRhdGEsIEYpICsgbG9nTF9wYXJ0aWFsKHRoZXRhWzFdLGIxLGRhdGEsIFQpKQ0KfQ0KDQpwcm9maWxlX2IxIDwtIGZ1bmN0aW9uKGIxLCBkYXRhKXsNCiAgb3B0IDwtIG5sbWluYihjKDApLCBsb2dMX2IxLCBsb3dlciA9IGMoLUluZiksIGRhdGEgPSBsb2dfZGF0YSwgYjEgPSBiMSkNCiAgIyBvcHRpbWl6ZShsb2dMKQ0KICBiMCA8LSBvcHQkcGFyDQogIC1sb2dMX2IxKGMoYjApLGIxLGRhdGEpDQp9DQoNCg0KYjEgPC0gc2VxKC01LDUsMC4wMSkNCmFscGhhIDwtIDAuMDUNCmMgPC0gZXhwKC0xLzIqcWNoaXNxKDEtYWxwaGEsMSkpDQpwID0gYygpDQpmb3IgKGkgaW4gMTpsZW5ndGgoYjEpKXsNCiAgcFtpXSA9IGV4cChwcm9maWxlX2IxKGIxW2ldLCBsb2dfZGF0YSkpDQp9DQoNCk1MRV9iMSA8LSBvcHRpbWl6ZShwcm9maWxlX2IxLCBjKC01LDUpLCBkYXRhID0gbG9nX2RhdGEsIG1heGltdW0gPSBUKSRtYXhpbXVtDQoNCnBsb3QoYjEsIHAvbWF4KHApLCAnbCcpDQphYmxpbmUoYywgMCkNCmFibGluZSh2ID0gTUxFX2IxKQ0KDQoNCg0KYV9iMSA8LSBiMVtwL21heChwKSA+IGNdDQpDSV9iMSA8LSBjKG1pbihhX2IxKSwgbWF4KGFfYjEpKQ0KDQoNCmNhdCgiVGhlIG1heGltdW0gbGlrZWxpaG9vZCBlc3RpbWF0ZXMgb2YgcDAgYW5kIHAxIGFyZTogcDAgPSAiLCBwMCwgIiBwMSA9ICIsIHAxLCAiXG4iKQ0KY2F0KCJUaGUgbWF4aW11bSBwcm9maWxlIGxpa2VsaWhvb2QgZXN0aW1hdGUgb2YgYjEgaXM6ICAiLCBNTEVfYjEsICJcbiIpDQpjYXQoIldpdGggY29uZmlkZW5jZSBpbnRlcnZhbHM6ICIsIENJX2IxLCAiXG4iKQ0KYGBgDQoNCg0KI0FuYWx5c2lzIG9mIHRoZSBzdXJ2aXZhbCB0aW1lIGRhdGENCg0KIyMjIFJlYWQgdGhlIGRhdGEgYWN0MzIwLnR4dCBpbnRvIFIuIA0KDQpgYGB7cn0NCg0KI0xvYWQgZGF0YQ0KZGF0YS50aW1lIDwtIHJlYWQuZGVsaW0oImFjdGczMjAudHh0IixoZWFkZXIgPSBUUlVFLCBzZXAgPSAiIiwgZGVjID0gIi4iKQ0KaGVhZChkYXRhLnRpbWUsMikgDQpgYGANCiMjIyBIb3cgbWFueSBwYXRpZW50cyBnb3QgQUlEUyBvciBkaWVzIGluIHRoZSB0d28gdHJlYXRtZW50IGdyb3Vwcz8NCiMjIyBXaGF0IGlzIHRoZSBwcm9wb3J0aW9uIG9mIHBhdGllbnRzIHRoYXQgZ290IEFJRFMgb3IgZGllZCBpbiB0aGUgdHdvIGdyb3Vwcz8NCg0KYGBge3J9DQojQ291bnQgbnVtYmVyIG9mIHBhdGllbnQgd2l0aG91dCB0cmVhdG1lbnQgYW5kIHdpdGhvdXQgQUlEUw0KKHN1bShkYXRhLnRpbWUkdHggPT0gMCAmIGRhdGEudGltZSRldmVudCA9PSAwKSkNCiNDb3VudCBudW1iZXIgb2YgcGF0aWVudCB3aXRob3V0IHRyZWF0bWVudCBhbmQgQUlEUw0KKHN1bShkYXRhLnRpbWUkdHggPT0gMCAmIGRhdGEudGltZSRldmVudCA9PSAxKSkNCiNDb3VudCBudW1iZXIgb2YgcGF0aWVudCB3aXRoIHRyZWF0bWVudCBhbmQgd2l0aG91dCBBSURTDQooc3VtKGRhdGEudGltZSR0eCA9PSAxICYgZGF0YS50aW1lJGV2ZW50ID09IDApKQ0KIyBDb3VudCBudW1iZXIgb2YgcGF0aWVudCB3aXRoIHRyZWF0bWVudCBhbmQgQUlEUw0KKHN1bShkYXRhLnRpbWUkdHggPT0gMSAmIGRhdGEudGltZSRldmVudCA9PSAxKSkNCg0KI0NhbGN1bGF0aW5nIHByb3BvcnRpb25zDQoNCiNObyBhaWRzIG91dCBvZiBwZW9wbGUgd2l0aG91dCB0cmVhdG1lbnQNCihzdW0oZGF0YS50aW1lJHR4ID09IDAgJiBkYXRhLnRpbWUkZXZlbnQgPT0gMCkpL3N1bShkYXRhLnRpbWUkdHggPT0gMCkNCihzdW0oZGF0YS50aW1lJHR4ID09IDAgJiBkYXRhLnRpbWUkZXZlbnQgPT0gMSkpL3N1bShkYXRhLnRpbWUkdHggPT0gMCkNCihzdW0oZGF0YS50aW1lJHR4ID09IDEgJiBkYXRhLnRpbWUkZXZlbnQgPT0gMCkpL3N1bShkYXRhLnRpbWUkdHggPT0gMSkNCihzdW0oZGF0YS50aW1lJHR4ID09IDEgJiBkYXRhLnRpbWUkZXZlbnQgPT0gMSkpL3N1bShkYXRhLnRpbWUkdHggPT0gMSkNCmBgYA0KIyMjIEZpdCBhbiBleHBvbmVudGlhbCBkaXN0cmlidXRpb24gdG8gYWxsIHRoZSBkYXRhLiANCg0KYGBge3J9DQpleHAubGlrZWxpaG9vZD1mdW5jdGlvbihyYXRlKXsNCiAgLXN1bShkZXhwKHg9ZGF0YS50aW1lJHRpbWVbZGF0YS50aW1lJGV2ZW50PT0xXSwgcmF0ZT1yYXRlLCBsb2c9VFJVRSkpLSBzdW0ocGV4cChxPWRhdGEudGltZSR0aW1lW2RhdGEudGltZSRldmVudD09MF0sIGxvd2VyLnRhaWwgPSBGQUxTRSwgcmF0ZT1yYXRlLCBsb2c9VFJVRSkpDQogIH0NCg0KDQoobmxtaW5iKHN0YXJ0PTAuNSxvYmplY3RpdmUgPSBleHAubGlrZWxpaG9vZCxsb3dlcj0wKSRwYXIpDQoobmxtaW5iKHN0YXJ0PTAuNSxvYmplY3RpdmUgPSBleHAubGlrZWxpaG9vZCxsb3dlcj0wKSRvYmplY3RpdmUpDQojKG9wdGltaXplKGV4cC5saWtlbGlob29kLGMoMCwgMTAwKSxtYXhpbXVtPVRSVUUpJG1heGltdW0pDQoNCmBgYA0KDQpGaXQgYW4gZXhwb25lbnRpYWwgZGlzdHJpYnV0aW9uIHRvIGVhY2ggZ3JvdXAuIA0KDQpgYGB7cn0NCg0KZXhwLmxpa2VsaWhvb2Rfbm9fdHJlYXQ9ZnVuY3Rpb24ocmF0ZSl7DQogIC1zdW0oZGV4cCh4PWRhdGEudGltZSR0aW1lW2RhdGEudGltZSRldmVudD09MSAmIGRhdGEudGltZSR0eCA9PSAwXSwgcmF0ZT1yYXRlLCBsb2c9VFJVRSkpLSBzdW0ocGV4cChxPWRhdGEudGltZSR0aW1lW2RhdGEudGltZSRldmVudD09MCAmIGRhdGEudGltZSR0eCA9PSAwXSwgbG93ZXIudGFpbCA9IEZBTFNFLCByYXRlPXJhdGUsIGxvZz1UUlVFKSkNCn0NCg0KKG5sbWluYihzdGFydD0wLjUsb2JqZWN0aXZlID0gZXhwLmxpa2VsaWhvb2Rfbm9fdHJlYXQsbG93ZXI9MCkkcGFyKQ0KKG5sbWluYihzdGFydD0wLjUsb2JqZWN0aXZlID0gZXhwLmxpa2VsaWhvb2Rfbm9fdHJlYXQsbG93ZXI9MCkkb2JqZWN0aXZlKQ0KDQoNCg0KZXhwLmxpa2VsaWhvb2Rfd2l0aF90cmVhdD1mdW5jdGlvbihyYXRlKXsNCiAgLXN1bShkZXhwKHg9ZGF0YS50aW1lJHRpbWVbZGF0YS50aW1lJGV2ZW50PT0xICYgZGF0YS50aW1lJHR4ID09IDFdLCByYXRlPXJhdGUsIGxvZz1UUlVFKSktIHN1bShwZXhwKHE9ZGF0YS50aW1lJHRpbWVbZGF0YS50aW1lJGV2ZW50PT0wICYgZGF0YS50aW1lJHR4ID09IDFdLCBsb3dlci50YWlsID0gRkFMU0UsIHJhdGU9cmF0ZSwgbG9nPVRSVUUpKQ0KfQ0KDQoobmxtaW5iKHN0YXJ0PTAuNSxvYmplY3RpdmUgPSBleHAubGlrZWxpaG9vZF93aXRoX3RyZWF0LGxvd2VyPTApJHBhcikNCihubG1pbmIoc3RhcnQ9MC41LG9iamVjdGl2ZSA9IGV4cC5saWtlbGlob29kX3dpdGhfdHJlYXQsbG93ZXI9MCkkb2JqZWN0aXZlICkNCmBgYA0KSXQgY2FuIGJlIHNlZW4gdGhhdCB0aGUgbW9kZWwgZml0cyB0aGUgZGF0YSBiZXR0ZXIgd2hlbiB0aGUgZGF0YSBpcyBzZXBhcmF0ZWQgaW50byB0aGUgdHdvIHRyZWF0bWVudCBncm91cHMuIA0KDQojIyMgRm9ybXVsYXRlIGFmIG1vZGVsIHdoZXJlIG9uZSBwYXJhbWV0ZXIgaW5kaWNhdGUgdGhlIHRyZWF0bWVudCBlZmZlY3QNCg0KYGBge3J9DQojIEltcGxlbWVudCBuZWdhdGl2ZSBsb2cgbGlrZWxpaG9vZCBmdW5jdGlvbg0KDQpubGwuZXhwIDwtIGZ1bmN0aW9uKHJhdGUpew0KICANCiAgdmFsMSA8LSAtc3VtKGRleHAoeD1kYXRhLnRpbWUkdGltZVtkYXRhLnRpbWUkZXZlbnQ9PTFdLHJhdGU9cmF0ZVsxXStyYXRlWzJdKmRhdGEudGltZSR0eFtkYXRhLnRpbWUkZXZlbnQ9PTFdLGxvZz1UUlVFKSkNCiAgDQogIHZhbDIgPC0gLXN1bShwZXhwKHE9ZGF0YS50aW1lJHRpbWVbZGF0YS50aW1lJGV2ZW50PT0wXSxyYXRlPXJhdGVbMV0rcmF0ZVsyXSpkYXRhLnRpbWUkdHhbZGF0YS50aW1lJGV2ZW50PT0wXSxsb3dlci50YWlsPUYsbG9nPVRSVUUpKQ0KICANCiAgdmFsMSt2YWwyDQp9DQoNCm9wdC5leHAgPC0gbmxtaW5iKHN0YXJ0PWMoMC4wMDEsMC4wMDUpLG9iamVjdGl2ZT1ubGwuZXhwLGxvd2VyPWMoLUluZiwtSW5mKSkNCihvcHQuZXhwJHBhclsyXSkNCg0KDQpgYGANCg0KIyMjIE1ha2luZyB0aGUgV2FsZCBjb25maWRlbmNlIGludGVydmFsDQoNCmBgYHtyfQ0KDQojTWFraW5nIGEgY29uZmlkZW5jZSBpbnRlcnZhbA0KDQpJIDwtIGhlc3NpYW4obmxsLmV4cCxvcHQuZXhwJHBhcikNCnNlIDwtIDEvc3FydChJKQ0KKG9wdC5leHAkcGFyK2MoLTEsMSkqcW5vcm0oMC45NzUpKnNlL3NxcnQobikpDQpgYGANCg0KDQo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKIyMgUmVhZCB0aGUgZGF0YSB0dW5vLnR4dCBpbnRvIFIuClRoZSBkYXRhIGlzIHJlYWQsIGFuZCB0aGUgZmlyc3QgZmV3IGxpbmVzIG9mIHRoZSBjb2RlIGlzIHNob3duLgpgYGB7cn0KZGF0YSA8LSByZWFkLmRlbGltKCJ0dW5vLnR4dCIsaGVhZGVyID0gVFJVRSwgc2VwID0gIiAiLCBkZWMgPSAiLiIpCmRhdGEkcG93Lm9icy5ub3JtPC0oZGF0YSRwb3cub2JzKS81MDAwCmhlYWQoZGF0YSw2KQpgYGAKCgojIyMgMS4gRm9ybXVsYXRlIGFuIGluaXRpYWwgbW9kZWwKClRoZSBtb2RlbCB0aGF0IHdlIGNvbnNpZGVyIGlzOgokJHk9Zih3X3MpPVxiZXRhXzArXGJldGFfMXdfcytcYmV0YV8yd19zXjIkJApXaGVyZSB5IGlzIHRoZSBvYnNlcnZlZCBwb3dlciBwcm9kdWN0aW9uIGFuZCBmIGlzIGEgZnVuY3Rpb24gb2Ygd2luZCBzcGVlZC4KYGBge3J9Cm1vZDE9bG0ocG93Lm9icy5ub3JtfiB3czMwK0kod3MzMF4yKSwgZGF0YT1kYXRhKQpzdW1tYXJ5KG1vZDEpCkFJQyhtb2QxKQpgYGAKQWxsIHBhcmFtZXRlcnMgYXJlIHNpZ25pZmljYW50LgoKQWRkaW5nIHdpbmQgZGlyZWN0aW9uOgpgYGB7cn0KbW9kND1sbShwb3cub2JzLm5vcm1+IHdzMzArd2QzMCtJKHdzMzBeMikrSSh3ZDMwXjIpLCBkYXRhPWRhdGEpCnN1bW1hcnkobW9kNCkKQUlDKG1vZDQpCmBgYAoKYGBge3J9Cm1vZDI9Z2xtKHBvdy5vYnMubm9ybX4gd3MzMCxmYW1pbHk9R2FtbWEsICBkYXRhPWRhdGEpCnN1bW1hcnkobW9kMikKQUlDKG1vZDIpCmBgYAoKCgpVc2luZyB0cmFuc2Zvcm1hdGlvbiAxLCBmcm9tIHByb2plY3QgMToKYGBge3IsIHdhcm5pbmc9RkFMU0V9CnRyYW5zMSA8LSBmdW5jdGlvbihsYW1iZGEseSl7CiAgICB5LmwgPC0gMS9sYW1iZGEqbG9nKCh5XmxhbWJkYSkvKDEteV5sYW1iZGEpKQogICAgcmV0dXJuKHkubCl9CgojIyBwcm9maWxlIGxpa2VsaWhvb2QgZm9yIGxhbWJkYQpscC5sYW1iZGExIDwtIGZ1bmN0aW9uKGxhbWJkYSx5KXsKICAgIG4gPC0gbGVuZ3RoKHkpCiAgICB5LmwgPC0gdHJhbnMxKGxhbWJkYSAseSkKICAgIHNpZ21hc3EgPC0gMS9uICogc3VtKCh5LmwtbWVhbih5LmwpKV4yKQogICAgLW4vMiAqIGxvZyhzaWdtYXNxKSArIHN1bShsb2coYWJzKC0xLyh5KigtMSArIHlebGFtYmRhKSkpKSl9Cgoob3B0LmxhbWJkYS50cmFuczE9b3B0aW1pemUobHAubGFtYmRhMSxjKDAuMDAwMDAxLDcwKSx5PWRhdGEkcG93Lm9icy5ub3JtLCBtYXhpbXVtPVRSVUUpKQoKYGBgCgpgYGB7cn0KbW9kMz1nbG0odHJhbnMxKG9wdC5sYW1iZGEudHJhbnMxJG1heGltdW0sZGF0YSRwb3cub2JzLm5vcm0pfiB3czMwLGZhbWlseT1nYXVzc2lhbiwgIGRhdGE9ZGF0YSkKc3VtbWFyeShtb2QzKQpBSUMobW9kMykKYGBgCgpUcnlpbmcgYW4gZXhwb25lbnRpYWwgbW9kZWw6CmBgYHtyfQptb2Q1PWxtKGxvZyhkYXRhJHBvdy5vYnMubm9ybSl+ZGF0YSR3czMwKQpzdW1tYXJ5KG1vZDUpCkFJQyhtb2Q1KQpgYGAK</div>
 
 
 
@@ -2259,7 +2033,7 @@ $(document).ready(function () {
 <!-- code folding -->
 <script>
 $(document).ready(function () {
-  window.initializeSourceEmbed("Assignment - Survival data(Merged).Rmd");
+  window.initializeSourceEmbed("Wind Power Part 2.Rmd");
   window.initializeCodeFolding("show" === "show");
 });
 </script>

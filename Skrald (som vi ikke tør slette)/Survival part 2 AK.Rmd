@@ -1,0 +1,107 @@
+---
+title: Survival
+output: html_notebook
+---
+
+# Project 2 
+## Analysis of the binary data
+### Read the data into R:
+```{r}
+data <- read.delim("Logistic.txt",header = TRUE, sep = "", dec = ".")
+data$AIDS_no=data$n-data$AIDS_yes
+data
+```
+
+### Fit a logistic regression model:
+```{r}
+# AZT treatment =1, AZT no treatment=0:
+AZT=c(rep(1,170),rep(0,168))
+# AIDS =1, no AIDS=0
+AIDS=c(rep(1,25),rep(0,(170-25)),rep(1,44),rep(0,(168-44)))
+# Combine it to a dataframe
+df = data.frame(AZT, AIDS) 
+```
+
+```{r}
+# Performing a logistic regression
+fit.glm=glm(AIDS~AZT,family=binomial, data=df)
+fit.glm
+```
+
+The odds ratio: 
+$$OR=\frac{a*d}{b*c}$$
+$D_E$ - exposed and diseased
+$H_N$ - Not exposed and healthy
+
+```{r}
+a=data$AIDS_yes[1]
+b=data$AIDS_no[1]
+c=data$AIDS_yes[2]
+d=data$AIDS_no[2]
+(OR=a*d/(b*c))
+```
+OR<1 means that if the patient is treated the probability of getting AIDS is lower.
+
+Calculate a 95% confidence interval:
+```{r}
+(upperOR=exp(log(OR)+qnorm(0.975)*sqrt(1/a+1/b+1/c+1/d)))
+(lowerOR=exp(log(OR)-qnorm(0.975)*sqrt(1/a+1/b+1/c+1/d)))
+```
+The 95% confidence interval does not include 1, meaning that if a patient is treated with AZT the probability of getting AIDS is lower.
+
+## Analysis of the survival time data
+
+## Descriptive statistics:
+
+### Read the data into R:
+```{r}
+#Load data
+data.time <- read.delim("actg320.txt",header = TRUE, sep = "", dec = ".")
+head(data.time,5) 
+```
+
+### How many patients got AIDS or died in the two treatment groups?
+```{r}
+# Control treatment got AIDS or died
+(sum(data.time$tx == 0 & data.time$event == 1))
+# New treatment got AIDS or died
+(sum(data.time$tx == 1 & data.time$event == 1))
+```
+
+### How long was the total follow-up time in the two groups?
+```{r}
+# Convert days to years
+data.time$timeyear=data.time$time/365.25
+# Calculate followup time for the two groups
+by(data.time$timeyear,data.time$tx, sum)
+```
+
+We have longer followup time for treatment group 1 (new treatment) than 0 (control treatment).
+
+### Plot the survival functions in the two treatment groups, which group seems to be doing best?
+```{r}
+library(survival)
+Surv.bytx = survfit(Surv(timeyear,event==1)~tx, conf.type="log-log", data=data.time)
+Surv.bytx
+```
+
+```{r}
+plot(Surv.bytx, conf.int=T, las=1, xlab="Years Since Admission", ylab="Estimated Survival Prob", col=2:3, lwd=2, ylim=c(0.75,1))
+legend("bottomleft",col=2:3, c("Control Treatment", "New Treatment"),lwd=2)
+```
+The probability of surviving is higher whit the new treatment.
+
+### Plot the cumulative incidence functions for the two groups, which plot would you prefer?
+```{r}
+plot(Surv.bytx, fun=function(x) { 1- x }, conf.int = F, las = 1, xlab = "Years since admission",
+ylab = "Estimated Failure Prob.", col=2:3, lwd = 2)
+legend("topleft", col=2:3, c("Control Treatment", "New Treatment"), lwd=2)
+```
+I prefer the survival function, as it is more postive!
+
+### Compare the survival in the two treatment groups using a log-rank test.
+```{r}
+survdiff(Surv(timeyear, event==1)~tx, data=data.time)
+```
+
+The p-value is 0.001 which means that there is a significant difference between the two groups.
