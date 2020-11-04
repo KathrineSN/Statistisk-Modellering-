@@ -25,8 +25,8 @@ AIC(mod1)
 All parameters are significant.
 
 ```{r}
-qqnorm(dnorm(data$pow.obs.norm, mean=mod1$fitted.values, sd=0.1648) )
-qqline(dnorm(data$pow.obs.norm, mean=mod1$fitted.values, sd=0.1648))
+qqnorm(mod1$residuals )
+qqline(mod1$residuals)
 ```
 
 ### 2. You might consider non-normal models and/or normal model with data transformation. Further you might consider including wind direction. You should devellop a suited model for prediction of daily power prodiction. 
@@ -39,8 +39,8 @@ AIC(mod2)
 ```
 
 ```{r}
-qqnorm(dnorm(data$pow.obs.norm, mean=mod2$fitted.values, sd=mod2$deviance) )
-qqline(dnorm(data$pow.obs.norm, mean=mod2$fitted.values, sd=mod2$deviance))
+qqnorm(mod2$residuals)
+qqline(mod2$residuals)
 ```
 ```{r}
 library(betareg)
@@ -50,12 +50,13 @@ AIC(mod8)
 ```
 
 ```{r}
-qqnorm(dnorm(data$pow.obs.norm, mean=mod8$fitted.values, sd=sqrt(sum((mod8$residuals)^2)/(length(data$pow.obs.norm)-2))))
-qqline(dnorm(data$pow.obs.norm, mean=mod8$fitted.values, sd=sqrt(sum((mod8$residuals)^2)/(length(data$pow.obs.norm)-2))))
+qqnorm(mod8$residuals)
+qqline(mod8$residuals)
 ```
 
 
 ## Models using transformation 1, from project 1:
+Optimer lambda således at residualerne fra modellen best fitter en normalfordeling. 
 ```{r, warning=FALSE}
 trans1 <- function(lambda,y){
     y.l <- 1/lambda*log((y^lambda)/(1-y^lambda))
@@ -63,24 +64,26 @@ trans1 <- function(lambda,y){
 
 ## profile likelihood for lambda
 lp.lambda1 <- function(lambda,y){
-    n <- length(y)
-    y.l <- trans1(lambda ,y)
-    sigmasq <- 1/n * sum((y.l-mean(y.l))^2)
-    -n/2 * log(sigmasq) + sum(log(abs(-1/(y*(-1 + y^lambda)))))}
+    mod <- lm(trans1(lambda,y)~data$ws30+I(data$ws30^2))
+    length(y)/2*log(summary(mod)$sigma^2) - sum(log(abs(1/(y*(1 - y^lambda)))))
+    }
 
-(opt.lambda.trans1=optimize(lp.lambda1,c(0.000001,70),y=data$pow.obs.norm, maximum=TRUE))
+plot(seq(0.01,1,0.01), sapply(seq(0.01,1,0.01), lp.lambda1, y=data$pow.obs.norm))
+
+lp.lambda1(1/1, data$pow.obs.norm)
+(opt.lambda.trans1=optimize(lp.lambda1,c(0,1),y=data$pow.obs.norm))
 
 ```
 
 ```{r}
-mod3=glm(trans1(opt.lambda.trans1$maximum,data$pow.obs.norm)~ ws30,family=gaussian,  data=data)
+mod3=glm(trans1(opt.lambda.trans1$minimum,data$pow.obs.norm)~ ws30+I(data$ws30^2),family=gaussian,  data=data)
 summary(mod3)
 AIC(mod3)
 ```
 
 ```{r}
-qqnorm(dnorm(trans1(opt.lambda.trans1$maximum,data$pow.obs.norm), mean=mod3$fitted.values, sd=mod3$deviance) ,main="Distribution after boxcox transformation")
-qqline(dnorm(trans1(opt.lambda.trans1$maximum,data$pow.obs.norm), mean=mod3$fitted.values, sd=mod3$deviance))
+qqnorm(mod3$residuals)
+qqline(mod3$residuals)
 
 ```
 ## Models using transformation 2 from project 1:
@@ -105,8 +108,8 @@ summary(mod7)
 AIC(mod7)
 ```
 ```{r}
-qqnorm(dnorm(trans2(opt.lambda.trans2$maximum,data$pow.obs.norm), mean=mod7$fitted.values, sd=mod7$deviance))
-qqline(dnorm(trans2(opt.lambda.trans2$maximum,data$pow.obs.norm), mean=mod7$fitted.values, sd=mod7$deviance))
+qqnorm(mod7$residuals)
+qqline(mod7$residuals)
 ```
 
 
@@ -136,7 +139,7 @@ AIC(mod6)
 ```
 
 ```{r}
-qqnorm(dnorm(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm), mean=mod6$fitted.values, sd=mod6$deviance))
-qqline(dnorm(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm), mean=mod6$fitted.values, sd=mod6$deviance))
+qqnorm(mod6$residuals)
+qqline(mod6$residuals)
 ```
 

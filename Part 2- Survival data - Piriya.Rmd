@@ -99,13 +99,16 @@ In the confidence interval for AZT, zero is not included. Therefore, the AZT par
 
 The Wald statistics for the AZT effect:
 
+The null-hypothesis is the that theta is equal to 0. 
+
 ```{r}
-coef(mod1)[2]/summary(mod1)$coefficients[2,2]
+z=coef(mod1)[2]/summary(mod1)$coefficients[2,2]
 ```
 Based on Wald test statistics a p-value is calculated. 
 
 ```{r}
-pnorm(coef(mod1)[2]/summary(mod1)$coefficients[2,2])
+2*pnorm(z)
+1-pchisq(z^2, df=1)
 ```
 ```
 
