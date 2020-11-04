@@ -24,7 +24,8 @@ df = data.frame(AZT,AIDS)
 
 ```{r}
 #Logistic regression
-glm(AIDS~AZT, family = binomial,data = df)
+mod1=glm(AIDS~AZT, family = binomial,data = df)
+summary(mod1)
 ```
 
 ###  Present the odds ratio for the effect of AZT on AIDS with 95% confidence interval and interpret the result in words.
@@ -66,53 +67,46 @@ The confidence interval does not include one, meaning that probability of gettin
 
 ### Test the hypothesis of no effect of AZT on AIDS using:
 
-### The likelihood ratio test
+#### The likelihood ratio test
 
 The log likelihood ratio test is given as
 
-$$log(LR) = log(L(\theta_{0}))-log(L(\hat \theta))$$
+$$log(LR) = log(L(\theta_{0}))-log(L(\hat \theta))=log(c)$$
 
-In this test $\theta_{0}$ is the MLE of no difference between the two treatment groups, meaning that it makes no difference whether a patient was treated with AZT. 
+Here $\theta_{0}$ is deviance of the model with only the intercept and $ \hat\theta$ is the deviance of the model including all parameters. 
 
-Likewise, $\hat \theta$ is the MLE of patients being treated with AZT. 
-
-### Calculate thetas
-
-First, $\theta_{0}$ is calculated. 
+Using the c value from above, an approximated p-value can be obtained by:
+$$P(\chi^2_1>-2\cdot log(c))$$
+!!!!!!!!!!!!!!!Hvorfor forsvinder 2-tallet????????????????
 
 ```{r}
+#mod1 = glm(AIDS~AZT, family = binomial,data = df)
 
-#Formulating the likelihood function
-binomial.log.likelihood = function(theta,success,size){
-  -(sum(dbinom(x=success,size=size,prob=theta, log=TRUE)))}
-
-theta.all = nlminb(start=0.5,objective=binomial.log.likelihood,lower=0,success=k,size=n)
-theta.all$par
+c = mod1$null.deviance-mod1$deviance
+1-pchisq(c, df=1)
 ```
+The null-hypothesis is rejected. There is a significan difference between the two models, meaning that the model with all parameters are significantly better. 
 
-$\hat \theta$ is calculated. 
+
+#### Wald test
+
+Find the Wald confidence intervals. 
 
 ```{r}
-theta_AZT_yes.opt=nlminb(start=0.5,binomial.log.likelihood,lower=0,success=data$AIDS_yes[1],size=data$n[1])
-
-theta_AZT_yes.opt$par
+confint(mod1)
 ```
-LR is calculated. 
+In the confidence interval for AZT, zero is not included. Therefore, the AZT parameter is significant for the model. 
+
+The Wald statistics for the AZT effect:
 
 ```{r}
-(c <- theta.all$objective-theta_AZT_yes.opt$objective)
+coef(mod1)[2]/summary(mod1)$coefficients[2,2]
 ```
+Based on Wald test statistics a p-value is calculated. 
 
-Given LR=c an approximate p-value can be calculated as
-
-$$ P(\chi^2_{1} > -2 \cdot c)$$
 ```{r}
-#(-2*c,df=1,lower.tail = F)
-
-mod32 = glm(AIDS~AZT, family = binomial,data = df)
-
-mod32$null.deviance-mod32$deviance
-1-pchisq(mod32$null.deviance-mod32$deviance, df=1)
+pnorm(coef(mod1)[2]/summary(mod1)$coefficients[2,2])
+```
 ```
 
 
@@ -260,7 +254,7 @@ S30 <- (1+exp(z30))^-1
 
 # get the range for the x and y axis
 xrange <- range(data.time$time)
-yrange <- range(S3)
+yrange <- range(S30)
 
 
 # set up the plot
