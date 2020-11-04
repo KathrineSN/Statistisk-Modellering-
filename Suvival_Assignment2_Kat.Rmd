@@ -40,11 +40,55 @@ Test the hypothesis of no effect of AZT on AIDS
 
 Likelihood ratio test
 
-Directly from R output??
+### The likelihood ratio test
+
+The log likelihood ratio test is given as
+
+$$log(LR) = log(L(\theta_{0}))-log(L(\hat \theta))$$
+
+In this test $\theta_{0}$ is the MLE of no difference between the two treatment groups, meaning that it makes no difference whether a patient was treated with AZT. 
+
+Likewise, $\hat \theta$ is the MLE of patients being treated with AZT. 
+
+### Calculate thetas
+
+First, $\theta_{0}$ is calculated. 
 
 ```{r}
 
+#Formulating the likelihood function
+binomial.log.likelihood = function(theta,success,size){
+  -(sum(dbinom(x=success,size=size,prob=theta, log=TRUE)))}
+
+theta.all = nlminb(start=0.5,objective=binomial.log.likelihood,lower=0,success=k,size=n)
+theta.all$par
 ```
+
+$\hat \theta$ is calculated. 
+
+```{r}
+theta_AZT_yes.opt=nlminb(start=0.5,binomial.log.likelihood,lower=0,success=data$AIDS_yes[1],size=data$n[1])
+
+theta_AZT_yes.opt$par
+```
+LR is calculated. 
+
+```{r}
+(c <- theta.all$objective-theta_AZT_yes.opt$objective)
+```
+
+Given LR=c an approximate p-value can be calculated as
+
+$$ P(\chi^2_{1} > -2 \cdot c)$$
+```{r}
+#(-2*c,df=1,lower.tail = F)
+
+mod32 = glm(AIDS~AZT, family = binomial,data = df)
+
+mod32$null.deviance-mod32$deviance
+1-pchisq(mod32$null.deviance-mod32$deviance, df=1)
+```
+Low p-value meaning that AZT has an effect
 
 
 
@@ -58,10 +102,6 @@ The null hypothesis is rejected on all levels as the p-value is 2e-16
 ```{r}
 
 ```
-
-
-
-
 
 
 #######################
@@ -140,6 +180,54 @@ data$AIDS_no=data$n-data$AIDS_yes
 head(data,2) 
 
 ```
+
+################################
+## Parametric survival models ##
+################################
+
+Fit parametric survival models containing treatment (tx) and CD4 count as exploratory variables
+
+```{r}
+mod1 <- survreg(Surv(time, event) ~ tx + cd4,
+data = data.time, dist = "weibull")
+
+summary(mod1)
+```
+It looks like that sigma factor is significant for the model, therefore, an exponential regression model would not be a better fit. 
+sigma factor
+
+```{r}
+
+mod3 <- survreg(Surv(time, event) ~ cd4 + tx,
+data = data.time, dist = "loglogistic")
+
+summary(mod3)
+```
+
+AIC score for comparison
+
+```{r}
+c(AIC(mod1),AIC(mod3))
+```
+The loglogistic model is best because it has the lowest AIC score. 
+Make a table of estimates for the parameters in the Loglogistic model including a 95% confidence interval
+
+```{r}
+
+confint(mod3)
+
+```
+Time Ratio log-logistic for th treatment effect and the effect of CD¤ count witg 50
+```{r}
+#Time ratio for bearings
+exp(cbind(coef(mod3)[3],confint(mod3)[3, 1], confint(mod3)[3, 2]))
+#Time ratio for loads
+exp(cbind(coef(mod3)[2],confint(mod3)[2, 1], confint(mod3)[2, 2])*50)
+```
+```
+
+
+
 
 
 

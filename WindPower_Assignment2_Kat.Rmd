@@ -1,0 +1,167 @@
+################
+## Wind Power ##
+################
+
+Reading the data
+
+```{r}
+data <- read.delim("tuno.txt",header = TRUE, sep = " ", dec = ".")
+data$pow.obs.norm<-(data$pow.obs)/5000
+head(data,6)
+
+```
+
+Formulate an initial model f = b_0 + b_1*w_s + b_2*w_s^2
+
+```{r}
+
+mod1=lm(pow.obs.norm~ ws30+I(ws30^2), data=data)
+
+summary(mod1)
+
+AIC(mod1)
+```
+All parameters are significant
+
+###############################################################
+## Develop a suited model for prediction of power production ##
+###############################################################
+
+We also tried to add wind direction
+
+```{r}
+mod4=lm(pow.obs.norm~ ws30+wd30+I(ws30^2)+I(wd30^2), data=data)
+
+summary(mod4)
+
+AIC(mod4)
+```
+
+Wind direction is also slightly significant
+It does not improve the model much
+Using the generalized linear model with a Gamma link function appears to be better
+
+```{r}
+#This is the best model so far
+mod2=glm(pow.obs.norm~ ws30,family=Gamma,  data=data)
+summary(mod2)
+AIC(mod2)
+```
+
+Using transformation 1 from project
+
+```{r}
+trans1 <- function(lambda,y){
+    y.l <- 1/lambda*log((y^lambda)/(1-y^lambda))
+    return(y.l)}
+
+## profile likelihood for lambda
+lp.lambda1 <- function(lambda,y){
+    n <- length(y)
+    y.l <- trans1(lambda ,y)
+    sigmasq <- 1/n * sum((y.l-mean(y.l))^2)
+    -n/2 * log(sigmasq) + sum(log(abs(-1/(y*(-1 + y^lambda)))))}
+
+(opt.lambda.trans1=optimize(lp.lambda1,c(0.000001,70),y=data$pow.obs.norm, maximum=TRUE))
+```
+```{r}
+mod3=glm(trans1(opt.lambda.trans1$maximum,data$pow.obs.norm)~ ws30,family=gaussian,  data=data)
+
+summary(mod3)
+
+AIC(mod3)
+```
+
+```{r}
+mod3=glm(trans1(opt.lambda.trans1$maximum,data$pow.obs.norm)~ ws30,family = gaussian,  data=data)
+
+summary(mod3)
+
+AIC(mod3)
+```
+
+Transformation 2 from project 1
+
+```{r}
+trans2 <- function(lambda,y){
+    y.l <- 2*log((y^lambda)/(1-y)^(1-lambda))
+    return(y.l)}
+
+## profile likelihood for lambda
+lp.lambda2 <- function(lambda,y){
+    n <- length(y)
+    y.l <- trans2(lambda ,y)
+    sigmasq <- 1/n * sum((y.l-mean(y.l))^2)
+    -n/2 * log(sigmasq) + sum(log(abs(((4*lambda - 2)*y - 2*lambda)/(y*(-1 + y)))))}
+    
+(opt.lambda.trans2=optimize(lp.lambda2,c(0.000001,1),y=data$pow.obs.norm, maximum=TRUE))
+```
+```{r}
+mod4=glm(trans2(opt.lambda.trans2$maximum,data$pow.obs.norm)~ ws30,family=gaussian,  data=data)
+
+summary(mod4)
+
+AIC(mod4)
+
+```
+
+```{r}
+
+## box-cox transformation
+bc.trans <- function(lambda,y){
+    y.l <- (y^lambda-1)/lambda
+    
+    if(lambda==0){y.l <- log(y)}
+    return(y.l)}
+
+## profile likelihood for lambda
+lp.lambda <- function(lambda,y){
+    n <- length(y)
+    y.l <- bc.trans(lambda ,y)
+    sigmasq <- 1/n * sum((y.l-mean(y.l))^2)
+    -n/2 * log(sigmasq) + (lambda-1)*sum(log(y))}
+
+(opt.lambda.boxcox=optimize(lp.lambda,c(-2,2),y=data$pow.obs.norm,maximum=TRUE))
+
+```
+```{r}
+mod5=glm(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)~ ws30,family=gaussian,  data=data)
+
+summary(mod5)
+
+AIC(mod5)
+```
+
+```{r}
+library(betareg)
+mod6=betareg(pow.obs.norm ~ ws30, data=data)
+
+summary(mod6)
+
+AIC(mod6)
+
+qqnorm(mod6$residuals)
+qqline(mod6$residuals)
+
+#plot(mod6, which = 5)
+
+#qqPlot(mod6, data = data)
+```
+
+```{r}
+
+
+#qqnorm(dnorm(data$pow.obs.norm, mean = mod6$fitted.values, sd=mod6$)
+       
+```
+
+
+
+
+
+
+
+
+
+```
+
