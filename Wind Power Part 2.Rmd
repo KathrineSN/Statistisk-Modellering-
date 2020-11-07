@@ -24,22 +24,39 @@ AIC(mod1)
 ```
 All parameters are significant.
 
-Adding wind direction:
 ```{r}
-mod4=lm(pow.obs.norm~ ws30+wd30+I(ws30^2)+I(wd30^2), data=data)
-summary(mod4)
-AIC(mod4)
+qqnorm(mod1$residuals )
+qqline(mod1$residuals)
 ```
 
+### 2. You might consider non-normal models and/or normal model with data transformation. Further you might consider including wind direction. You should devellop a suited model for prediction of daily power prodiction. 
+
+#### Models without tranformation 
 ```{r}
 mod2=glm(pow.obs.norm~ ws30,family=Gamma,  data=data)
 summary(mod2)
 AIC(mod2)
 ```
 
+```{r}
+qqnorm(mod2$residuals)
+qqline(mod2$residuals)
+```
+```{r}
+library(betareg)
+mod8=betareg(pow.obs.norm~ ws30, data=data)
+summary(mod8)
+AIC(mod8)
+```
+
+```{r}
+qqnorm(mod8$residuals)
+qqline(mod8$residuals)
+```
 
 
-Using transformation 1, from project 1:
+## Models using transformation 1, from project 1:
+Optimer lambda således at residualerne fra modellen best fitter en normalfordeling. 
 ```{r, warning=FALSE}
 trans1 <- function(lambda,y){
     y.l <- 1/lambda*log((y^lambda)/(1-y^lambda))
@@ -47,24 +64,82 @@ trans1 <- function(lambda,y){
 
 ## profile likelihood for lambda
 lp.lambda1 <- function(lambda,y){
-    n <- length(y)
-    y.l <- trans1(lambda ,y)
-    sigmasq <- 1/n * sum((y.l-mean(y.l))^2)
-    -n/2 * log(sigmasq) + sum(log(abs(-1/(y*(-1 + y^lambda)))))}
+    mod <- lm(trans1(lambda,y)~data$ws30+I(data$ws30^2))
+    length(y)/2*log(summary(mod)$sigma^2) - sum(log(abs(1/(y*(1 - y^lambda)))))
+    }
 
-(opt.lambda.trans1=optimize(lp.lambda1,c(0.000001,70),y=data$pow.obs.norm, maximum=TRUE))
+plot(seq(0.01,1,0.01), sapply(seq(0.01,1,0.01), lp.lambda1, y=data$pow.obs.norm))
+
+lp.lambda1(1/1, data$pow.obs.norm)
+(opt.lambda.trans1=optimize(lp.lambda1,c(0,1),y=data$pow.obs.norm))
 
 ```
 
 ```{r}
-mod3=glm(trans1(opt.lambda.trans1$maximum,data$pow.obs.norm)~ ws30,family=gaussian,  data=data)
+mod3=glm(trans1(opt.lambda.trans1$minimum,data$pow.obs.norm)~ ws30+I(data$ws30^2),family=gaussian,  data=data)
 summary(mod3)
 AIC(mod3)
 ```
 
-Trying an exponential model:
 ```{r}
-mod5=lm(log(data$pow.obs.norm)~data$ws30)
-summary(mod5)
-AIC(mod5)
+qqnorm(mod3$residuals)
+qqline(mod3$residuals)
+
 ```
+## Models using transformation 2 from project 1:
+```{r, warning=FALSE}
+trans2 <- function(lambda,y){
+    y.l <- 2*log((y^lambda)/(1-y)^(1-lambda))
+    return(y.l)}
+
+## profile likelihood for lambda
+lp.lambda2 <- function(lambda,y){
+    n <- length(y)
+    y.l <- trans2(lambda ,y)
+    sigmasq <- 1/n * sum((y.l-mean(y.l))^2)
+    -n/2 * log(sigmasq) + sum(log(abs(((4*lambda - 2)*y - 2*lambda)/(y*(-1 + y)))))}
+    
+(opt.lambda.trans2=optimize(lp.lambda2,c(0.000001,1),y=data$pow.obs.norm, maximum=TRUE))
+
+```
+```{r}
+mod7=glm(trans2(opt.lambda.trans2$maximum,data$pow.obs.norm)~ ws30,family=gaussian,  data=data)
+summary(mod7)
+AIC(mod7)
+```
+```{r}
+qqnorm(mod7$residuals)
+qqline(mod7$residuals)
+```
+
+
+## Models using Boxcox transformation: 
+```{r}
+## box-cox transformation
+bc.trans <- function(lambda,y){
+    y.l <- (y^lambda-1)/lambda
+    
+    if(lambda==0){y.l <- log(y)}
+    return(y.l)}
+
+## profile likelihood for lambda
+lp.lambda <- function(lambda,y){
+    n <- length(y)
+    y.l <- bc.trans(lambda ,y)
+    sigmasq <- 1/n * sum((y.l-mean(y.l))^2)
+    -n/2 * log(sigmasq) + (lambda-1)*sum(log(y))}
+
+(opt.lambda.boxcox=optimize(lp.lambda,c(-2,2),y=data$pow.obs.norm,maximum=TRUE))
+```
+
+```{r}
+mod6=glm(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)~ ws30,family=gaussian,  data=data)
+summary(mod6)
+AIC(mod6)
+```
+
+```{r}
+qqnorm(mod6$residuals)
+qqline(mod6$residuals)
+```
+
