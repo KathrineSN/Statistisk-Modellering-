@@ -25,8 +25,8 @@ AIC(mod1)
 All parameters are significant.
 
 ```{r}
-qqnorm(mod1$residuals )
-qqline(mod1$residuals)
+library(car)
+qqPlot(mod1$residuals)
 ```
 
 ### 2. You might consider non-normal models and/or normal model with data transformation. Further you might consider including wind direction. You should devellop a suited model for prediction of daily power produAction. 
@@ -39,8 +39,7 @@ AIC(mod2)
 ```
 
 ```{r}
-qqnorm(mod2$residuals)
-qqline(mod2$residuals)
+qqPlot(mod2$residuals)
 ```
 ```{r}
 library(betareg)
@@ -50,13 +49,15 @@ AIC(mod8)
 ```
 
 ```{r}
-qqnorm(mod8$residuals)
-qqline(mod8$residuals)
+qqPlot(mod8$residuals)
 ```
 
 
 ## Models using transformation 1, from project 1:
 Optimer lambda således at residualerne fra modellen best fitter en normalfordeling. 
+
+
+#### Wind Speed and Wind Speed Squared
 ```{r, warning=FALSE}
 trans1 <- function(lambda,y){
     y.l <- 1/lambda*log((y^lambda)/(1-y^lambda))
@@ -74,53 +75,15 @@ lp.lambda1(1/1, data$pow.obs.norm)
 (opt.lambda.trans1=optimize(lp.lambda1,c(0,1),y=data$pow.obs.norm))
 
 ```
-
-
-
-
-
-
 ```{r}
 mod3=glm(trans1(opt.lambda.trans1$minimum,data$pow.obs.norm)~ ws30+I(data$ws30^2),family=gaussian,  data=data)
 summary(mod3)
 AIC(mod3)
+qqPlot(mod3$residuals)
 ```
+We have tried to add a third order term, but it did not improve the model as it was not significant.
 
-```{r}
-qqnorm(mod3$residuals)
-qqline(mod3$residuals)
-
-```
-
-```{r}
-#Forsøg med et 3. gradsled
-
-trans1 <- function(lambda,y){
-    y.l <- 1/lambda*log((y^lambda)/(1-y^lambda))
-    return(y.l)}
-
-## profile likelihood for lambda
-lp.lambda1 <- function(lambda,y){
-    mod <- lm(trans1(lambda,y)~data$ws30+I(data$ws30^2)+I(data$ws30^3))
-    length(y)/2*log(summary(mod)$sigma^2) - sum(log(abs(1/(y*(1 - y^lambda)))))
-    }
-
-#plot(seq(0.01,1,0.01), sapply(seq(0.01,1,0.01), lp.lambda1, y=data$pow.obs.norm))
-
-lp.lambda1(1/1, data$pow.obs.norm)
-(opt.lambda.trans1=optimize(lp.lambda1,c(0,1),y=data$pow.obs.norm))
-
-#HVORFOR ER 2.GRADSLEDDET IKKE SIGNIFIKANT HER?
-
-```
-```{r}
-mod4=glm(trans1(opt.lambda.trans1$minimum,data$pow.obs.norm)~ ws30+I(data$ws30^2)+I(data$ws30^3),family=gaussian,  data=data)
-summary(mod4)
-AIC(mod4)
-qqnorm(mod4$residuals)
-qqline(mod4$residuals)
-```
-
+#### Wind speed, Wind speed squared and cosine of wind direction
 ```{r}
 #Forsøg med sin og cos til wd
 
@@ -130,7 +93,7 @@ trans1 <- function(lambda,y){
 
 ## profile likelihood for lambda
 lp.lambda1 <- function(lambda,y){
-    mod <- lm(trans1(lambda,y)~sin(data$wd30)+cos(data$wd30)+sin(I(data$wd30^2))+cos(I(data$wd30^2)))
+    mod <- lm(trans1(lambda,y)~data$ws30+I(data$ws30^2)+cos(data$wd30))
     length(y)/2*log(summary(mod)$sigma^2) - sum(log(abs(1/(y*(1 - y^lambda)))))
     }
 
@@ -141,70 +104,66 @@ lp.lambda1(1/1, data$pow.obs.norm)
 
 ```
 ```{r}
-
-mod5=glm(trans1(opt.lambda.trans1$minimum,data$pow.obs.norm)~ sin(data$wd30)+cos(data$wd30)+sin(I(data$wd30^2))+cos(I(data$wd30^2)),family=gaussian,  data=data)
+library(car)
+mod5=glm(trans1(opt.lambda.trans1$minimum,data$pow.obs.norm)~ data$ws30+I(data$ws30^2)+cos(data$wd30),family=gaussian,  data=data)
 summary(mod5)
 AIC(mod5)
-qqnorm(mod5$residuals)
-qqline(mod5$residuals)
+qqPlot(mod5$residuals)
 ```
 
+#### Wind speed, Wind speed squared and cosine of wind direction
+```{r}
+#Forsøg med sin og cos til wd
 
-
-## Models using transformation 2 from project 1:
-```{r, warning=FALSE}
-trans2 <- function(lambda,y){
-    y.l <- 2*log((y^lambda)/(1-y)^(1-lambda))
+trans1 <- function(lambda,y){
+    y.l <- 1/lambda*log((y^lambda)/(1-y^lambda))
     return(y.l)}
 
 ## profile likelihood for lambda
-lp.lambda2 <- function(lambda,y){
-    n <- length(y)
-    y.l <- trans2(lambda ,y)
-    sigmasq <- 1/n * sum((y.l-mean(y.l))^2)
-    -n/2 * log(sigmasq) + sum(log(abs(((4*lambda - 2)*y - 2*lambda)/(y*(-1 + y)))))}
-    
-(opt.lambda.trans2=optimize(lp.lambda2,c(0.000001,1),y=data$pow.obs.norm, maximum=TRUE))
+lp.lambda1 <- function(lambda,y){
+    mod <- lm(trans1(lambda,y)~cos(data$wd30)+sin(data$wd30)+cos(I(data$wd30*2)))
+    length(y)/2*log(summary(mod)$sigma^2) - sum(log(abs(1/(y*(1 - y^lambda)))))
+    }
+
+#plot(seq(0.01,1,0.01), sapply(seq(0.01,1,0.01), lp.lambda1, y=data$pow.obs.norm))
+
+lp.lambda1(1/1, data$pow.obs.norm)
+(opt.lambda.trans1=optimize(lp.lambda1,c(0,1),y=data$pow.obs.norm))
 
 ```
 ```{r}
-mod7=glm(trans2(opt.lambda.trans2$maximum,data$pow.obs.norm)~ ws30,family=gaussian,  data=data)
-summary(mod7)
-AIC(mod7)
-```
-```{r}
-qqnorm(mod7$residuals)
-qqline(mod7$residuals)
-```
-
-
-## Models using Boxcox transformation: 
-```{r}
-## box-cox transformation
-bc.trans <- function(lambda,y){
-    y.l <- (y^lambda-1)/lambda
-    
-    if(lambda==0){y.l <- log(y)}
-    return(y.l)}
-
-## profile likelihood for lambda
-lp.lambda <- function(lambda,y){
-    n <- length(y)
-    y.l <- bc.trans(lambda ,y)
-    sigmasq <- 1/n * sum((y.l-mean(y.l))^2)
-    -n/2 * log(sigmasq) + (lambda-1)*sum(log(y))}
-
-(opt.lambda.boxcox=optimize(lp.lambda,c(-2,2),y=data$pow.obs.norm,maximum=TRUE))
-```
-
-```{r}
-mod6=glm(bc.trans(opt.lambda.boxcox$maximum,data$pow.obs.norm)~ ws30,family=gaussian,  data=data)
+library(car)
+mod6=glm(trans1(opt.lambda.trans1$minimum,data$pow.obs.norm)~cos(data$wd30)+sin(data$wd30)+cos(I(data$wd30*2)),family=gaussian,  data=data)
 summary(mod6)
 AIC(mod6)
+qqPlot(mod6$residuals)
 ```
 
+
+### 3. Present the parameters of the final model, this include quantification of the uncertainty of parameters.
 ```{r}
-qqnorm(mod6$residuals)
-qqline(mod6$residuals)
+Confint(mod6)
+```
+
+
+### 4. Give an interpretation of the parameters in the particular this should include presentation of any nonlinear functions (series expansions) of the exploratory variables.
+
+
+### 5. Present the final model e.g. some graphical presentation of predictions under different scenarios of wind speed and wind direction. 
+```{r}
+
+sigma <- sqrt((1/length(data$pow.obs.norm))*sum(data$wd30-mean(data$wd30))^2)
+t.quan <- qt(p = 0.975, df=length(data$pow.obs.norm)-4 )
+interval_u<-mod6$fitted.values+t.quan*sigma
+interval_l<-mod6$fitted.values+t.quan*sigma
+#Y.pred.all+t.quan*sqrt(var.Y.pred.all)
+```
+
+
+```{r}
+plot(data$wd30,trans1(opt.lambda.trans1$minimum,data$pow.obs.norm))
+points(data$wd30,mod6$fitted.values, pch=16, col="Red")   
+points(data$wd30,interval_u, col="Red")
+#lines(interval_l, col)
 ```
 
