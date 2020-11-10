@@ -135,16 +135,16 @@ WI <- pi*(1-pi)
 
 #t is the transpose
 
-XWS = t(X) %*% WS
-XWI = X * WI
-XWX = t(XWI) %*% X
+XWS = t(X) %*% WS # Score function
+XWI = X * WI #Information matrix (mellemregning)
+XWX = t(XWI) %*% X # Information matrix
 
 #The score statistics (HVAD ER DET DER SKER HER?!?)
 
 t(XWS) %*% solve(XWX) %*% XWS
 print('p-value:')
 1-pchisq(t(XWS) %*% solve(XWX) %*% XWS, df=1)
-
+ 
 
 ```
 The null hypothesis is rejected meaning that the group treated with AZT is significantly different from the other group.
