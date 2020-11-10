@@ -75,6 +75,11 @@ lp.lambda1(1/1, data$pow.obs.norm)
 
 ```
 
+
+
+
+
+
 ```{r}
 mod3=glm(trans1(opt.lambda.trans1$minimum,data$pow.obs.norm)~ ws30+I(data$ws30^2),family=gaussian,  data=data)
 summary(mod3)
@@ -86,6 +91,66 @@ qqnorm(mod3$residuals)
 qqline(mod3$residuals)
 
 ```
+
+```{r}
+#Forsøg med et 3. gradsled
+
+trans1 <- function(lambda,y){
+    y.l <- 1/lambda*log((y^lambda)/(1-y^lambda))
+    return(y.l)}
+
+## profile likelihood for lambda
+lp.lambda1 <- function(lambda,y){
+    mod <- lm(trans1(lambda,y)~data$ws30+I(data$ws30^2)+I(data$ws30^3))
+    length(y)/2*log(summary(mod)$sigma^2) - sum(log(abs(1/(y*(1 - y^lambda)))))
+    }
+
+#plot(seq(0.01,1,0.01), sapply(seq(0.01,1,0.01), lp.lambda1, y=data$pow.obs.norm))
+
+lp.lambda1(1/1, data$pow.obs.norm)
+(opt.lambda.trans1=optimize(lp.lambda1,c(0,1),y=data$pow.obs.norm))
+
+#HVORFOR ER 2.GRADSLEDDET IKKE SIGNIFIKANT HER?
+
+```
+```{r}
+mod4=glm(trans1(opt.lambda.trans1$minimum,data$pow.obs.norm)~ ws30+I(data$ws30^2)+I(data$ws30^3),family=gaussian,  data=data)
+summary(mod4)
+AIC(mod4)
+qqnorm(mod4$residuals)
+qqline(mod4$residuals)
+```
+
+```{r}
+#Forsøg med sin og cos til wd
+
+trans1 <- function(lambda,y){
+    y.l <- 1/lambda*log((y^lambda)/(1-y^lambda))
+    return(y.l)}
+
+## profile likelihood for lambda
+lp.lambda1 <- function(lambda,y){
+    mod <- lm(trans1(lambda,y)~sin(data$wd30)+cos(data$wd30)+sin(I(data$wd30^2))+cos(I(data$wd30^2)))
+    length(y)/2*log(summary(mod)$sigma^2) - sum(log(abs(1/(y*(1 - y^lambda)))))
+    }
+
+#plot(seq(0.01,1,0.01), sapply(seq(0.01,1,0.01), lp.lambda1, y=data$pow.obs.norm))
+
+lp.lambda1(1/1, data$pow.obs.norm)
+(opt.lambda.trans1=optimize(lp.lambda1,c(0,1),y=data$pow.obs.norm))
+
+```
+```{r}
+
+mod5=glm(trans1(opt.lambda.trans1$minimum,data$pow.obs.norm)~ sin(data$wd30)+cos(data$wd30)+sin(I(data$wd30^2))+cos(I(data$wd30^2)),family=gaussian,  data=data)
+summary(mod5)
+AIC(mod5)
+qqnorm(mod5$residuals)
+qqline(mod5$residuals)
+```
+
+
+
 ## Models using transformation 2 from project 1:
 ```{r, warning=FALSE}
 trans2 <- function(lambda,y){

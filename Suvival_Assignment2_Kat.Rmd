@@ -128,11 +128,11 @@ Number of patients getting AIDS or dying in the two groups
 The total follow up time
 follow up time = sum of the time that you follow all of the participants
 ```{r}
-print('Follow up for new treatment group')
+print('Follow up for non-treatment group')
 (sum(data.time$time[data.time$tx == 0])/365)
 
 
-print('Follow up for new treatment group')
+print('Follow up for treatment group')
 (sum(data.time$time[data.time$tx == 1])/365)
 ```
 Plotting survival function in the two treatment groups

@@ -1,0 +1,313 @@
+# Analysis of the binary data
+
+### Read data
+
+```{r}
+data <- read.delim("Logistic.txt",header = TRUE, sep = "", dec = ".")
+data$AIDS_no=data$n-data$AIDS_yes
+head(data,2)
+
+n <- sum(data[,3]) #Number of patient #n 
+k <- sum(data[,2]) #Number of patients with AIDS #Sucesses #k
+theta <- k/n #Probability that you have Aids
+```
+
+### Fit a logistic regression model for the binary outcome AIDS=”yes” versus AIDS=”no” with the explanatory variable treatment with AZT (Yes,NO).
+
+```{r}
+AZT = c(rep(1,170),rep(0,168))
+AIDS = c(rep(1,25),rep(0,145),rep(1,44),rep(0,124))
+
+#Creating a dataframe with data
+df = data.frame(AZT,AIDS)
+
+#Creating design matrix
+
+X <- matrix(0, nrow = length(AIDS), ncol = 2)
+
+X[,1] = 1
+X[,2] = c(rep(1,data$AIDS_yes[1]), rep(0,data$AIDS_yes[2]), rep(1,data$AIDS_no[1]),rep(1,data$AIDS_no[2]))
+
+
+```
+
+```{r}
+#Logistic regression
+mod1=glm(AIDS~AZT, family = binomial,data = df)
+summary(mod1)
+```
+
+###  Present the odds ratio for the effect of AZT on AIDS with 95% confidence interval and interpret the result in words.
+
+The odds ratio is defined as: 
+
+$$
+O R=\frac{D_{E} H_{N}}{D_{N} H_{E}}
+$$
+
+$$
+\begin{array}{|r|cc|}
+\hline & \text { Diseased } & \text { Healthy } \\
+\hline \text { Exposed } & D_{E} & H_{E} \\
+\text { Not exposed } & D_{N} & H_{N} \\
+\hline
+\end{array}
+$$
+
+```{r}
+a = data$AIDS_yes[1]
+b = data$AIDS_no[1]
+c = data$AIDS_yes[2]
+d = data$AIDS_no[2]
+
+(OR=(a*d)/(b*c))
+
+```
+The OR is lower than one, meaning that probability of getting aids is lower when a patient is treated with AZT. 
+
+```{r}
+#with confidence interval #95% confidence interval
+(lowerOR=exp(log(OR)-qnorm(0.975)*sqrt(1/a+1/b+1/c+1/d)))
+(upperOR=exp(log(OR)+qnorm(0.975)*sqrt(1/a+1/b+1/c+1/d)))
+```
+
+
+The confidence interval does not include one, meaning that probability of getting aids is lower when a patient is treated with AZT. 
+
+### Test the hypothesis of no effect of AZT on AIDS using:
+
+#### The likelihood ratio test
+
+The log likelihood ratio test is given as
+
+$$log(LR) = log(L(\theta_{0}))-log(L(\hat \theta))=log(c)$$
+
+Here $\theta_{0}$ is deviance of the model with only the intercept and $ \hat\theta$ is the deviance of the model including all parameters. 
+
+Using the c value from above, an approximated p-value can be obtained by:
+$$P(\chi^2_1>-2\cdot log(c))$$
+!!!!!!!!!!!!!!!Hvorfor forsvinder 2-tallet????????????????
+
+```{r}
+#mod1 = glm(AIDS~AZT, family = binomial,data = df)
+
+c = mod1$null.deviance-mod1$deviance
+1-pchisq(c, df=1)
+```
+The null-hypothesis is rejected. There is a significan difference between the two models, meaning that the model with all parameters are significantly better. 
+
+
+#### Wald test
+
+Find the Wald confidence intervals. 
+
+```{r}
+confint(mod1)
+```
+In the confidence interval for AZT, zero is not included. Therefore, the AZT parameter is significant for the model. 
+
+The Wald statistics for the AZT effect:
+
+The null-hypothesis is the that theta is equal to 0. 
+
+```{r}
+z=coef(mod1)[2]/summary(mod1)$coefficients[2,2]
+```
+Based on Wald test statistics a p-value is calculated. 
+
+```{r}
+2*pnorm(z)
+1-pchisq(z^2, df=1)
+```
+### Score test
+#Score test using b1 = 0 (i.e. no AZT treatment)
+
+```{r}
+m0 = glm(AIDS ~ 1, family = binomial)
+
+# See def. for pi on p. 259
+pi = m0$fit
+
+#Weights for the score and information function
+
+WS <- (AIDS-pi)
+WI <- pi*(1-pi)
+
+#t is the transpose
+
+XWS = t(X) %*% WS
+XWI = X * WI
+XWX = t(XWI) %*% X
+
+#The score statistics (HVAD ER DET DER SKER HER?!?)
+
+t(XWS) %*% solve(XWX) %*% XWS
+print('p-value:')
+1-pchisq(t(XWS) %*% solve(XWX) %*% XWS, df=1)
+
+
+```
+The null hypothesis is rejected meaning that the group treated with AZT is significantly different from the other group.
+
+
+# Analysis of the survival data
+
+## 1 Analyses of the survival time data
+
+### Load data
+```{r}
+#Load data
+data.time <- read.delim("actg320.txt",header = TRUE, sep = "", dec = ".")
+head(data.time,2) 
+```
+
+### How many got AIDS in the two treament groups? 
+```{r}
+
+by(data.time$event, data.time$tx, sum)
+
+```
+
+### How long is the follow-up time?
+
+```{r}
+#From days to years
+data.time$YearTime <- data.time$time/365.25
+
+by(data.time$YearTime, data.time$tx, sum)
+
+```
+The follow-up time is a little longer for patients with treatment. 
+
+### Plot the survival function in the two treatment groups, which groups seems to be doing best?
+```{r}
+library(survival)
+
+Surv.Bytx <- survfit(Surv(time, event == 1) ~ tx,
+conf.type = "log-log",data = data.time)
+
+(Surv.Bytx)
+```
+
+```{r}
+plot(Surv.Bytx, conf.int = T, las = 1, xlab = "Time",ylab = "Estimated Survival Prob.", col=c(2,3), lwd = 1)
+
+legend("bottomleft", col=2:3, c("Not treated","Treated"), lwd=2)
+```
+The functions differ towards the end. It is seen that the probability of surviving is higher when a patient is treated. 
+
+### Plot the cumulative incidence function for the two groups which do you prefer?
+
+```{r}
+plot(Surv.Bytx, fun=function(x) { 1- x }, conf.int = T,las = 1, xlab = "Time",
+ylab = "Estimated Failure Prob.", col=c(2,3))
+legend("topleft", col=c(2,3), c("Male","Female"))
+```
+The cumulative incidence function is best, since it is easier to see what is happening on this plot given than the incidence rate is fairly low.  
+
+### Compare the survival in the two treatment groups using the Log-rank test
+
+```{r}
+survdiff(Surv(YearTime, event == 1) ~ tx, data = data.time)
+```
+The p-value is significant. The null-hypothesis is rejected, meaning that it does make a difference to receive treatment. 
+
+
+## 1.2 Parametric survival models
+
+## Fit parametric survival models containing treatment (tx) and CD4 count as exploratory variables
+
+### Weibull model 
+```{r}
+mod1 <- survreg(Surv(time, event) ~ tx + cd4,
+data = data.time, dist = "weibull")
+
+summary(mod1)
+```
+It looks like that sigma factor is significant for the model, therefore, an exponential regression model would not be a better fit. 
+
+
+### Log-logistic model
+
+```{r}
+mod3 <- survreg(Surv(time, event) ~ cd4 + tx,
+data = data.time, dist = "loglogistic")
+
+summary(mod3)
+```
+All parameters are significant.
+
+
+### AIC 
+
+To compare the 2 models the AIC score is calculated
+```{r}
+c(AIC(mod1),AIC(mod3))
+```
+The loglogistic model is best because it has the lowest AIC score. 
+
+### Make a table of estimates for the parameters in the Loglogistic model including a 95% confidence interval
+
+```{r}
+
+confint(mod3)
+
+```
+
+### Time Ratio log-logistic for th treatment effect and the effect of CD¤ count witg 50
+
+```{r}
+#Time ratio for bearings
+exp(cbind(coef(mod3)[3],confint(mod3)[3, 1], confint(mod3)[3, 2]))
+#Time ratio for loads
+exp(cbind(coef(mod3)[2],confint(mod3)[2, 1], confint(mod3)[2, 2])*50)
+```
+The survival time is increased with 132% when a patient is treated. 
+
+The survival time is increased 183% for every 50 cd4 cells/milliliter. 
+
+### Asses the goodness of fit of the loglogistic model using the Cox Snell residuals
+
+```{r}
+data.time$z <- (log(data.time$time)-mod3$linear.predictors)/mod3$scale
+data.time$CS3 <- log(1+exp(data.time$z))
+surv3 <- survfit(Surv(CS3, event==1)~1 , data = data.time)
+plot(surv3$time, -log(surv3$surv))
+abline(a=0, b=1, lty=2)
+```
+The fit looks okay. The models best in the early survival times. The longer time that passes, the worse it fits. 
+
+### Give a grafical representation of model
+
+```{r}
+xrange <- range(data.time$time)
+t <- seq(xrange[1],xrange[2],length=100)
+
+#LOG LOGISTIC
+coef3 <- mod3$coefficients
+
+z31 <- (log(t)-(coef3[1]+coef3[2]+coef3[3]))/mod3$scale
+z30 <- (log(t)-(coef3[1]+coef3[2]))/mod3$scale
+S31 <- (1+exp(z31))^-1
+S30 <- (1+exp(z30))^-1
+
+
+# get the range for the x and y axis
+xrange <- range(data.time$time)
+yrange <- range(S30)
+
+
+# set up the plot
+plot(xrange, yrange, type="n", xlab="Hours since test start",
+ylab="Probability of survival (cd4=1)",las=1)
+#PLOT THE SURVIVAL FUNCTIONS
+lines(t, S31, type="l", col=2, lty=1, lwd=2)
+lines(t, S30, type="l", col=3, lty=1, lwd=2)
+legend('topright',lwd=2,col=c(2,3),legend=c('LL with tx', 'LL without tx'))
+
+```
+It is seen that patients in general have higher probability of surviving if they are treated.  
+
+
+
+
