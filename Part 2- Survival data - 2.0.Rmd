@@ -94,7 +94,7 @@ $$P(\chi^2_1>-2\cdot log(c))$$
 c = mod1$null.deviance-mod1$deviance
 1-pchisq(c, df=1)
 ```
-The null-hypothesis is rejected. There is a significan difference between the two models, meaning that the model with all parameters are significantly better. 
+The null-hypothesis is rejected. There is a significant difference between the two models, meaning that the model with all parameters are significantly better. 
 
 
 #### Wald test
@@ -190,7 +190,7 @@ conf.type = "log-log",data = data.time)
 ```
 
 ```{r}
-plot(Surv.Bytx, conf.int = T, las = 1, xlab = "Time",ylab = "Estimated Survival Prob.", col=c(2,3), lwd = 1)
+plot(Surv.Bytx, conf.int = TRUE, las = 1, xlab = "Time",ylab = "Estimated Survival Prob.", col=c(2,3), lwd = 1)
 
 legend("bottomleft", col=2:3, c("Not treated","Treated"), lwd=2)
 ```
@@ -199,7 +199,7 @@ The functions differ towards the end. It is seen that the probability of survivi
 ### Plot the cumulative incidence function for the two groups which do you prefer?
 
 ```{r}
-plot(Surv.Bytx, fun=function(x) { 1- x }, conf.int = T,las = 1, xlab = "Time",
+plot(Surv.Bytx, fun=function(x) { 1- x }, conf.int = TRUE,las = 1, xlab = "Time",
 ylab = "Estimated Failure Prob.", col=c(2,3))
 legend("topleft", col=c(2,3), c("Male","Female"))
 ```
