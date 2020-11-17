@@ -86,13 +86,13 @@ Here $\theta_{0}$ is deviance of the model with only the intercept and $ \hat\th
 
 Using the c value from above, an approximated p-value can be obtained by:
 $$P(\chi^2_1>-2\cdot log(c))$$
-!!!!!!!!!!!!!!!Hvorfor forsvinder 2-tallet????????????????
 
 ```{r}
 #mod1 = glm(AIDS~AZT, family = binomial,data = df)
-
-c = mod1$null.deviance-mod1$deviance
-1-pchisq(c, df=1)
+mod0=glm(AIDS~1, family = binomial,data = df) #Model kun med intercept
+#c = mod1$null.deviance-mod1$deviance
+c = logLik(mod0)[1]-logLik(mod1)[1]
+pchisq(-2*c, df=1,lower.tail = F)
 ```
 The null-hypothesis is rejected. There is a significant difference between the two models, meaning that the model with all parameters are significantly better. 
 
