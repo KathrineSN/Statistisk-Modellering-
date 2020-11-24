@@ -36,6 +36,11 @@ All the confidence intervals for the mean parameters include zero, meaning that 
 ## c) Make a profile likelihood plot of one of the variance parameters in the two component model.  
 
 ```{r}
+# Profile likelihood normal distribution
+lp.sig <- function(sigma2,y){ n <- length(x)
+sigma.hat.sq <- sum((x - mean(x))^2) / n
+- sigma.hat.sq * n/(2 * sigma2) +log(sigma2^(- n / 2))
+}
 
 ```
 
