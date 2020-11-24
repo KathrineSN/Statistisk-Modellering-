@@ -15,58 +15,138 @@ plot(data$r.day,data$pow.obs.norm,type='o')
 ```
 
 ## Fit an AR(1) model
-
 ```{r}
-mod1 <- arima(data$pow.obs.norm,order=c(1,0,0),include.mean=F)
-par(mfrow=c(2,1))
-acf(mod1$residuals,lag.max = 50)
-pacf(mod1$residuals,lag.max=50)
-```
+#Forsøg med sin og cos til wd
 
+trans1 <- function(lambda,y){
+    y.l <- 1/lambda*log((y^lambda)/(1-y^lambda))
+    return(y.l)}
+
+## profile likelihood for lambda
+lp.lambda1 <- function(lambda,y){
+    mod <- lm(trans1(lambda,y)~cos(data$wd30)+sin(data$wd30)+cos(I(data$wd30*2)))
+    length(y)/2*log(summary(mod)$sigma^2) - sum(log(abs(1/(y*(1 - y^lambda)))))
+    }
+
+#plot(seq(0.01,1,0.01), sapply(seq(0.01,1,0.01), lp.lambda1, y=data$pow.obs.norm))
+
+(opt.lambda.trans1=optimize(lp.lambda1,c(0,1),y=data$pow.obs.norm))
+
+mod0=glm(trans1(opt.lambda.trans1$minimum,data$pow.obs.norm)~cos(data$wd30)+sin(data$wd30)+cos(I(data$wd30*2)),family=gaussian,  data=data)
+
+```
 
 ## 1. Extract residuals and construct matrix(e)
 ```{r}
 
-e <- cbind(mod1$residuals[1:length(mod1$residuals)-1],mod1$residuals[2:length(mod1$residuals)])
+e <- cbind(mod0$residuals[1:length(mod1$residuals)-1],mod0$residuals[2:length(mod1$residuals)])
 
+var(e);cor(e)
 ```
 
 ## 2. Fit e to a normal distribution
 
 ```{r}
+mod1 <- arima(mod0$residuals ,order=c(1,0,0),include.mean=F)
+par(mfrow=c(2,1))
+acf(mod1$residuals,lag.max = 50)
+pacf(mod1$residuals,lag.max=50)
+```
+
+### Parameter estimates and wald confidence intervals
+For model where $\rho$ is not equal to zero.
+```{r}
+
+library(numDeriv)
 normal.function=function(dat){
 # Define likelihood function:
-Normal.likelihood=function(params,dat){ -sum(dmvnorm(x=dat, sd=matrix(c(1,params[1],params[1],1),ncol=2), log=TRUE))}
+Normal.likelihood=function(params,dat){ -sum(dmvnorm(e, mean=c(0,0),sigma=params[1]*matrix(c(1,params[2], params[2],1), nrow=2),log=TRUE))}
 
 # Find the optimal parameters using nlimnb:
-opt=nlminb(c(0.01),Normal.likelihood, dat=dat)
+opt=nlminb(c(0.01,0.01),Normal.likelihood,lower=c(0,-1),upper=c(Inf, 1), dat=dat)
 # Find the Fisher information:
-#H=hessian(Normal.likelihood,opt$par, dat=dat)
-#se=sqrt(diag(solve(H)))
+H=hessian(Normal.likelihood,opt$par, dat=dat)
+se=sqrt(diag(solve(H)))
 
-#CI1=opt$par[1]+c(-1,1)*se[1]*qnorm(0.975)
+CI1=opt$par[1]+c(-1,1)*se[1]*qnorm(0.975)
+CI2=opt$par[2]+c(-1,1)*se[2]*qnorm(0.975)
 
-#return(list("opt"=opt,"CI1"=CI1, "se"=se))
-return(list('opt'=opt))
+return(list("opt"=opt,"CI1"=CI1,"CI2"=CI2, "se"=se, "H"=H))
 }
-```
 
-```{r}
-dmvnorm(x=e)
-```
-
-```{r}
-normal.function(e)
-```
-```{r}
-library(fMultivar)
-library('MASS')
-pmvnorm(lower=rep(-Inf, 2), upper=c(Inf, Inf), mean=c(0,0), sigma=cov(e))
+mod2<-normal.function(e)
+mod2
 ```
 
 
+
+### A contour plot of the likelihood
+
+--- kat ---
+
+### P-values for the likelihood ratio test
+Null model, where $\rho=0$.
+
 ```{r}
-library(mvtnorm)
-pmvnorm(lower=rep(-Inf, 2), upper=c(Inf, Inf), mean=c(0,0), sigma=cov(e))
+normal.function=function(dat){
+# Define likelihood function:
+Normal.likelihood=function(params,dat){ -sum(dmvnorm(e, mean=c(0,0),sigma=params[1]*matrix(c(1,0,0,1), nrow=2),log=TRUE))}
+
+# Find the optimal parameters using nlimnb:
+opt=nlminb(c(0.01),Normal.likelihood,lower=c(0),upper=c(Inf), dat=dat)
+# Find the Fisher information:
+H=hessian(Normal.likelihood,opt$par, dat=dat)
+se=sqrt(diag(solve(H)))
+
+CI1=opt$par[1]+c(-1,1)*se[1]*qnorm(0.975)
+#CI2=opt$par[2]+c(-1,1)*se[2]*qnorm(0.975)
+
+return(list("opt"=opt,"CI1"=CI1,"se"=se, "H"=H))
+}
+
+mod3<-normal.function(e)
+mod3
+```
+
+#### Likelihood ratio test
+```{r}
+c = mod2$opt$objective-mod3$opt$objective
+pchisq(-2*c, df=1,lower.tail = FALSE)
+```
+The p-value is extremely low, meaning that the null hypothesis is rejected. There is a difference between the two models.
+
+#### Wald test
+```{r}
+# parameter delt med se
+z=mod2$opt$par[2]/mod2$se[2]
+2*(1-pnorm(z))
+```
+The p-value is extremely low, meaning that the null hypothesis is rejected. There is a difference between having the $\rho$ parameter and not.
+
+### 3. Compare the Information matrix calculated by numerical methods with the algebraric form for the Fisher information I(sigmaˆ2,rho).
+Compare with the algebraric:
+```{r}
+rho<-mod2$opt$par[[2]]
+n<-dim(e)[1]
+sigma2 <- mod2$opt$par[[1]]
+H=mod2$H
+  
+I<-matrix(NA, nrow=2, ncol=2)
+I[1,1]=n/sigma2^2
+I[1,2]=-n*rho/(sigma2*(1-rho^2))
+I[2,1]=-n*rho/(sigma2*(1-rho^2))
+I[2,2]=(n*(1+rho^2))/(1-rho^2)^2
+
+(H-I)/H
+
+```
+The difference between the calculated information matrix and the algebraric form for the fisher information is very small. They are more or less the same.
+
+### 4. 
+
+### 5. Estimate the parameters of the AR(1) model (see Example 11.1), first conditioning on e1, then full estimation. Compare with the estimation above, is it as expected?
+
+```{r}
+arima(e, order = (1,0,0), method="ML")
 ```
 

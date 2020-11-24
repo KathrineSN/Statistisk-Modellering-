@@ -124,6 +124,7 @@ lp.lambda1 <- function(lambda,y){
 (opt.lambda.trans1=optimize(lp.lambda1,c(0,1),y=data$pow.obs.norm))
 
 ```
+
 ```{r}
 library(car)
 mod6=glm(trans1(opt.lambda.trans1$minimum,data$pow.obs.norm)~data$ws30+I(data$ws30^2)+cos(data$wd30),family=gaussian,  data=data)

@@ -7,6 +7,11 @@ data <- read.csv("finance_data.csv", header=TRUE,sep=";")
 data$time=as.Date(data$time)
 head(data,6)
 ```
+
+```{r}
+plot(data$time, data$SLV, type="l")
+```
+
 ## Mixture models
 ### a) Fit normal mixture models with 2 and 3 components
 ```{r}
@@ -44,4 +49,50 @@ sigma.hat.sq <- sum((x - mean(x))^2) / n
 
 ```
 
+
+
+
+## Markov Chain
+```{r}
+y <- data$SLV
+
+```
+
+```{r}
+source("A1.R")
+y <- data$SLV
+
+## 2 - state 
+## Initial values
+m <- 2
+lambda0 <- quantile(y,c(0.25,0.75))
+gamma0 <- matrix(0.05,ncol=m,nrow=m)
+diag(gamma0) <- 1-(m-1)*gamma0[1,1]
+
+
+## optimize
+fit2 <- pois.HMM.mle(y,m,lambda0,gamma0)
+fit2
+
+```
+
+```{r}
+## working parameters
+parvect  <- pois.HMM.pn2pw(m,fit3$lambda,fit3$gamma)
+## Optimize (hessian = TRUE return hessian)
+mod <- nlm(pois.HMM.mllk,parvect,x=y,m=m,
+            hessian=TRUE)  
+mod
+
+## Organize the result
+parvect <- mod$estimate
+names(parvect) <- c("lambda1","lambda2","lambda3","tau21",
+                    "tau31","tau12","tau32","tau13","tau23")
+
+se <- sqrt(diag(solve(mod$hessian)))
+
+## Working pars + standard error
+round(cbind(parvect,se),digits=2) ## note se of tau31
+fit3$gamma
+```
 
