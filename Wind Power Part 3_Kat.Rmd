@@ -1,0 +1,199 @@
+
+
+
+
+
+1) Extract the residuals from the linear model given above, and construct the matrix
+
+```{r}
+
+data <- read.delim("tuno.txt",header = TRUE, sep = " ", dec = ".")
+data$pow.obs.norm<-(data$pow.obs)/5000
+head(data,6)
+
+
+```
+
+
+Optimal model found in part 2
+
+#cos(data$wd30)+sin(data$wd30)+cos(I(data$wd30*2)
+
+```{r}
+#Forsøg med sin og cos til wd
+
+trans1 <- function(lambda,y){
+    y.l <- 1/lambda*log((y^lambda)/(1-y^lambda))
+    return(y.l)}
+
+## profile likelihood for lambda
+lp.lambda1 <- function(lambda,y){
+    mod <- lm(trans1(lambda,y)~cos(data$wd30)+sin(data$wd30)+cos(I(data$wd30*2)))
+    length(y)/2*log(summary(mod)$sigma^2) - sum(log(abs(1/(y*(1 - y^lambda)))))
+    }
+
+#plot(seq(0.01,1,0.01), sapply(seq(0.01,1,0.01), lp.lambda1, y=data$pow.obs.norm))
+
+lp.lambda1(1/1, data$pow.obs.norm)
+(opt.lambda.trans1=optimize(lp.lambda1,c(0,1),y=data$pow.obs.norm))
+
+mod6=glm(trans1(opt.lambda.trans1$minimum,data$pow.obs.norm)~cos(data$wd30)+sin(data$wd30)+cos(I(data$wd30*2)),family=gaussian,  data=data)
+
+```
+
+Optimal lambda is found to be 0.2737313
+
+```{r}
+e = mod6$residuals
+
+n = length(e)
+
+matrix = cbind(e[-n],e[-1])
+
+```
+(Vi er interesserede i om residualerne er korrelerede altså om data afhænger af hinanden i en tidsserie)
+
+Fit parameters in the model
+$[e_i, e_{i+1}]^T$ ~ $N(0, \Sigma)$
+
+Inspired by lecture week 10.
+```{r}
+
+#Likelihood estimation
+nll <- function(theta,y){
+    n <- length(y) - 1
+    n/2 * log(theta[1]) + 1/(2*theta[1]) * sum((y[-1]-theta[2]*y[-(n+1)])^2)
+}
+
+#MLE
+(opt <- nlminb(c(1,1/2),nll,y=e,lower=c(0.001,-0.999),upper=c(Inf,0.999)))
+opt
+
+#Check
+(phi <- sum(e[-1]*e[-length(e)])/sum(e[-length(e)]^2))
+(sigma.sq <- 1/(length(e)-1) * sum((e[-1]-phi * e[-length(e)])^2))
+
+
+```
+Optimal sigma is found to be: 15.9861060
+Optimal tho is found to be: 0.3943076
+
+```{r}
+#Standard errors (Wald CI)
+library(numDeriv)
+V <- solve(hessian(nll,opt$par,y=e))
+(se <- sqrt(diag(V)))
+('CI for sigma')
+(waldsigma = opt$par[1] + c(-1,1)*qnorm(0.975)*se[1])
+('CI for rho')
+(waldrho = opt$par[2] + c(-1,1)*qnorm(0.975)*se[2])
+
+```
+Contour plot of likelihood
+
+```{r}
+## Profile likelihood for phi
+llp.phi <- function(phi,x){
+  n <- length(x) - 1
+  -n/2 * log(sum((x[-1]-phi*x[-(n+1)])^2))
+}
+lp.cor <- function(co, x){
+  fun.tmp <- function(sigma, co, x){
+    -nll(c(sigma,co),x)
+  }
+  ## interval from plot
+  optimize(fun.tmp,c(0.001,100),co=co,
+           x=e,maximum=TRUE)$objective
+}
+
+sig1 = seq(10,20,length.out = 100)
+cor1 = seq(0,0.7, length.out = 100)
+par(mfrow=c(1,1))
+ll.contour = function(sigma,co,y){
+    n <- length(y) - 1
+    #print(co)
+    tmp=0
+    for (i in 1:n){
+      tmp = tmp +  1/(2*sigma)* ((y[i+1]-co*y[i])^2)
+    }
+    -n/2 * log(sigma) - tmp #1/(2*sigma) * sum((y[-1]-co*y[-(n+1)])^2)
+  }
+ll<- outer(sig1,cor1,'ll.contour',y=e)
+like<- exp(ll-max(ll))
+contour(sig1,cor1,like,level=c(0.05,.1,.3,.5,.7,.9),
+        ylab=expression(rho),
+        xlab=expression(sigma^2))
+title(expression('Likelihood contour'))
+lines(c(0,50),c(0,0),lty=2,col=2)
+
+```
+
+P-values for the likelihood ratio test and Wald test for the hypothesis H0: ρ = 0 against the alternative.
+
+
+
+
+
+3) Compare the Information matrix calculated by numerical methods with the algebraric form for the Fisher information $I(\hat\sigma^2,\hat\rho)$.
+
+
+4) Make a plot of the profile likelihood of ρ and compare with the quadratic approximation.  Further using the z-transform (see Exercise 3.23) for ρ and the log-transform for σ^2, plot the profile likelihood for z and compare with the quadratic approximation, finally derive Fishers information matrix for the transformed variables and compare with the numerical Hessian.
+```{r}
+par(mfrow=c(1,2))
+## Plot profile likelihood
+phi <- seq(0,1,
+           length=200)
+
+llp <- sapply(phi,lp.cor,x=e)
+plot(phi,llp,type="l", main = "Profile likelihood for rho", xlab = expression(rho), ylab="Likelihood")
+lines(opt$par[2]*c(1,1),c(0,1),col="blue")
+lines(range(phi),
+      exp(-c(1,1) * qchisq(0.95,df=1)/2),
+      col=2,lty=2)
+pll = function(theta,y){-nll(theta,y)}
+obs.info = hessian(pll,opt$par,y=e)
+ql = -opt$objective + 0.5* obs.info[2,2] * (phi-opt$par[2])^2
+lines(phi, ql,lty=2, col="red")
+llp <- sapply(phi,lp.cor,x=e)
+plot(phi,exp(llp-max(llp)),type="l", main = "Profile likelihood for rho", xlab = expression(rho), ylab="Likelihood")
+lines(opt$par[2]*c(1,1),c(0,1),col="blue")
+lines(range(phi),
+      exp(-c(1,1) * qchisq(0.95,df=1)/2),
+      col=2,lty=2)
+pll = function(theta,y){-nll(theta,y)}
+obs.info = hessian(pll,opt$par,y=e)
+ql = -opt$objective + 0.5* obs.info[2,2] * (phi-opt$par[2])^2
+lines(phi, exp(ql-max(ql)),lty=2, col="red")
+
+z = 1/2*log((1+cor1)/(1-cor1))
+ls = log(sig1)
+lp.z <- function(z, x){
+  co = (exp(2*z) - 1)/(exp(2*z) + 1)
+  fun.tmp <- function(sigma, co, x){
+    -nll(c(sigma,co),x)
+  }
+  ## interval from plot
+  optimize(fun.tmp,c(0.001,100),co=co,
+           x=e,maximum=TRUE)$objective
+}
+opt_z = 1/2*log((1+opt$par[2])/(1-opt$par[2]))
+llp <- sapply(z,lp.z,x=e)
+plot(z,exp(llp-max(llp)),type="l", main = "Profile likelihood for z", xlab = expression(rho), ylab="Likelihood")
+lines(opt_z*c(1,1),c(0,1),col="blue")
+lines(range(z),
+      exp(-c(1,1) * qchisq(0.95,df=1)/2),
+      col=2,lty=2)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
