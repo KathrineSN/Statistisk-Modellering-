@@ -1,0 +1,42 @@
+---
+title: "Financial Part 3"
+---
+
+```{r}
+data <- read.csv("finance_data.csv", header=TRUE,sep=";")
+data$time=as.Date(data$time)
+head(data,6)
+```
+## Mixture models
+### a) Fit normal mixture models with 2 and 3 components
+```{r}
+library(MASS)
+library(mclust, quietly=TRUE)
+
+fit3 = Mclust(data$SLV, G=3, model="V")
+summary(fit3)
+
+```
+
+```{r}
+fit2 = Mclust(data$SLV, G=2, model="V")
+summary(fit2)
+```
+The normal mixture model with 3 components is better than the model with 2 components, looking at both the log-likelihood and the BIC score. 
+
+### b) Report confidence intervals for the parameters and give an interpretation of these intervals. 
+```{r}
+fit3$parameters$mean[1]+c(1,-1)*sqrt(fit3$parameters$variance$sigmasq[1])*qnorm(0.975)
+fit3$parameters$mean[2]+c(1,-1)*sqrt(fit3$parameters$variance$sigmasq[2])*qnorm(0.975)
+fit3$parameters$mean[3]+c(1,-1)*sqrt(fit3$parameters$variance$sigmasq[3])*qnorm(0.975)
+
+```
+All the confidence intervals for the mean parameters include zero, meaning that all the gaussian distributions are centered around zero. That probably okay, given that this is a confidence interval for the mean. 
+
+## c) Make a profile likelihood plot of one of the variance parameters in the two component model.  
+
+```{r}
+
+```
+
+

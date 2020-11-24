@@ -1,0 +1,72 @@
+---
+title: "Wind Part 3"
+output: pdf_document
+---
+
+## Read the data tuno.txt into R.
+The data is read, and the first few lines of the code is shown.
+```{r}
+data <- read.delim("tuno.txt",header = TRUE, sep = " ", dec = ".")
+data$pow.obs.norm<-(data$pow.obs)/5000
+head(data,6)
+```
+```{r}
+plot(data$r.day,data$pow.obs.norm,type='o')
+```
+
+## Fit an AR(1) model
+
+```{r}
+mod1 <- arima(data$pow.obs.norm,order=c(1,0,0),include.mean=F)
+par(mfrow=c(2,1))
+acf(mod1$residuals,lag.max = 50)
+pacf(mod1$residuals,lag.max=50)
+```
+
+
+## 1. Extract residuals and construct matrix(e)
+```{r}
+
+e <- cbind(mod1$residuals[1:length(mod1$residuals)-1],mod1$residuals[2:length(mod1$residuals)])
+
+```
+
+## 2. Fit e to a normal distribution
+
+```{r}
+normal.function=function(dat){
+# Define likelihood function:
+Normal.likelihood=function(params,dat){ -sum(dmvnorm(x=dat, sd=matrix(c(1,params[1],params[1],1),ncol=2), log=TRUE))}
+
+# Find the optimal parameters using nlimnb:
+opt=nlminb(c(0.01),Normal.likelihood, dat=dat)
+# Find the Fisher information:
+#H=hessian(Normal.likelihood,opt$par, dat=dat)
+#se=sqrt(diag(solve(H)))
+
+#CI1=opt$par[1]+c(-1,1)*se[1]*qnorm(0.975)
+
+#return(list("opt"=opt,"CI1"=CI1, "se"=se))
+return(list('opt'=opt))
+}
+```
+
+```{r}
+dmvnorm(x=e)
+```
+
+```{r}
+normal.function(e)
+```
+```{r}
+library(fMultivar)
+library('MASS')
+pmvnorm(lower=rep(-Inf, 2), upper=c(Inf, Inf), mean=c(0,0), sigma=cov(e))
+```
+
+
+```{r}
+library(mvtnorm)
+pmvnorm(lower=rep(-Inf, 2), upper=c(Inf, Inf), mean=c(0,0), sigma=cov(e))
+```
+
