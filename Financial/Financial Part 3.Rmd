@@ -7,41 +7,219 @@ data <- read.csv("finance_data.csv", header=TRUE,sep=";")
 data$time=as.Date(data$time)
 head(data,6)
 ```
+
+```{r}
+plot(data$time, data$SLV, type="l")
+```
+
 ## Mixture models
 ### a) Fit normal mixture models with 2 and 3 components
-```{r}
-library(MASS)
-library(mclust, quietly=TRUE)
 
-fit3 = Mclust(data$SLV, G=3, model="V")
-summary(fit3)
-
-```
+Kig på Jans kode fra uge 10. Der er det implimenteret for en possion distribution og optimerer derfor over en parameter. Her skal det implementeres for en normal distribution og derfor for to parametre. 
 
 ```{r}
-fit2 = Mclust(data$SLV, G=2, model="V")
-summary(fit2)
-```
-The normal mixture model with 3 components is better than the model with 2 components, looking at both the log-likelihood and the BIC score. 
+## Normal mixture: transform
+## Natural to working parameters
+norm.mix.pn2pw <- function(m, mu, sigma, delta) {
+  if(sum(delta) >= 1) {
+    print("sum(delta) should be < 1")
+    return()
+  }
+  t.sigma <- log(sigma)
+  t.delta <- log(delta/(1 - sum(delta)))
+  return(list(mu = mu, t.sigma = t.sigma, t.delta = t.delta))
+}
 
-### b) Report confidence intervals for the parameters and give an interpretation of these intervals. 
-```{r}
-fit3$parameters$mean[1]+c(1,-1)*sqrt(fit3$parameters$variance$sigmasq[1])*qnorm(0.975)
-fit3$parameters$mean[2]+c(1,-1)*sqrt(fit3$parameters$variance$sigmasq[2])*qnorm(0.975)
-fit3$parameters$mean[3]+c(1,-1)*sqrt(fit3$parameters$variance$sigmasq[3])*qnorm(0.975)
+## Working to natural parameters
+norm.mix.pw2pn <- function(m, mu, t.sigma, t.delta){
+  if(m == 1){
+    return(exp(t.sigma))
+  }
+  sigma <- exp(t.sigma)
+  delta <- exp(t.delta)/(1 + sum(exp(t.delta)))
+  delta <- c(1 - sum(delta),delta)
+  return(list(mu = mu, sigma = sigma, delta = delta))
+}
 
-```
-All the confidence intervals for the mean parameters include zero, meaning that all the gaussian distributions are centered around zero. That probably okay, given that this is a confidence interval for the mean. 
-
-## c) Make a profile likelihood plot of one of the variance parameters in the two component model.  
-
-```{r}
-# Profile likelihood normal distribution
-lp.sig <- function(sigma2,y){ n <- length(x)
-sigma.hat.sq <- sum((x - mean(x))^2) / n
-- sigma.hat.sq * n/(2 * sigma2) +log(sigma2^(- n / 2))
+## Negative log likelihood
+nll <- function(theta, m=2, x=data$SLV){
+  if(m == 1) {
+    return(-sum(pnorm(x, theta[1], exp(theta[2]), log=TRUE))) 
+  }
+  mu <- theta[1:m]
+  t.sigma <- theta[(m+1):(2*m)]
+  t.delta <- theta[(2*m+1):(3*m-1)]
+  n.pars <- norm.mix.pw2pn(m, mu, t.sigma, t.delta)
+  n <- length(x)
+  nll <- 0
+  for(i in 1:n) {
+    nll <- nll - log(sum(n.pars$delta * dnorm(x[i], mu, n.pars$sigma)))
+  }
+  return(nll)
 }
 
 ```
 
+
+```{r}
+## Estimation with 2 distributions
+m <- 2; 
+
+## Initial values
+mu <- mean(data$SLV)*c(1/2,3/2)
+sigma <-sd(data$SLV)*c(1/2,3/2)
+delta <- c(1/2)
+
+## Working parameters
+wpars <- norm.mix.pn2pw(m, mu, sigma, delta)
+theta <- c(wpars$mu, wpars$t.sigma, wpars$t.delta)
+
+## MLE
+opt2 <- nlminb(theta, nll, m = m, x = data$SLV)
+
+## Natural parameters
+npars2 <- norm.mix.pw2pn(m, opt2$par[1:m], opt2$par[(m+1):(2*m)], opt2$par[(2*m+1):(3*m-1)])
+
+npars2 
+```
+
+```{r}
+mix.dist <- function(x ,npars){
+  sum(npars$delta * dnorm(x, mean = npars$mu, sd = npars$sigma))
+}
+
+## Plot
+par(mfrow=c(1,1))
+hist(data$SLV, prob=TRUE, nclass=60)
+lines(seq(min(data$SLV), max(data$SLV), 0.001), sapply(seq(min(data$SLV), max(data$SLV), 0.001), mix.dist, npars=npars2), col=2)
+lines(seq(min(data$SLV), max(data$SLV), 0.001), npars2$delta[1]*dnorm(seq(min(data$SLV), max(data$SLV), 0.001), npars2$mu[1], npars2$sigma[1]), col=3)
+lines(seq(min(data$SLV), max(data$SLV), 0.001), npars2$delta[2]*dnorm(seq(min(data$SLV), max(data$SLV), 0.001), npars2$mu[2], npars2$sigma[2]), col=3)
+legend("topleft",  c("2 components",'Components seperately'), col=c("red",'green'), lty=1, cex=0.7)
+
+```
+
+
+```{r}
+## Estimation with 3 distributions
+m <- 3;
+
+## Initial values 
+mu <- mean(data$SLV)*c(1/2,1,3/2)
+sigma <- sd(data$SLV)*c(1/2,1,3/2);
+delta <- c(1/3,1/3)
+
+## Working parameters
+wpars <- norm.mix.pn2pw(m, mu, sigma, delta)
+theta <- c(wpars$mu, wpars$t.sigma, wpars$t.delta)
+
+## MLE
+opt3 <-nlminb(theta, nll, m = m, x = data$SLV)
+
+## Natural parameters
+npars3 <- norm.mix.pw2pn(m, opt3$par[1:m], opt3$par[(m+1):(2*m)], opt3$par[(2*m+1):(3*m-1)])
+
+```
+
+
+```{r}
+mix.dist <- function(x ,npars){
+  sum(npars$delta * dnorm(x, mean = npars$mu, sd = npars$sigma))
+}
+
+## Plot
+par(mfrow=c(1,1))
+hist(data$SLV, prob=TRUE, nclass=60)
+lines(seq(min(data$SLV), max(data$SLV), 0.001), sapply(seq(min(data$SLV), max(data$SLV), 0.001), mix.dist, npars=npars3), col=2)
+lines(seq(min(data$SLV), max(data$SLV), 0.001), npars3$delta[1]*dnorm(seq(min(data$SLV), max(data$SLV), 0.001), npars3$mu[1], npars3$sigma[1]), col=3)
+lines(seq(min(data$SLV), max(data$SLV), 0.001), npars3$delta[2]*dnorm(seq(min(data$SLV), max(data$SLV), 0.001), npars3$mu[2], npars3$sigma[2]), col=3)
+lines(seq(min(data$SLV), max(data$SLV), 0.001), npars3$delta[3]*dnorm(seq(min(data$SLV), max(data$SLV), 0.001), npars3$mu[3], npars3$sigma[3]), col=3)
+legend("topleft",  c("2 components",'Components seperately'), col=c("red",'green'), lty=1, cex=0.7)
+
+
+```
+```{r}
+## Model check
+AIC <- 2*c(opt2$objective, opt3$objective) + 2*c(length(opt2$par), length(opt3$par))
+AIC
+
+## Deviance 
+1-pchisq(-2*(opt3$objective-opt2$objective),df=length(opt3$par)-length(opt2$par))
+
+```
+
+Model 2 is slightly better than model 3. The  best model in financial part 1 was the t-distribution with an AIC score of -1492. Therefore this is the overall best model. 
+
+
+### b) Report confidence interval for the parameters in the best mixture model. 
+
+```{r}
+library(numDeriv)
+H <- hessian(nll, opt2$par)
+se<- sqrt(diag(solve(H)))
+(CI1 <- opt2$par[1]+c(-1,1)*se[1]*qnorm(0.975))
+(CI2<- opt2$par[2]+c(-1,1)*se[1]*qnorm(0.975))
+```
+The mean value is centered around zero. Since, sigma is small, little variance in the data is expected. 
+
+## c) Make a profile likelihood plot of one of the variance parameters in the two component model.  
+
+```{r}
+## Profile likelihood for sigma 1 given working parameters
+lp.sigma1 <- function(sigma1, m, x, pars0){
+  ## Fun for inner optim
+  fun.tmp <- function(theta, sigma1, m, x){
+    pars <- c(theta[1:m], log(sigma1), theta[-(1:m)])
+    nll(pars, m, x)
+  }
+  nlminb(pars0, fun.tmp, sigma1 = sigma1, m = m, x = x)$objective    
+}
+
+```
+
+
+
+
+## Markov Chain
+```{r}
+y <- data$SLV
+
+```
+
+```{r}
+source("A1.R")
+y <- data$SLV
+
+## 2 - state 
+## Initial values
+m <- 2
+lambda0 <- quantile(y,c(0.25,0.75))
+gamma0 <- matrix(0.05,ncol=m,nrow=m)
+diag(gamma0) <- 1-(m-1)*gamma0[1,1]
+
+
+## optimize
+fit2 <- pois.HMM.mle(y,m,lambda0,gamma0)
+fit2
+
+```
+
+```{r}
+## working parameters
+parvect  <- pois.HMM.pn2pw(m,fit3$lambda,fit3$gamma)
+## Optimize (hessian = TRUE return hessian)
+mod <- nlm(pois.HMM.mllk,parvect,x=y,m=m,
+            hessian=TRUE)  
+mod
+
+## Organize the result
+parvect <- mod$estimate
+names(parvect) <- c("lambda1","lambda2","lambda3","tau21",
+                    "tau31","tau12","tau32","tau13","tau23")
+
+se <- sqrt(diag(solve(mod$hessian)))
+
+## Working pars + standard error
+round(cbind(parvect,se),digits=2) ## note se of tau31
+fit3$gamma
+```
 
