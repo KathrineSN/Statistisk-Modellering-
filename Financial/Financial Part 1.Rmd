@@ -27,7 +27,7 @@ Where the maximum likelihood estimates are:
 $$\hat{\mu}= \bar{x}$$
 $$\hat{\sigma^2}=\frac{1}{n}\cdot \sum_i (x_i-\bar{x})^2$$
 ```{r}
-
+library(numDeriv)
 normal.function=function(dat){
 normal.likelihood=function(params,dat){-sum(dnorm(x=dat,params[1],params[2],log=TRUE))}
 
