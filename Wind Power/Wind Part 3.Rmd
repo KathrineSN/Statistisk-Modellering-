@@ -39,13 +39,15 @@ mod0=glm(trans1(opt.lambda.trans1$minimum,data$pow.obs.norm)~cos(data$wd30)+sin(
 ## 1. Extract residuals and construct matrix(e)
 ```{r}
 
-e <- cbind(mod0$residuals[1:length(mod1$residuals)-1],mod0$residuals[2:length(mod1$residuals)])
+e <- cbind(mod0$residuals[1:length(mod0$residuals)-1],mod0$residuals[2:length(mod0$residuals)])
 
 var(e);cor(e)
+
 ```
 
 ## 2. Fit e to a normal distribution
 
+Skal det her ikke flyttes? Har ikke så meget at gøre med at fitte en normalfordeing :)
 ```{r}
 mod1 <- arima(mod0$residuals ,order=c(1,0,0),include.mean=F)
 par(mfrow=c(2,1))
@@ -56,8 +58,8 @@ pacf(mod1$residuals,lag.max=50)
 ### Parameter estimates and wald confidence intervals
 For model where $\rho$ is not equal to zero.
 ```{r}
-
 library(numDeriv)
+library(mvtnorm)
 normal.function=function(dat){
 # Define likelihood function:
 Normal.likelihood=function(params,dat){ -sum(dmvnorm(e, mean=c(0,0),sigma=params[1]*matrix(c(1,params[2], params[2],1), nrow=2),log=TRUE))}
@@ -82,7 +84,33 @@ mod2
 
 ### A contour plot of the likelihood
 
---- kat ---
+```{r}
+
+sig1 = seq(15,25,length.out = 100)
+rho1 = seq(0,0.7, length.out = 100)
+par(mfrow=c(1,1))
+ll.contour = function(sigma,rho, e){
+  n <- length(e) - 1
+  #print(co)
+  tmp=0
+  deter = sigma^2-rho^2*sigma^2
+  for (i in 1:n){
+    x=e[i]; y=e[i+1]
+    tmp = tmp + 1/2*( (-x/( sigma*(rho^2 - 1)) + y*rho/( sigma*(rho^2 - 1)))*x 
+                                               + (x*rho/( sigma*(rho^2 - 1)) - y/( sigma*(rho^2 - 1)))*y)
+  }
+  -2/2*log(2*pi)*n-1/2*log(deter)*n - tmp #1/(2*sigma) * sum((y[-1]-co*y[-(n+1)])^2)
+}
+ll<- outer(sig1,rho1,'ll.contour',e=e)
+like<- exp(ll-max(ll))
+contour(sig1,rho1,like,level=c(0.05,.1,.3,.5,.7,.9),
+        ylab=expression(rho),
+        xlab=expression(sigma^2))
+title(expression('Likelihood contour'))
+lines(c(0,50),c(0,0),lty=2,col=2)
+
+```
+
 
 ### P-values for the likelihood ratio test
 Null model, where $\rho=0$.
