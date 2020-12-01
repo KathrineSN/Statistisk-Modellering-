@@ -18,8 +18,6 @@ plot(data$time, data$SLV, type="l")
 Kig på Jans kode fra uge 10. Der er det implimenteret for en possion distribution og optimerer derfor over en parameter. Her skal det implementeres for en normal distribution og derfor for to parametre. 
 
 ```{r}
-
-
 ## Natural to working parameters
 re.norm.mix.pn2pw <- function(m, mu, sigma, delta) {
   if(sum(delta) >= 1) {
@@ -142,7 +140,7 @@ opt3 <-nlminb(theta, nll, m = m, x = data$SLV)
 
 ## Natural parameters
 npars3 <- norm.mix.pw2pn(m, opt3$par[1:m], opt3$par[(m+1):(2*m)], opt3$par[(2*m+1):(3*m-1)])
-
+npars3
 ```
 
 
@@ -176,13 +174,19 @@ Model 2 is slightly better than model 3. The  best model in financial part 1 was
 
 
 ### b) Report confidence interval for the parameters in the best mixture model. 
+```{r}
+opt2
+```
 
 ```{r}
 library(numDeriv)
 H <- hessian(nll, opt2$par)
 se<- sqrt(diag(solve(H)))
 (CI1 <- opt2$par[1]+c(-1,1)*se[1]*qnorm(0.975))
-(CI2<- opt2$par[2]+c(-1,1)*se[1]*qnorm(0.975))
+(CI2<- opt2$par[2]+c(-1,1)*se[2]*qnorm(0.975))
+(CI3 <- opt2$par[3]+c(-1,1)*se[3]*qnorm(0.975))
+(CI4<- opt2$par[4]+c(-1,1)*se[4]*qnorm(0.975))
+(CI5<- opt2$par[5]+c(-1,1)*se[5]*qnorm(0.975))
 ```
 The mean value is centered around zero. Since, sigma is small, little variance in the data is expected. Better interpretation??
 
@@ -227,11 +231,9 @@ rug(npars2$sigma,col=2,lwd=2)
 We have two maxima in the profile likelihood. Meaning we don't know which one is better.
 
 
-### d) Reparametrize
+### d) Int he previous question you shoulds ee multiple maxima,reprametrize the model such that you only see one maximum
 
 Hvordan fungerer denne her reparametrisering
-
-
 
 ```{r}
 ## Natural to working parameters

@@ -15,26 +15,25 @@ plot(data$r.day,data$pow.obs.norm,type='o')
 ```
 
 ## Fit optimal linear model
-```{r}
-#Forsøg med sin og cos til wd
 
+```{r}
 trans1 <- function(lambda,y){
     y.l <- 1/lambda*log((y^lambda)/(1-y^lambda))
     return(y.l)}
 
 ## profile likelihood for lambda
 lp.lambda1 <- function(lambda,y){
-    mod <- lm(trans1(lambda,y)~cos(data$wd30)+sin(data$wd30)+cos(I(data$wd30*2)))
+    mod <- lm(trans1(lambda,y)~data$ws30+I(data$ws30^2)+cos(data$wd30))
     length(y)/2*log(summary(mod)$sigma^2) - sum(log(abs(1/(y*(1 - y^lambda)))))
     }
 
-#plot(seq(0.01,1,0.01), sapply(seq(0.01,1,0.01), lp.lambda1, y=data$pow.obs.norm))
-
 (opt.lambda.trans1=optimize(lp.lambda1,c(0,1),y=data$pow.obs.norm))
 
-mod0=glm(trans1(opt.lambda.trans1$minimum,data$pow.obs.norm)~cos(data$wd30)+sin(data$wd30)+cos(I(data$wd30*2)),family=gaussian,  data=data)
+mod0=glm(trans1(opt.lambda.trans1$minimum,data$pow.obs.norm)~data$ws30+I(data$ws30^2)+cos(data$wd30),family=gaussian,  data=data)
 
+mod0
 ```
+
 
 ## 1. Extract residuals and construct matrix(e)
 ```{r}
@@ -88,7 +87,7 @@ mod2
 
 ```{r}
 
-sig1 = seq(15,25,length.out = 100)
+sig1 = seq(9,15,length.out = 100)
 rho1 = seq(0,0.7, length.out = 100)
 par(mfrow=c(1,1))
 ll.contour = function(sigma,rho, e){
@@ -172,6 +171,7 @@ I[2,2]=(n*(1+rho^2))/(1-rho^2)^2
 ```
 The difference between the calculated information matrix and the algebraric form for the fisher information is very small. They are more or less the same.
 
+
 ### 4. 
 
 ```{r}
@@ -184,37 +184,19 @@ The difference between the calculated information matrix and the algebraric form
 ### 5. Estimate the parameters of the AR(1) model (see Example 11.1), first conditioning on e1, then full estimation. Compare with the estimation above, is it as expected?
 
 ```{r}
-#arima(e, order = (1,0,0), method="ML")
-
-e <- mod0$residuals
-
-nll.ar1 <- function(pars, e){
-  n <- length(e)
-  sigma <- exp(pars[1])
-  rho <- (exp(2*pars[2])-1)/(1+exp(2*pars[2]))
-  -sum(dnorm(e[-1]), mean = rho*e[-n], sd=sqrt(sigma), log = TRUE)
-}
-pars = c(2,0.2)
-
-(opt.ar1 <- nlminb(c(pars[1],pars[2]), nll.ar1, e=e,lower = c(-Inf,-Inf), upper=c(Inf,Inf)))
-
-phi1 <- (exp(2*opt.ar1$par[2])-1)/(1+exp(2*opt.ar1$par[2]))
-(phi1)
-# ca. 0.3
-
-```
-```{r}
 
 e <- residuals(mod0)
 nll.ar1 <- function(pars,e){ 
   n <- length(e)
-  sigma <- exp(pars[1])
+  sigma <- pars[1]
+  #sigma <- exp(pars[1])
   rho <- (exp(2*pars[2])-1)/(1+exp(2*pars[2]))
   - sum(dnorm(e[-1], mean = rho*e[-n], sd = sqrt(sigma), log = TRUE))
 }
 
 pars <- c(2,0.2)
-opt.ar1 <- nlminb(pars,nll.ar1,e=e,lower=c(-Inf,-Inf),upper=c(Inf,Inf))
+opt.ar1 <- nlminb(pars,nll.ar1,e=e,lower=c(0,-Inf),upper=c(Inf,Inf))
+#opt.ar1 <- nlminb(pars,nll.ar1,e=e,lower=c(-Inf,-Inf),upper=c(Inf,Inf))
 (opt.ar1)
 
 ```
@@ -223,36 +205,49 @@ opt.ar1 <- nlminb(pars,nll.ar1,e=e,lower=c(-Inf,-Inf),upper=c(Inf,Inf))
 
 ```{r}
 
-nll.ar1.full <- function(pars, e){
+e <- residuals(mod0)
+nll.ar1 <- function(pars,e){ 
   n <- length(e)
+  sigma <- pars[1]
+  #sigma <- exp(pars[1])
+  rho <- (exp(2*pars[2])-1)/(1+exp(2*pars[2]))
+  sigma0 <- sigma / (1-rho^2)
+  -dnorm(e[1], sd = sqrt(sigma0), log = TRUE)-sum(dnorm(e[-1], mean = rho*e[-n], sd = sqrt(sigma), log = TRUE))
+}
+
+pars <- c(2,0.2)
+#opt.ar1 <- nlminb(pars,nll.ar1,e=e,lower=c(-Inf,-Inf),upper=c(Inf,Inf))
+opt.ar1 <- nlminb(pars,nll.ar1,e=e,lower=c(0,-Inf),upper=c(Inf,Inf))
+(opt.ar1)
+
+```
+
+### 6. Estimate the parameters of the linear model (2) and the parameters of the AR(1) model simultanious, and compare the likelihood of the linear model and the combined model.
+
+```{r}
+
+X=cbind(rep(1,length(data$ws30)),data$ws30,data$ws30^2, cos(data$wd30))
+nll.ar1.full <- function(pars,y,X){
+  n <- length(y)
+  y.hat <- X%*%pars[1:dim(X)[2]] 
+  pars <- pars[-(1:dim(X)[2])] 
+  e<-y-y.hat
   sigma <- exp(pars[1])
   rho <- (exp(2*pars[2])-1)/(1+exp(2*pars[2]))
   sigma0 <- sigma / (1-rho^2)
   - dnorm(e[1], sd = sqrt(sigma0), log = TRUE) - sum(dnorm(e[-1]), mean = rho*e[-n], sd=sqrt(sigma), log = TRUE)
 }
 
-pars <- c(0.01,0.01)
+pars <- c(0.01,0.01,0.01,0.01,0.01,0.01)
 
-(opt.ar1.full <- nlminb(c(log(pars[1]),pars[2]), nll.ar1.full, e=e,lower = c(-Inf,-Inf), upper=c(Inf,Inf)))
+(opt.ar1.full <- nlminb(c(log(pars[1]),pars[2],pars[3],pars[4]), nll.ar1.full, X=X, y=data$pow.obs.norm,lower = c(-Inf,-Inf,-Inf,-Inf), upper=c(Inf,Inf,Inf,Inf)))
 
 ```
-
-### 6.
 
 ```{r}
-
-
-(opt.ar1$objective)
-
-(AIC = 2*2-2* log(opt.ar1$objective))
-
-
-logLik(mod0)
-
-AIC(mod0)
-
+X=cbind(rep(1,length(data$ws30)),data$ws30,data$ws30^2, cos(data$wd30))
+dim(X)
 ```
-
 
 
 
