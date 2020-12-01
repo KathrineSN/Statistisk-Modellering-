@@ -18,6 +18,31 @@ plot(data$time, data$SLV, type="l")
 Kig på Jans kode fra uge 10. Der er det implimenteret for en possion distribution og optimerer derfor over en parameter. Her skal det implementeres for en normal distribution og derfor for to parametre. 
 
 ```{r}
+
+
+## Natural to working parameters
+re.norm.mix.pn2pw <- function(m, mu, sigma, delta) {
+  if(sum(delta) >= 1) {
+    print("sum(delta) should be < 1")
+    return()
+  }
+  t.sigma <- log(c(sigma[1],sigma[-1]-sigma[-m]))
+  t.delta <- log(delta/(1 - sum(delta)))
+  return(list(mu = mu, t.sigma = t.sigma, t.delta = t.delta))
+}
+
+## Working to natural parameters
+re.norm.mix.pw2pn <- function(m, mu, t.sigma, t.delta){
+  if(m == 1){
+    return(exp(t.sigma))
+  }
+  sigma <- cumsum(exp(t.sigma))
+  delta <- exp(t.delta)/(1 + sum(exp(t.delta)))
+  delta <- c(1 - sum(delta),delta)
+  return(list(mu = mu, sigma = sigma, delta = delta))
+}
+
+
 ## Normal mixture: transform
 ## Natural to working parameters
 norm.mix.pn2pw <- function(m, mu, sigma, delta) {
@@ -66,9 +91,9 @@ nll <- function(theta, m=2, x=data$SLV){
 m <- 2; 
 
 ## Initial values
-mu <- mean(data$SLV)*c(1/2,3/2)
-sigma <-sd(data$SLV)*c(1/2,3/2)
-delta <- c(1/2)
+mu <- mean(data$SLV)*c(2,1/2)
+sigma <-sd(data$SLV)*c(1,1)
+delta <- c(0.01)
 
 ## Working parameters
 wpars <- norm.mix.pn2pw(m, mu, sigma, delta)
@@ -133,7 +158,7 @@ lines(seq(min(data$SLV), max(data$SLV), 0.001), sapply(seq(min(data$SLV), max(da
 lines(seq(min(data$SLV), max(data$SLV), 0.001), npars3$delta[1]*dnorm(seq(min(data$SLV), max(data$SLV), 0.001), npars3$mu[1], npars3$sigma[1]), col=3)
 lines(seq(min(data$SLV), max(data$SLV), 0.001), npars3$delta[2]*dnorm(seq(min(data$SLV), max(data$SLV), 0.001), npars3$mu[2], npars3$sigma[2]), col=3)
 lines(seq(min(data$SLV), max(data$SLV), 0.001), npars3$delta[3]*dnorm(seq(min(data$SLV), max(data$SLV), 0.001), npars3$mu[3], npars3$sigma[3]), col=3)
-legend("topleft",  c("2 components",'Components seperately'), col=c("red",'green'), lty=1, cex=0.7)
+legend("topleft",  c("3 components",'Components seperately'), col=c("red",'green'), lty=1, cex=0.7)
 
 
 ```
@@ -159,11 +184,12 @@ se<- sqrt(diag(solve(H)))
 (CI1 <- opt2$par[1]+c(-1,1)*se[1]*qnorm(0.975))
 (CI2<- opt2$par[2]+c(-1,1)*se[1]*qnorm(0.975))
 ```
-The mean value is centered around zero. Since, sigma is small, little variance in the data is expected. 
+The mean value is centered around zero. Since, sigma is small, little variance in the data is expected. Better interpretation??
 
 ## c) Make a profile likelihood plot of one of the variance parameters in the two component model.  
 
 ```{r}
+source("A1.R")
 ## Profile likelihood for sigma 1 given working parameters
 lp.sigma1 <- function(sigma1, m, x, pars0){
   ## Fun for inner optim
@@ -174,52 +200,222 @@ lp.sigma1 <- function(sigma1, m, x, pars0){
   nlminb(pars0, fun.tmp, sigma1 = sigma1, m = m, x = x)$objective    
 }
 
+## Estimation with 2 distributions
+m <- 2; 
+
+## Initial values
+mu <- mean(data$SLV)*c(1/2,3/2)
+sigma <-sd(data$SLV)*c(1/2,3/2)
+delta <- c(0.1)
+
+## Working parameters
+wpars <- norm.mix.pn2pw(m, mu, sigma, delta)
+theta0 <- c(wpars$mu, wpars$t.sigma, wpars$t.delta)
+theta <- c(theta0[1:m],theta0[(m+2):(3*m-1)])
+
+sigma1 <- seq(0.01, 0.1, length=100)
+
+## profile likeihood
+pnll <- sapply(sigma1, lp.sigma1, m = m, x = data$SLV, pars0 = theta)
+
+## Plot the profile likelihood
+plot(sigma1,exp(-(pnll-min(pnll))),type="l", ylim=c(0,1))
+lines(range(sigma1),
+      c(1,1)*exp(-qchisq(0.95,df=1)/2),col=2,lty=2,lwd=2)
+rug(npars2$sigma,col=2,lwd=2)
+```
+We have two maxima in the profile likelihood. Meaning we don't know which one is better.
+
+
+### d) Reparametrize
+
+Hvordan fungerer denne her reparametrisering
+
+
+
+```{r}
+## Natural to working parameters
+re.norm.mix.pn2pw <- function(m, mu, sigma, delta) {
+  if(sum(delta) >= 1) {
+    print("sum(delta) should be < 1")
+    return()
+  }
+  t.sigma <- log(c(sigma[1],sigma[-1]-sigma[-m]))
+  t.delta <- log(delta/(1 - sum(delta)))
+  return(list(mu = mu, t.sigma = t.sigma, t.delta = t.delta))
+}
+
+## Working to natural parameters
+re.norm.mix.pw2pn <- function(m, mu, t.sigma, t.delta){
+  if(m == 1){
+    return(exp(t.sigma))
+  }
+  sigma <- cumsum(exp(t.sigma))
+  delta <- exp(t.delta)/(1 + sum(exp(t.delta)))
+  delta <- c(1 - sum(delta),delta)
+  return(list(mu = mu, sigma = sigma, delta = delta))
+}
+
+## Negative log likelihood
+re.nll <- function(theta, m, x){
+  if(m == 1) {
+    return(-sum(pnorm(x, theta[1], exp(theta[2]), log=TRUE))) 
+  }
+  mu <- theta[1:m]
+  t.sigma <- theta[(m+1):(2*m)]
+  t.delta <- theta[(2*m+1):(3*m-1)]
+  n.pars <- re.norm.mix.pw2pn(m, mu, t.sigma, t.delta)
+  n <- length(x)
+  nll <- 0
+  for(i in 1:n) {
+    nll <- nll - log(sum(n.pars$delta * dnorm(x[i], mu, n.pars$sigma)))
+  }
+  return(nll)
+}
+
 ```
 
 
-
-
-## Markov Chain
 ```{r}
-y <- data$SLV
+
+## Profile likelihood for sigma 1 given working parameters
+re.lp.sigma1 <- function(sigma1, m, x, pars0){
+  ## Fun for inner optim
+  fun.tmp <- function(theta, sigma1, m, x){
+    pars <- c(theta[1:m], log(sigma1), theta[-(1:m)])
+    re.nll(pars, m, x)
+  }
+  nlminb(pars0, fun.tmp, sigma1 = sigma1, m = m, x = x)$objective    
+}
+
+m <- 2; 
+
+## Initial values
+mu <- mean(data$SLV)*c(1/2,3/2)
+sigma <-sd(data$SLV)*c(1/2,3/2)
+delta <- c(0.1)
+
+## Working parameters
+wpars <- re.norm.mix.pn2pw(m, mu, sigma, delta)
+theta0 <- c(wpars$mu, wpars$t.sigma, wpars$t.delta)
+theta <- c(theta0[1:m],theta0[(m+2):(3*m-1)])
+
+sigma1 <- seq(0.01, 0.05, length=100)
+
+## profile likeihood
+pnll <- sapply(sigma1, re.lp.sigma1, m = m, x = data$SLV, pars0 = theta)
+
+## Plot the profile likelihood
+plot(sigma1,exp(-(pnll-min(pnll))),type="l", ylim=c(0,1))
+lines(range(sigma1),
+      c(1,1)*exp(-qchisq(0.95,df=1)/2),col=2,lty=2,lwd=2)
+rug(npars2$sigma[1],col=2,lwd=2)
+
 
 ```
 
+### D. Discuss Interpretation of the models
+
+We have a model that shows the distribution of the weekly return of the given ETF.
+This is a two component mixture model meaning that is must consist of two underlying components. Where one component has significantly more influence than the other.
+
+ANYTHING ELSE???
+
+
+# Hidden Markov Models
+
+### a) Fit two and three state normal Hidden Markov Models
+
 ```{r}
-source("A1.R")
-y <- data$SLV
+norm.HMM.pn2pw <- function(m, mu, sigma, gamma) {                                              
+  t.sigma <- log(sigma)
+  t.gamma <- NULL                              
+  if (m > 1) {                                            
+    foo     <- log(gamma / diag(gamma))           
+    t.gamma <- as.vector(foo[!diag(m)])             
+  }                                             
+  parvect <- c(as.vector(mu), as.vector(t.sigma), 
+               as.vector(t.gamma))
+  parvect
+}  
+
+norm.HMM.pw2pn <- function(m, parvect) {
+  mu    <- parvect[1:m]
+  epar  <- exp(parvect[-(1:m)]) 
+  sigma <- epar[1:m]
+  gamma <- diag(m)                                    
+  if (m > 1) {                                                  
+    gamma[!gamma] <- epar[(m+1):(m*m)]
+    gamma         <- gamma / apply(gamma, 1, sum)          
+  }                                                   
+  delta <- solve(t(diag(m) - gamma + 1), rep(1, m))          
+  list(mu = mu, sigma = sigma, gamma = gamma, delta = delta)           
+}  
+
+norm.HMM.mllk <- function(parvect, x, m, ...) {
+  n        <- length(x)                            
+  pn       <- norm.HMM.pw2pn(m, parvect)            
+  P        <- rep(NA, m)
+  lscale   <- 0                                    
+  foo      <- pn$delta  
+  for (i in 1:n) {
+    for (j in 1:m) {
+      P[j] <- dnorm(x[i], mean = pn$mu[j], sd = pn$sigma[j])
+    }
+    foo    <- foo %*% pn$gamma * P
+    sumfoo <- sum(foo)
+    lscale <- lscale + log(sumfoo)
+    foo    <- foo / sumfoo
+  }
+  mllk     <- -lscale
+  mllk
+}
+
+norm.HMM.mle <- function(x, m, mu0, sigma0, gamma0,...) {                                                      
+  parvect0 <- norm.HMM.pn2pw(m, mu0, sigma0, gamma0)         
+  mod      <- nlm(norm.HMM.mllk, parvect0, x = x, m = m) 
+  pn       <- norm.HMM.pw2pn(m, mod$estimate)            
+  mllk     <- mod$minimum                              
+  np       <- length(parvect0)
+  AIC      <- 2 * (mllk + np)                              
+  n        <- sum(!is.na(x))                            
+  BIC      <- 2 * mllk + np * log(n)                         
+  list(mu = pn$mu, sigma = pn$sigma, gamma = pn$gamma, delta = pn$delta, 
+       code = mod$code, mllk = mllk, AIC = AIC, BIC = BIC)   
+}
+
+########################################################################################################################
 
 ## 2 - state 
 ## Initial values
 m <- 2
-lambda0 <- quantile(y,c(0.25,0.75))
-gamma0 <- matrix(0.05,ncol=m,nrow=m)
-diag(gamma0) <- 1-(m-1)*gamma0[1,1]
-
+mu0 <- mean(data$SLV)*c(1/2,3/2)
+sigma0 <- sd(data$SLV)*c(1/2,3/2)
+gamma0 <- matrix(0.01,ncol = m, nrow = m)
+diag(gamma0) <- 1-(m - 1)*gamma0[1,1]
 
 ## optimize
-fit2 <- pois.HMM.mle(y,m,lambda0,gamma0)
+fit2 <- norm.HMM.mle(data$SLV, m, mu0, sigma0, gamma0)
 fit2
 
+
+## 3 - state 
+## Initial values
+m <- 3
+mu0 <- mean(data$SLV)*c(1/2,1,3/2)
+sigma0 <- sd(data$SLV)*c(1/2,1,3/2)
+gamma0 <- matrix(0.01,ncol = m, nrow = m)
+diag(gamma0) <- 1-(m - 1)*gamma0[1,1]
+
+## optimize
+fit3 <- norm.HMM.mle(data$SLV, m, mu0, sigma0, gamma0)
+fit3
 ```
 
-```{r}
-## working parameters
-parvect  <- pois.HMM.pn2pw(m,fit3$lambda,fit3$gamma)
-## Optimize (hessian = TRUE return hessian)
-mod <- nlm(pois.HMM.mllk,parvect,x=y,m=m,
-            hessian=TRUE)  
-mod
 
-## Organize the result
-parvect <- mod$estimate
-names(parvect) <- c("lambda1","lambda2","lambda3","tau21",
-                    "tau31","tau12","tau32","tau13","tau23")
 
-se <- sqrt(diag(solve(mod$hessian)))
 
-## Working pars + standard error
-round(cbind(parvect,se),digits=2) ## note se of tau31
-fit3$gamma
-```
+
+
+
 

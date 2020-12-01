@@ -14,7 +14,7 @@ head(data,6)
 plot(data$r.day,data$pow.obs.norm,type='o')
 ```
 
-## Fit an AR(1) model
+## Fit optimal linear model
 ```{r}
 #Forsøg med sin og cos til wd
 
@@ -40,6 +40,8 @@ mod0=glm(trans1(opt.lambda.trans1$minimum,data$pow.obs.norm)~cos(data$wd30)+sin(
 ```{r}
 
 e <- cbind(mod0$residuals[1:length(mod0$residuals)-1],mod0$residuals[2:length(mod0$residuals)])
+
+# e <- cbind(mod0$residuals[2:length(mod0$residuals)],mod0$residuals[1:length(mod0$residuals)-1])
 
 var(e);cor(e)
 
@@ -172,9 +174,89 @@ The difference between the calculated information matrix and the algebraric form
 
 ### 4. 
 
+```{r}
+
+```
+
+
+
+
 ### 5. Estimate the parameters of the AR(1) model (see Example 11.1), first conditioning on e1, then full estimation. Compare with the estimation above, is it as expected?
 
 ```{r}
-arima(e, order = (1,0,0), method="ML")
+#arima(e, order = (1,0,0), method="ML")
+
+e <- mod0$residuals
+
+nll.ar1 <- function(pars, e){
+  n <- length(e)
+  sigma <- exp(pars[1])
+  rho <- (exp(2*pars[2])-1)/(1+exp(2*pars[2]))
+  -sum(dnorm(e[-1]), mean = rho*e[-n], sd=sqrt(sigma), log = TRUE)
+}
+pars = c(2,0.2)
+
+(opt.ar1 <- nlminb(c(pars[1],pars[2]), nll.ar1, e=e,lower = c(-Inf,-Inf), upper=c(Inf,Inf)))
+
+phi1 <- (exp(2*opt.ar1$par[2])-1)/(1+exp(2*opt.ar1$par[2]))
+(phi1)
+# ca. 0.3
+
 ```
+```{r}
+
+e <- residuals(mod0)
+nll.ar1 <- function(pars,e){ 
+  n <- length(e)
+  sigma <- exp(pars[1])
+  rho <- (exp(2*pars[2])-1)/(1+exp(2*pars[2]))
+  - sum(dnorm(e[-1], mean = rho*e[-n], sd = sqrt(sigma), log = TRUE))
+}
+
+pars <- c(2,0.2)
+opt.ar1 <- nlminb(pars,nll.ar1,e=e,lower=c(-Inf,-Inf),upper=c(Inf,Inf))
+(opt.ar1)
+
+```
+
+
+
+```{r}
+
+nll.ar1.full <- function(pars, e){
+  n <- length(e)
+  sigma <- exp(pars[1])
+  rho <- (exp(2*pars[2])-1)/(1+exp(2*pars[2]))
+  sigma0 <- sigma / (1-rho^2)
+  - dnorm(e[1], sd = sqrt(sigma0), log = TRUE) - sum(dnorm(e[-1]), mean = rho*e[-n], sd=sqrt(sigma), log = TRUE)
+}
+
+pars <- c(0.01,0.01)
+
+(opt.ar1.full <- nlminb(c(log(pars[1]),pars[2]), nll.ar1.full, e=e,lower = c(-Inf,-Inf), upper=c(Inf,Inf)))
+
+```
+
+### 6.
+
+```{r}
+
+
+(opt.ar1$objective)
+
+(AIC = 2*2-2* log(opt.ar1$objective))
+
+
+logLik(mod0)
+
+AIC(mod0)
+
+```
+
+
+
+
+
+
+
 
