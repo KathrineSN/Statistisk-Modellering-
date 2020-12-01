@@ -414,7 +414,7 @@ fit3 <- norm.HMM.mle(data$SLV, m, mu0, sigma0, gamma0)
 fit3
 ```
 
-
+Vi går videre med model 3, se på AIC. 
 
 
 
