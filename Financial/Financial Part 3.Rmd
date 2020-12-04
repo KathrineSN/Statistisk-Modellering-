@@ -416,8 +416,186 @@ fit3
 
 Vi går videre med model 3, se på AIC. 
 
+### b) For the chosen model report 95% confidence intervals for the working parameters.
+
+```{r}
+parvect <- norm.HMM.pn2pw(3,fit3$mu, fit3$sigma, fit3$gamma)
+mod <- nlm(norm.HMM.mllk,parvect, x=data$SLV,m=3, hessian=TRUE)
+
+## Organize the result
+parvect <- mod$estimate
+names(parvect) <- c("mu1","mu2","mu3",
+                    "t.sigma1","t.sigma2","t.sigma3",
+                    "tau21","tau31","tau12","tau32","tau13","tau23")
+
+se <- sqrt(diag(solve(mod$hessian)))
+
+upper<-parvect+qnorm(0.975)*se
+lower<-parvect-qnorm(0.975)*se
+
+cbind(parvect, lower , upper)
+```
+
+### c) Report the natural parameters and interpret the result.
+
+```{r}
+natural_params<-norm.HMM.pw2pn(3, parvect)
+natural_params
+```
+
+### d) Compare the following distributions (by plots)
+
+#### The long term distribution of the return.
+
+```{r}
+mix.dist <- function(x ,npars){
+  sum(npars$delta * dnorm(x, mean = npars$mu, sd = npars$sigma))
+}
+
+## Plot
+par(mfrow=c(1,1))
+hist(data$SLV, prob=TRUE, nclass=60, main="Long Term Distribution")
+lines(seq(min(data$SLV), max(data$SLV), 0.001), sapply(seq(min(data$SLV), max(data$SLV), 0.001), mix.dist, npars=natural_params), col=2)
+lines(seq(min(data$SLV), max(data$SLV), 0.001), natural_params$delta[1]*dnorm(seq(min(data$SLV), max(data$SLV), 0.001), natural_params$mu[1], natural_params$sigma[1]), col=3)
+
+lines(seq(min(data$SLV), max(data$SLV), 0.001), natural_params$delta[2]*dnorm(seq(min(data$SLV), max(data$SLV), 0.001), natural_params$mu[2], natural_params$sigma[2]), col=3)
+
+lines(seq(min(data$SLV), max(data$SLV), 0.001), natural_params$delta[3]*dnorm(seq(min(data$SLV), max(data$SLV), 0.001), natural_params$mu[3], natural_params$sigma[3]), col=3)
+
+legend("topleft",  c("3 components",'Components seperately'), col=c("red",'green'), lty=1, cex=0.7)
+
+```
 
 
+#### The 1-step ahead distribution given that you known the current state.
+
+```{r}
+
+mix.dist.new <- function(x ,delta,npars){
+  sum(delta * dnorm(x, mean = npars$mu, sd = npars$sigma))
+}
 
 
+for (j in 1:3){
+  #hist(data$SLV, prob=TRUE, nclass=60, main="Long Term Distribution")
+  delta <- natural_params$gamma[j,] # Hver enkelt r?kke er lig delta
+plot(seq(min(data$SLV), max(data$SLV), 0.001), sapply(seq(min(data$SLV), max(data$SLV), 0.001), mix.dist.new, delta=delta, npars=natural_params),ylab = "Likelihood",xlab="Weekly return", type="l", main=paste(c("One Step Distribution - State",j), collapse = " "))
+   ## Samlede distribution
+  
+  for (i in 1:3){
+   npars <- list("mu"=natural_params$mu[i],"sigma"=natural_params$sigma[i])
+    lines(seq(min(data$SLV), max(data$SLV), 0.001), sapply(seq(min(data$SLV), max(data$SLV), 0.001), mix.dist.new, delta=delta[i], npars=npars),col=1+i)}
 
+legend("topleft",  c("Total Distribution",'Distribution of State 1','Distribution of State 2','Distribution of State 3'), col=c("black", 2,3,4), lty=1, cex=0.7)
+  }
+```
+
+### e) Report 95% confidence intervals for some (or all) natural parameters (note that the natural paramters include the stationary distribution).
+
+Confidence interval for $\mu$ and $\sigma$ using walds confidence intervals.
+```{r}
+## Wald based
+
+# MEAN
+mean3 <- natural_params$mu
+lowerCI_mean <- mean3+ qnorm(c(0.025))*se[1:3]
+upperCI_mean <- mean3+qnorm(c(0.975))*se[1:3]
+
+MEAN <- cbind(lowerCI_mean,mean3,upperCI_mean)
+colnames(MEAN) <-c("2.5%","MLE","97.5%")
+
+## SD
+# Her indsættes working parameters og tages exp for at gøre op fra log transformationen
+sd3 <- natural_params$sigma 
+lowerCI_sd <- exp(parvect[(3+1):(2*3)]+qnorm(c(0.025))*se[(3+1):(2*3)]) 
+upperCI_sd <-exp(parvect[(3+1):(2*3)]+qnorm(c(0.975))*se[(3+1):(2*3)])
+
+SD <- cbind(lowerCI_sd,sd3,upperCI_sd)
+colnames(SD) <-c("2.5%","MLE","97.5%")
+rownames(SD) <-c("SD1","SD2","SD3")
+
+(SD)
+(MEAN)
+```
+
+
+Confidence intervals for the natural parameters are found using bootstrap.
+
+```{r}
+
+# Function that generates data from a normal distribution
+normal.HMM.generate_sample <- function(n,m,mu,sigma,gamma,delta=NULL) {
+  if(is.null(delta)){ delta<-solve(t(diag(m)-gamma+1),rep(1,m))}
+  mvect <- 1:m
+  state <- numeric(n)
+  state[1] <- sample(mvect,1,prob=delta) # start altid ved delta
+  for(i in 2:n){
+    state[i]<-sample(mvect,1,prob=gamma[state[i-1],])
+  }
+  x <- rnorm(n,mean=mu[state],sd=sigma[state])
+  x
+}
+
+## Plot simulated and actual data
+par(mfrow=c(1,1))
+set.seed(3215)
+n <- dim(data)[1]
+plot(1:n,data$SLV,type="l",ylab = "Weekly return",xlab = "Time")
+for(i in 1:3){
+  y <- normal.HMM.generate_sample(n,3,natural_params$mu,natural_params$sigma,natural_params$gamma,
+                                  natural_params$delta)
+  lines(1:n,y,col=i+1)
+}
+lines(1:n,data$SLV,lwd=2,ylab = "Weekly return",xlab = "Time")
+
+
+```
+
+
+```{r}
+# bootstrap
+k <- 200
+Mu <- matrix(ncol=3,nrow=k)
+Sigma <- matrix(ncol=3,nrow=k)
+Gamma <- array(dim=c(3,3,k))
+Delta <- matrix(ncol=3,nrow=k)
+for(i in 1:k){
+  y <- normal.HMM.generate_sample(n,3,natural_params$mu,natural_params$sigma,natural_params$gamma,
+                                  natural_params$delta)
+
+  opt.hmm3.tmp <- nlminb(parvect,norm.HMM.mllk, x=y, m=3)
+  nat.par.tmp <- norm.HMM.pw2pn(m=3,c(opt.hmm3.tmp$par))
+  Mu[i, ]<- nat.par.tmp$mu
+  Sigma[i, ]<- nat.par.tmp$sigma
+  Gamma[ , ,i]<- nat.par.tmp$gamma
+  Delta[i, ]<- nat.par.tmp$delta
+}
+```
+
+```{r}
+# take list of values and take CI's from simulation to get uncertainties
+tab <- rbind(cbind(natural_params$mu,t(apply(Mu[1:k, ],2,
+                                      quantile,probs=c(0.025,0.975)))),
+             cbind(natural_params$sigma,t(apply(Sigma[1:k, ],2,
+                                         quantile,probs=c(0.025,0.975)))),
+             cbind(natural_params$gamma[1, ],
+                   t(apply(Gamma[1, ,1:k ],1,quantile,probs=c(0.025,0.975)))),
+             cbind(natural_params$gamma[2, ],
+                   t(apply(Gamma[2, ,1:k ],1,quantile,probs=c(0.025,0.975)))),
+             cbind(natural_params$gamma[3, ],
+                   t(apply(Gamma[3, ,1:k ],1,quantile,probs=c(0.025,0.975)))),
+             cbind(natural_params$delta,t(apply(Delta[1:k, ],2,
+                                         quantile,probs=c(0.025,0.975)))))
+rownames(tab) <- c("mean1","mean2","mean3",
+                   "sd1","sd2","sd3",
+                   "gamma11","gamma12","gamma13",
+                   "gamma21","gamma22","gamma33",
+                   "gamma31","gamma32","gamma33",
+                   "delta1","delta2","delta3")
+round(tab,digits=9)
+
+```
+
+
+### f) Discuss what would be needed in order to make short term (say 1-2 weeks) predictions.
+You need to know which state you are currently in. Then you need to know volatility of current state (degree of variance of trading price over time ($\sigma$)). Then you can predict which state you are most likely to be in.
