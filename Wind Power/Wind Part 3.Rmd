@@ -47,15 +47,6 @@ var(e);cor(e)
 ```
 
 ## 2. Fit e to a normal distribution
-
-Skal det her ikke flyttes? Har ikke så meget at gøre med at fitte en normalfordeing :)
-```{r}
-mod1 <- arima(mod0$residuals ,order=c(1,0,0),include.mean=F)
-par(mfrow=c(2,1))
-acf(mod1$residuals,lag.max = 50)
-pacf(mod1$residuals,lag.max=50)
-```
-
 ### Parameter estimates and wald confidence intervals
 For model where $\rho$ is not equal to zero.
 ```{r}
@@ -80,7 +71,6 @@ return(list("opt"=opt,"CI1"=CI1,"CI2"=CI2, "se"=se, "H"=H))
 mod2<-normal.function(e)
 mod2
 ```
-
 
 
 ### A contour plot of the likelihood
@@ -217,16 +207,16 @@ nll.ar1 <- function(pars,e){
 
 pars <- c(2,0.2)
 #opt.ar1 <- nlminb(pars,nll.ar1,e=e,lower=c(-Inf,-Inf),upper=c(Inf,Inf))
-opt.ar1 <- nlminb(pars,nll.ar1,e=e,lower=c(0,-Inf),upper=c(Inf,Inf))
-(opt.ar1)
-
+opt.ar1.full <- nlminb(pars,nll.ar1,e=e,lower=c(0,-Inf),upper=c(Inf,Inf))
+opt.ar1.full
 ```
 
 ### 6. Estimate the parameters of the linear model (2) and the parameters of the AR(1) model simultanious, and compare the likelihood of the linear model and the combined model.
 
 ```{r}
 
-X=cbind(rep(1,length(data$ws30)),data$ws30,data$ws30^2, cos(data$wd30))
+e <- cbind(mod0$residuals[1:length(mod0$residuals)-1],mod0$residuals[2:length(mod0$residuals)])
+#e <- residuals(mod0)
 nll.ar1.full <- function(pars,y,X){
   n <- length(y)
   y.hat <- X%*%pars[1:dim(X)[2]] 
@@ -235,20 +225,38 @@ nll.ar1.full <- function(pars,y,X){
   sigma <- exp(pars[1])
   rho <- (exp(2*pars[2])-1)/(1+exp(2*pars[2]))
   sigma0 <- sigma / (1-rho^2)
-  - dnorm(e[1], sd = sqrt(sigma0), log = TRUE) - sum(dnorm(e[-1]), mean = rho*e[-n], sd=sqrt(sigma), log = TRUE)
+  - dnorm(e[1], sd = sqrt(sigma0), log = TRUE) - sum(dnorm(e[-1], mean = rho*e[-n], sd=sqrt(sigma), log = TRUE))
 }
 
-pars <- c(0.01,0.01,0.01,0.01,0.01,0.01)
+params <- c(coef(mod0),opt.ar1.full$par)
 
-(opt.ar1.full <- nlminb(c(log(pars[1]),pars[2],pars[3],pars[4]), nll.ar1.full, X=X, y=data$pow.obs.norm,lower = c(-Inf,-Inf,-Inf,-Inf), upper=c(Inf,Inf,Inf,Inf)))
+
+X <-model.matrix(mod0)
+
+(opt <- nlminb(c(params)*0, nll.ar1.full, y=trans1(opt.lambda.trans1$minimum,data$pow.obs.norm), X=X))
 
 ```
 
 ```{r}
-X=cbind(rep(1,length(data$ws30)),data$ws30,data$ws30^2, cos(data$wd30))
-dim(X)
+rbind(coef(mod0), opt$par[1:4])
 ```
 
+Coeffcienterne i den lineære model ændre sig ikke særlig meget, derfor er antagelsen om at residualerne følger en AR(1) passer.
+
+### 7. Discuss the effect of including the AR(1)-term for short and long term preddictions. 
+
+```{r}
+acf(mod0$residuals)
+```
+```{r}
+error=rep(NA, (n-1))
+for( i in 1:(n-1)){
+  y = e[i,2]*opt.ar1.full$par[2]+rnorm(1, mean=0, sd=opt.ar1.full$par[2])
+  error[i]= e[i,1]-y
+}
+
+acf(error)
+```
 
 
 
