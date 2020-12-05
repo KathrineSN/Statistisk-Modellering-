@@ -166,7 +166,7 @@ The difference between the calculated information matrix and the algebraric form
 
 ```{r}
 
-mvt <- 
+
 ## Plot profile likelihood
 rho <- seq(0,0.999, length=200)
 ## Profile likelihood for rho
@@ -175,22 +175,24 @@ lp.rho <- function(rho1, dat){
   #
   
   # Define likelihood function:
-  Normal.likelihood = function(params,dat){ -sum(dmvnorm(dat, mean=c(0,0),sigma=params[1]*matrix(c(params[2],0,0,params[2]), nrow=2),log=TRUE))}
+  Normal.likelihood = function(params,dat){ -sum(dmvnorm(dat, mean=c(0,0),sigma=params[1]*matrix(c(1,params[2],params[2],1), nrow=2),log=TRUE))}
   
   fun.tmp <- function(sigma, rho1, dat){
-  Normal.likelihood(c(sigma,rho1),dat) 
+  -Normal.likelihood(c(sigma,rho1),dat) 
   }
   ## interval from plot
-  optmvt = optimize(fun.tmp,c(0.001,100),rho1=rho1,
+  optimize(fun.tmp,c(0.001,100),rho1=rho1,
            dat=dat,maximum=TRUE)$objective
 }
 
 
-Normal.likelihood = function(params,dat){ -sum(dmvnorm(dat, mean=c(0,0),sigma=params[1]*matrix(c(params[2],0,0,params[2]), nrow=2),log=TRUE))}
+Normal.likelihood = function(params,dat){ -sum(dmvnorm(dat, mean=c(0,0),sigma=params[1]*matrix(c(1,params[2],params[2],1), nrow=2),log=TRUE))}
 
 
 ```
 ```{r}
+
+optmvt = mod2$opt
 par(mfrow=c(1,2))
 llp <- sapply(rho, lp.rho, dat=e)
 
@@ -212,6 +214,7 @@ lines(rho, exp(ql-max(ql)),lty=2, col="red")
 
 
 ```
+
 
 
 
