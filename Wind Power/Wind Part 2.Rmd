@@ -189,6 +189,10 @@ y = trans1(opt.lambda.trans1$minimum,data$pow.obs.norm)
 fittrans1 = glm(y ~ 1 + x1 + I(x1^2) + cos(x2))
 predictRegression.windSpeed(x1.pred, x2, y, fittrans1, "Wind Speed")
 ```
+Sort i¨linje: regressionen
+Rød linje: confidensinterval for regressionen
+Blå linje: Interval hvori vi forventer værdier
+
 
 ```{r}
 x1.pred <- seq(0, 30, 0.1)

@@ -162,7 +162,7 @@ I[2,2]=(n*(1+rho^2))/(1-rho^2)^2
 The difference between the calculated information matrix and the algebraric form for the fisher information is very small. They are more or less the same.
 
 
-### 4. 
+### 4. Make a plot of the profile liklihood ofρand compare with the quadraticapproximation.  Further using the z-transform (see Exercise 3.23) for ρ and the log-transform for σ2, plot the profile likelihood for z and compare with the quadratic approximation, finally derive Fishers in-formation matrix for the transformed varaibles and compare with thenumerical Hessian
 
 ```{r}
 
@@ -215,8 +215,55 @@ lines(rho, exp(ql-max(ql)),lty=2, col="red")
 
 ```
 
+It can be concluded that the quadratic approximation is a good approximation of the likelihood
 
 
+```{r}
+sig1 = seq(10,20,length.out = 100)
+
+
+z = 1/2*log((1+rho)/(1-rho))
+log_s = log(sig1)
+llmvt.trans = function(theta,e){
+  # theta = log(sigma), z
+  sigma = exp(theta[1])
+  rho = (exp(2*theta[2]) - 1)/(exp(2*theta[2]) + 1)
+  Normal.likelihood(c(sigma,rho),e)
+}
+lp.z <- function(z, x){
+  #rho = (exp(2*z) - 1)/(exp(2*z) + 1)
+  fun.tmp <- function(log_s, z, x){
+    #sigma = exp(log_s)
+    -llmvt.trans(c(log_s,z),x)
+  }
+  ## interval from plot
+  optimize(fun.tmp,c(-1000,1000),z=z,
+           x=x,maximum=TRUE)$objective
+}
+opt.trans = nlminb(c(0,0),llmvt.trans,e=e)
+llp <- sapply(z,lp.z,x=e)
+par(mfrow=c(1,2))
+plot(rho,(llp-max(llp)),type="l", main = "Profile likelihood for z", xlab = expression(rho), ylab="Likelihood", ylim=c(-10,0))
+pll.trans = function(theta,e){-llmvt.trans(theta,e)}
+obs.info = hessian(pll.trans,opt.trans$par,e=e)
+ql = 0.5* obs.info[2,2] * (z-opt.trans$par[2])^2
+lines(rho, ql,lty=2, col="red")
+lines(optmvt$par[2]*c(1,1),c(0,-20),col="blue")
+
+plot(rho,exp(llp-max(llp)),type="l", main = "Profile likelihood for z", xlab = expression(rho), ylab="Likelihood")
+lines(optmvt$par[2]*c(1,1),c(0,1),col="blue")
+lines(range(z), exp(-c(1,1) * qchisq(0.95,df=1)/2), col=2,lty=2)
+lines(rho, exp(ql-max(ql)),lty=2, col="red")
+
+
+
+
+
+```
+
+Optimal likelihood findes for transformeringen
+Vi optimerer likelihood for de transformerede parametre.
+Det ses at det gør en minimal forskel at bruge de transformerede parametre.
 
 
 ### 5. Estimate the parameters of the AR(1) model (see Example 11.1), first conditioning on e1, then full estimation. Compare with the estimation above, is it as expected?
