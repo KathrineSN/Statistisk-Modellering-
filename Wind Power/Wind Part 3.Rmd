@@ -166,6 +166,51 @@ The difference between the calculated information matrix and the algebraric form
 
 ```{r}
 
+mvt <- 
+## Plot profile likelihood
+rho <- seq(0,0.999, length=200)
+## Profile likelihood for rho
+lp.rho <- function(rho1, dat){
+  
+  #
+  
+  # Define likelihood function:
+  Normal.likelihood = function(params,dat){ -sum(dmvnorm(dat, mean=c(0,0),sigma=params[1]*matrix(c(params[2],0,0,params[2]), nrow=2),log=TRUE))}
+  
+  fun.tmp <- function(sigma, rho1, dat){
+  Normal.likelihood(c(sigma,rho1),dat) 
+  }
+  ## interval from plot
+  optmvt = optimize(fun.tmp,c(0.001,100),rho1=rho1,
+           dat=dat,maximum=TRUE)$objective
+}
+
+
+Normal.likelihood = function(params,dat){ -sum(dmvnorm(dat, mean=c(0,0),sigma=params[1]*matrix(c(params[2],0,0,params[2]), nrow=2),log=TRUE))}
+
+
+```
+```{r}
+par(mfrow=c(1,2))
+llp <- sapply(rho, lp.rho, dat=e)
+
+plot(rho,llp-max(llp),type="l", main = "Profile log-likelihood for rho", xlab = expression(rho), ylab="Likelihood", ylim=c(-10,0),xlim = c(0,0.8))
+
+lines(optmvt$par[2]*c(1,1),c(0,-20),col="blue")
+pll = function(theta,dat){-Normal.likelihood(theta,dat)}
+obs.info = hessian(pll,optmvt$par,dat=e)
+ql = 0.5* obs.info[2,2] * (rho-optmvt$par[2])^2
+lines(rho, ql,lty=2, col="red")
+
+plot(rho,exp(llp-max(llp)),type="l", main = "Normalized profile likelihood for rho", xlab = expression(rho), ylab="Likelihood")
+lines(optmvt$par[2]*c(1,1),c(0,1),col="blue",ylim = c(0,1), xlim = c(0,0.8))
+lines(range(rho),
+      exp(-c(1,1) * qchisq(0.95,df=1)/2),
+      col=6,lty=2)
+lines(rho, exp(ql-max(ql)),lty=2, col="red")
+
+
+
 ```
 
 
