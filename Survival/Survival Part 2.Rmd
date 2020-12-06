@@ -42,7 +42,7 @@ summary(mod1)
 The odds ratio is defined as: 
 
 $$
-O R=\frac{D_{E} H_{N}}{D_{N} H_{E}}
+O R=\frac{D_{E} H_{N}}{D_{N} H_{E}} = 0.4858934
 $$
 
 $$
@@ -50,6 +50,16 @@ $$
 \hline & \text { Diseased } & \text { Healthy } \\
 \hline \text { Exposed } & D_{E} & H_{E} \\
 \text { Not exposed } & D_{N} & H_{N} \\
+\hline
+\end{array}
+$$
+
+
+$$
+\begin{array}{|r|cc|}
+\hline & \text { AIDS yes } & \text { AIDS no } \\
+\hline \text { AZT yes } & D_{E} & H_{E} \\
+\text { AZT no} & D_{N} & H_{N} \\
 \hline
 \end{array}
 $$
@@ -114,7 +124,7 @@ The null-hypothesis is the that theta is equal to 0.
 z=coef(mod1)[2]/summary(mod1)$coefficients[2,2]
 ```
 Based on Wald test statistics a p-value is calculated. 
-
+$$P(\chi^2_1>z^2)$$
 ```{r}
 2*pnorm(z)
 1-pchisq(z^2, df=1)
@@ -158,7 +168,7 @@ The null hypothesis is rejected meaning that the group treated with AZT is signi
 ```{r}
 #Load data
 data.time <- read.delim("actg320.txt",header = TRUE, sep = "", dec = ".")
-head(data.time,2) 
+head(data.time,5) 
 ```
 
 ### How many got AIDS in the two treament groups? 
@@ -192,7 +202,7 @@ conf.type = "log-log",data = data.time)
 ```{r}
 plot(Surv.Bytx, conf.int = TRUE, las = 1, xlab = "Time",ylab = "Estimated Survival Prob.", col=c(2,3), lwd = 1)
 
-legend("bottomleft", col=2:3, c("Not treated","Treated"), lwd=2)
+legend("bottomleft", col=2:3, c("Control treatment","New Treatment"), lwd=2)
 ```
 The functions differ towards the end. It is seen that the probability of surviving is higher when a patient is treated. 
 
@@ -201,7 +211,7 @@ The functions differ towards the end. It is seen that the probability of survivi
 ```{r}
 plot(Surv.Bytx, fun=function(x) { 1- x }, conf.int = TRUE,las = 1, xlab = "Time",
 ylab = "Estimated Failure Prob.", col=c(2,3))
-legend("topleft", col=c(2,3), c("Male","Female"))
+legend("topleft", col=c(2,3), c("Control treatment","New Treatment"),lwd = 2)
 ```
 The cumulative incidence function is best, since it is easier to see what is happening on this plot given than the incidence rate is fairly low.  
 
@@ -272,7 +282,7 @@ The survival time is increased 183% for every 50 cd4 cells/milliliter.
 data.time$z <- (log(data.time$time)-mod3$linear.predictors)/mod3$scale
 data.time$CS3 <- log(1+exp(data.time$z))
 surv3 <- survfit(Surv(CS3, event==1)~1 , data = data.time)
-plot(surv3$time, -log(surv3$surv))
+plot(surv3$time, -log(surv3$surv), xlab = "Time", ylab = "Cox-Snell Residuals")
 abline(a=0, b=1, lty=2)
 ```
 The fit looks okay. The models best in the early survival times. The longer time that passes, the worse it fits. 

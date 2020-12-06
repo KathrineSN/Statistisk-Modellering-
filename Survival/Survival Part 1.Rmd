@@ -279,6 +279,10 @@ $E[T]=e^{\beta_{0}+\beta_{1}}$
 
 If $\beta{1}$ is significantly different from zero, it indicates that there is a difference between the control group and the treament group, meaning that ATZ does make a difference in regards to getting AIDS. 
 
+$$
+\ell_{\text {}}\left(\beta_{0}, \beta_{1}\right)=\ell\left(\exp \left(\beta_{0}\right)\right)^{treatment-1}+\ell\left(\exp \left(\beta_{0}+\beta_{1}\right)\right)^{treatment}
+$$
+
 ```{r}
 # Implement negative log likelihood function
 
