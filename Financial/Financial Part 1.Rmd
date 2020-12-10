@@ -15,7 +15,7 @@ head(data,6)
 
 A scatter plot and a qq-plot of the data is made to asses if a normal model is appropriate.
 ```{r}
-plot(data$time,data$SLV)
+plot(data$time,data$SLV, type = 'l', xlab = 'Time', ylab = 'Weekly Return')
 qqnorm(data$SLV, pch = 1, frame = FALSE)
 qqline(data$SLV, col = "steelblue", lwd = 2)
 ```

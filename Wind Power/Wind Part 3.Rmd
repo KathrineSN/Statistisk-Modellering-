@@ -341,7 +341,7 @@ Coeffcienterne i den lineære model ændre sig ikke særlig meget, derfor er ant
 ### 7. Discuss the effect of including the AR(1)-term for short and long term preddictions. 
 
 ```{r}
-acf(mod0$residuals)
+acf(mod0$residuals, main = "Autocorrelation of linear model")
 ```
 ```{r}
 error=rep(NA, (n-1))
@@ -350,7 +350,7 @@ for( i in 1:(n-1)){
   error[i]= e[i,1]-y
 }
 
-acf(error)
+acf(error, main = "Autocorrelation of AR(1) model")
 ```
 
 

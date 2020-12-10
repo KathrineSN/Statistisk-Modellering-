@@ -519,12 +519,13 @@ lines(xfit, yfit, col="blue", lwd=2)
 ```{r}
 x <- circular(data$wd30)
 h<-hist(x, xlab="Wind Speed",
-   main="Von Mises distribution")
+main="Von Mises distribution")
 xfit<-seq(min(x),max(x),length=40)
 yfit<-dvonmises(xfit,Vonmieses.function(circular(data$wd30))$opt$par[1],Vonmieses.function(circular(data$wd30))$opt$par[2])
 yfit <- yfit*diff(h$mids[1:2])*length(x)
 lines(xfit, yfit, col="blue", lwd=2)
 ```
+
 
 ### For wind direction use vonmieses distribution - do the likelihood based interval use uniroot first week solution.
 
@@ -577,3 +578,50 @@ beta.function.rep(data$pow.obs.norm)
 $\mu$ is 0.272 and is with 95% certainty in the confidence interval [0.2437152, 0.3000847]
 
 # Project 2
+
+
+
+
+###EKSTRA PLOTS til Kat
+
+
+```{r}
+x <-data$pow.obs.norm
+h<-hist(x, xlab="Power Obs",main="Fitting Gamma distribution")
+xfit<-seq(min(x),max(x),length=40)
+yfit<-dgamma(xfit,gamma.function(data$pow.obs.norm)$opt$par[1],gamma.function(data$pow.obs.norm)$opt$par[2])
+yfit <- yfit*diff(h$mids[1:2])*length(x)
+lines(xfit, yfit, col="blue", lwd=2)
+```
+```{r}
+x <-data$pow.obs.norm
+h<-hist(x, xlab="Power Obs",main="Fitting Log-Normal distribution")
+xfit<-seq(min(x),max(x),length=40)
+yfit<-dlnorm(xfit,log.normal.function(data$pow.obs.norm)$opt$par[1],log.normal.function(data$pow.obs.norm)$opt$par[2])
+yfit <- yfit*diff(h$mids[1:2])*length(x)
+lines(xfit, yfit, col="blue", lwd=2)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

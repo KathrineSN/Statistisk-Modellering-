@@ -39,7 +39,7 @@ AIC(mod2)
 ```
 
 ```{r}
-qqPlot(mod2$residuals)
+qqPlot(mod2$residuals, main = "qq-plot gamma regression")
 ```
 ```{r}
 library(betareg)
@@ -49,7 +49,7 @@ AIC(mod8)
 ```
 
 ```{r}
-qqPlot(mod8$residuals)
+qqPlot(mod8$residuals, main = "qq-plot beta regression")
 ```
 
 
@@ -154,8 +154,8 @@ Wind speed påvirker production, når den has sin største værdi, ergo må powe
 
 
 ```{r}
-v=0:100
-plot(v, 1.63430162*v+(-0.03013925)*v^2, type="l", ylim=c(-10,25))
+ws=0:100
+plot(ws, 1.63430162*ws+(-0.03013925)*ws^2, type="l", ylim=c(-10,25))
 abline(h=0)
 ```
 
@@ -195,7 +195,7 @@ Blå linje: Interval hvori vi forventer værdier
 
 
 ```{r}
-x1.pred <- seq(0, 30, 0.1)
+x1.pred <- seq(0, 2*3.1415, 0.1)
 x2 = data$ws30
 x1 =data$wd30
 y = trans1(opt.lambda.trans1$minimum,data$pow.obs.norm)
@@ -204,7 +204,7 @@ predictRegression.windSpeed(x1.pred, x2, y, fittrans1,"Wind Direction")
 ```
 
 ```{r}
-plot(trans1(opt.lambda.trans1$minimum,data$pow.obs.norm))
+plot(trans1(opt.lambda.trans1$minimum,data$pow.obs.norm), ylab = "Transformed, Normalized Power Production")
 points(mod6$fitted.values, pch=16, col="Red")   
 
 #lines(interval_l, col)

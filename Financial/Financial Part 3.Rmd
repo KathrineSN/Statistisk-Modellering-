@@ -113,7 +113,7 @@ mix.dist <- function(x ,npars){
 
 ## Plot
 par(mfrow=c(1,1))
-hist(data$SLV, prob=TRUE, nclass=60)
+hist(data$SLV, prob=TRUE, nclass=60, main = '2 component model of Weekly Return', xlab = 'Weekly Return')
 lines(seq(min(data$SLV), max(data$SLV), 0.001), sapply(seq(min(data$SLV), max(data$SLV), 0.001), mix.dist, npars=npars2), col=2)
 lines(seq(min(data$SLV), max(data$SLV), 0.001), npars2$delta[1]*dnorm(seq(min(data$SLV), max(data$SLV), 0.001), npars2$mu[1], npars2$sigma[1]), col=3)
 lines(seq(min(data$SLV), max(data$SLV), 0.001), npars2$delta[2]*dnorm(seq(min(data$SLV), max(data$SLV), 0.001), npars2$mu[2], npars2$sigma[2]), col=3)
@@ -151,7 +151,7 @@ mix.dist <- function(x ,npars){
 
 ## Plot
 par(mfrow=c(1,1))
-hist(data$SLV, prob=TRUE, nclass=60)
+hist(data$SLV, prob=TRUE, nclass=60, main = '3 component model of Weekly Return', xlab = 'Weekly Return')
 lines(seq(min(data$SLV), max(data$SLV), 0.001), sapply(seq(min(data$SLV), max(data$SLV), 0.001), mix.dist, npars=npars3), col=2)
 lines(seq(min(data$SLV), max(data$SLV), 0.001), npars3$delta[1]*dnorm(seq(min(data$SLV), max(data$SLV), 0.001), npars3$mu[1], npars3$sigma[1]), col=3)
 lines(seq(min(data$SLV), max(data$SLV), 0.001), npars3$delta[2]*dnorm(seq(min(data$SLV), max(data$SLV), 0.001), npars3$mu[2], npars3$sigma[2]), col=3)
@@ -179,14 +179,27 @@ opt2
 ```
 
 ```{r}
+npars2$sigma[2]
+npars2$delta[1]
+```
+
+
+```{r}
 library(numDeriv)
 H <- hessian(nll, opt2$par)
 se<- sqrt(diag(solve(H)))
 (CI1 <- opt2$par[1]+c(-1,1)*se[1]*qnorm(0.975))
 (CI2<- opt2$par[2]+c(-1,1)*se[2]*qnorm(0.975))
-(CI3 <- opt2$par[3]+c(-1,1)*se[3]*qnorm(0.975))
-(CI4<- opt2$par[4]+c(-1,1)*se[4]*qnorm(0.975))
-(CI5<- opt2$par[5]+c(-1,1)*se[5]*qnorm(0.975))
+(CI2<- npars2$sigma[1]+c(-1,1)*se[2]*qnorm(0.975))
+(CI2<- npars2$sigma[2]+c(-1,1)*se[2]*qnorm(0.975))
+(CI2<- npars2$delta[1]+c(-1,1)*se[2]*qnorm(0.975))
+(CI2<- npars2$delta[2]+c(-1,1)*se[2]*qnorm(0.975))
+
+
+#(CI3 <- opt2$par[3]+c(-1,1)*se[3]*qnorm(0.975))
+#(CI4<- opt2$par[4]+c(-1,1)*se[4]*qnorm(0.975))
+#(CI5<- opt2$par[5]+c(-1,1)*se[5]*qnorm(0.975))
+
 ```
 The mean value is centered around zero. Since, sigma is small, little variance in the data is expected. Better interpretation??
 
@@ -223,7 +236,7 @@ sigma1 <- seq(0.01, 0.1, length=100)
 pnll <- sapply(sigma1, lp.sigma1, m = m, x = data$SLV, pars0 = theta)
 
 ## Plot the profile likelihood
-plot(sigma1,exp(-(pnll-min(pnll))),type="l", ylim=c(0,1))
+plot(sigma1,exp(-(pnll-min(pnll))),type="l", ylim=c(0,1), xlab = 'Standard deviation', ylab = 'Profile likelihood')
 lines(range(sigma1),
       c(1,1)*exp(-qchisq(0.95,df=1)/2),col=2,lty=2,lwd=2)
 rug(npars2$sigma,col=2,lwd=2)
@@ -308,7 +321,7 @@ sigma1 <- seq(0.01, 0.05, length=100)
 pnll <- sapply(sigma1, re.lp.sigma1, m = m, x = data$SLV, pars0 = theta)
 
 ## Plot the profile likelihood
-plot(sigma1,exp(-(pnll-min(pnll))),type="l", ylim=c(0,1))
+plot(sigma1,exp(-(pnll-min(pnll))),type="l", ylim=c(0,1), xlab = 'Standard deviation', ylab = 'Profile likelihood')
 lines(range(sigma1),
       c(1,1)*exp(-qchisq(0.95,df=1)/2),col=2,lty=2,lwd=2)
 rug(npars2$sigma[1],col=2,lwd=2)
@@ -454,7 +467,7 @@ mix.dist <- function(x ,npars){
 
 ## Plot
 par(mfrow=c(1,1))
-hist(data$SLV, prob=TRUE, nclass=60, main="Long Term Distribution")
+hist(data$SLV, prob=TRUE, nclass=60, main="Long Term Distribution", xlab = "Weekly Return")
 lines(seq(min(data$SLV), max(data$SLV), 0.001), sapply(seq(min(data$SLV), max(data$SLV), 0.001), mix.dist, npars=natural_params), col=2)
 lines(seq(min(data$SLV), max(data$SLV), 0.001), natural_params$delta[1]*dnorm(seq(min(data$SLV), max(data$SLV), 0.001), natural_params$mu[1], natural_params$sigma[1]), col=3)
 
@@ -475,18 +488,20 @@ mix.dist.new <- function(x ,delta,npars){
   sum(delta * dnorm(x, mean = npars$mu, sd = npars$sigma))
 }
 
-
+#par(mfrow=c(1,3))
+op <- par(cex = 1.3)
 for (j in 1:3){
   #hist(data$SLV, prob=TRUE, nclass=60, main="Long Term Distribution")
   delta <- natural_params$gamma[j,] # Hver enkelt r?kke er lig delta
-plot(seq(min(data$SLV), max(data$SLV), 0.001), sapply(seq(min(data$SLV), max(data$SLV), 0.001), mix.dist.new, delta=delta, npars=natural_params),ylab = "Likelihood",xlab="Weekly return", type="l", main=paste(c("One Step Distribution - State",j), collapse = " "))
+plot(seq(min(data$SLV), max(data$SLV), 0.001), sapply(seq(min(data$SLV), max(data$SLV), 0.001), mix.dist.new, delta=delta, npars=natural_params),ylab = "Likelihood",xlab="Weekly return", 
+     type="l", main=paste(c("One Step Distribution - State",j), collapse = " "))
    ## Samlede distribution
   
   for (i in 1:3){
    npars <- list("mu"=natural_params$mu[i],"sigma"=natural_params$sigma[i])
     lines(seq(min(data$SLV), max(data$SLV), 0.001), sapply(seq(min(data$SLV), max(data$SLV), 0.001), mix.dist.new, delta=delta[i], npars=npars),col=1+i)}
 
-legend("topleft",  c("Total Distribution",'Distribution of State 1','Distribution of State 2','Distribution of State 3'), col=c("black", 2,3,4), lty=1, cex=0.7)
+legend("topright",  c("Total Distribution",'Distribution of State 1','Distribution of State 2','Distribution of State 3'), col=c("black", 2,3,4), lty=1, cex=0.7)
   }
 ```
 
