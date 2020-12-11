@@ -155,8 +155,9 @@ Wind speed påvirker production, når den has sin største værdi, ergo må powe
 
 ```{r}
 ws=0:100
-plot(ws, 1.63430162*ws+(-0.03013925)*ws^2, type="l", ylim=c(-10,25))
+plot(ws, 1.63430162*ws+(-0.03013925)*ws^2, type="l", ylim=c(-10,25), ylab = "Contribution from wind speed to power production")
 abline(h=0)
+abline(v=27.11, col = 'red', lty = 2)
 ```
 
 
