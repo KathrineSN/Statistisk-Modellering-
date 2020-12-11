@@ -108,6 +108,16 @@ t=x+y
 
 (pchisq(chi.squared.test, df=1, lower.tail=FALSE))
 ```
+```{r}
+(x)
+(y)
+(m)
+(n)
+(N)
+(t)
+```
+
+
 With a p-value of 0.008816159 we have strong evidence against the null hypothesis meaning that the two groups do not follow the same distribution.
 
 The null hypothesis is $H_0: \theta=0$. Since $\theta$ is significantly different from zero, the null-hypothesis is rejected and it is concluded that the groups are significantly different from each other. This means that there is a difference in if a patient receives treament with AZT or not. 
