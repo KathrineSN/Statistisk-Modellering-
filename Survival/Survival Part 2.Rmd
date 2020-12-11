@@ -260,6 +260,8 @@ The loglogistic model is best because it has the lowest AIC score.
 
 ```{r}
 
+(0.20259+c(-1,1)*qnorm(0.975)*0.09558)
+
 confint(mod3)
 
 ```
@@ -296,11 +298,14 @@ t <- seq(xrange[1],xrange[2],length=100)
 #LOG LOGISTIC
 coef3 <- mod3$coefficients
 
-z31 <- (log(t)-(coef3[1]+coef3[2]+coef3[3]))/mod3$scale
-z30 <- (log(t)-(coef3[1]+coef3[2]))/mod3$scale
+z31 <- (log(t)-(coef3[1]+coef3[2]*50+coef3[3]))/mod3$scale
+z30 <- (log(t)-(coef3[1]+coef3[2]*50))/mod3$scale
+z31_cd100 <- (log(t)-(coef3[1]+coef3[2]*100+coef3[3]))/mod3$scale
+z30_cd100 <- (log(t)-(coef3[1]+coef3[2]*100))/mod3$scale
 S31 <- (1+exp(z31))^-1
 S30 <- (1+exp(z30))^-1
-
+S31_cd100 <- (1+exp(z31_cd100))^-1
+S30_cd100 <- (1+exp(z30_cd100))^-1
 
 # get the range for the x and y axis
 xrange <- range(data.time$time)
@@ -313,7 +318,9 @@ ylab="Probability of survival (cd4=1)",las=1)
 #PLOT THE SURVIVAL FUNCTIONS
 lines(t, S31, type="l", col=2, lty=1, lwd=2)
 lines(t, S30, type="l", col=3, lty=1, lwd=2)
-legend('topright',lwd=2,col=c(2,3),legend=c('LL with tx', 'LL without tx'))
+lines(t, S31_cd100, type="l", col=4, lty=2, lwd=2)
+lines(t, S30_cd100, type="l", col=5, lty=2, lwd=2)
+legend('bottomleft',lwd=2,col=c(2,3,4,5),legend=c('LL with new treatment (cd4 50)', 'LL with control treatment (cd4 50)', 'LL with new treatment (cd4 100)', 'LL with control treatment (cd4 100)'))
 
 ```
 It is seen that patients in general have higher probability of surviving if they are treated.  
