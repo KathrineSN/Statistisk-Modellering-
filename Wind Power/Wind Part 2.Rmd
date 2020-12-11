@@ -8,7 +8,7 @@ The data is read, and the first few lines of the code is shown.
 ```{r}
 data <- read.delim("tuno.txt",header = TRUE, sep = " ", dec = ".")
 data$pow.obs.norm<-(data$pow.obs)/5000
-head(data,6)
+head(data,100)
 ```
 
 
@@ -173,7 +173,7 @@ predictRegression.windSpeed <- function(x1.pred, x2, y, modelRegression, name){
       intervalPred <- predict.lm(modelRegression, newdata = dataFramePredict, interval = "pred", level = 0.95)
       intervalConf <- predict.lm(modelRegression, newdata = dataFramePredict, interval = "conf", level = 0.95)
      # plot
-      plot(dataFramePredict$x1, valuePred$fit, pch = 20, ylim = c(min(y, intervalPred), max(y, intervalPred)), xlim = c(min(x1, dataFramePredict$x1), max(x1, dataFramePredict$x1)), xlab = name, ylab = 'Transformed, Normalized Power Production')
+      plot(dataFramePredict$x1, valuePred$fit, pch = 20, ylim = c(min(y, intervalPred), max(y, intervalPred)), xlim = c(min(x1, dataFramePredict$x1), max(x1, dataFramePredict$x1)), xlab = name, ylab = 'Transformed, Normalized Power Production (kW)')
       matlines(dataFramePredict$x1, intervalPred, lty = c(1, 2, 2), col = c("black", "blue", "blue"), lwd = 2)
       points(x1, y)  # Transformed observations
       lines(dataFramePredict$x1, intervalConf[, 2], lty = 3, col = "red", lwd = 2)
@@ -188,7 +188,7 @@ x1 = data$ws30
 x2 =data$wd30
 y = trans1(opt.lambda.trans1$minimum,data$pow.obs.norm)
 fittrans1 = glm(y ~ 1 + x1 + I(x1^2) + cos(x2))
-predictRegression.windSpeed(x1.pred, x2, y, fittrans1, "Wind Speed")
+predictRegression.windSpeed(x1.pred, x2, y, fittrans1, "Wind Speed (m/s)")
 ```
 Sort i¨linje: regressionen
 Rød linje: confidensinterval for regressionen
@@ -201,7 +201,7 @@ x2 = data$ws30
 x1 =data$wd30
 y = trans1(opt.lambda.trans1$minimum,data$pow.obs.norm)
 fittrans1 = glm(y ~ 1 + x2 + I(x2^2) + cos(x1))
-predictRegression.windSpeed(x1.pred, x2, y, fittrans1,"Wind Direction")
+predictRegression.windSpeed(x1.pred, x2, y, fittrans1,"Wind Direction (radians)")
 ```
 
 ```{r}

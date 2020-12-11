@@ -230,7 +230,7 @@ wpars <- norm.mix.pn2pw(m, mu, sigma, delta)
 theta0 <- c(wpars$mu, wpars$t.sigma, wpars$t.delta)
 theta <- c(theta0[1:m],theta0[(m+2):(3*m-1)])
 
-sigma1 <- seq(0.01, 0.1, length=100)
+sigma1 <- seq(0.01, 0.20, length=100)
 
 ## profile likeihood
 pnll <- sapply(sigma1, lp.sigma1, m = m, x = data$SLV, pars0 = theta)
