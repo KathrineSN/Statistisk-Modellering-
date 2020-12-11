@@ -201,6 +201,27 @@ opt <- nlminb(c(0, 0), fun2)
 ```
 Again it is seen that the two groups are different, as b1 is statistically different from zero.
 
+
+```{r}
+# Confidence interval for beta 1
+
+(that+c(-1,1)*qnorm(0.975)*se)
+
+
+#Making a confidence interval
+
+HE <- hessian(fun2,opt$par)
+se <- sqrt(diag(solve(HE)))
+
+#Confidence interval for b1
+(opt$par[1]+c(-1,1)*qnorm(0.975)*se[1])
+
+
+```
+
+$$ [-1.2680595; -0.1754725] $$
+
+
 # Analysis of the survival time data
 
 ### Read the data act320.txt into R. 
@@ -239,7 +260,7 @@ The rate parameter and the likelihood is calculated.
 ```{r}
 # Likelihood function for all patients with treat and without treatment. (event=1 is treatment). (pxep is used to define the probability after a certain point in time)
 exp.likelihood=function(rate){
-  -sum(dexp(x=data.time$time[data.time$event==1], rate=rate, log=TRUE))- sum(pexp(q=data.time$time[data.time$event==0], lower.tail = FALSE, rate=rate, log=TRUE))
+  -sum(dexp(x=data.time$time[data.time$event==1], rate=rate, log=TRUE)) - sum(pexp(q=data.time$time[data.time$event==0], lower.tail = FALSE, rate=rate, log=TRUE))
   }
 
 
