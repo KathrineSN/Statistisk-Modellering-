@@ -142,6 +142,7 @@ The p-value is extremely low, meaning that the null hypothesis is rejected. Ther
 ```{r}
 # parameter delt med se
 z=mod2$opt$par[2]/mod2$se[2]
+(z)
 2*(1-pnorm(z))
 ```
 The p-value is extremely low, meaning that the null hypothesis is rejected. There is a difference between having the $\rho$ parameter and not.
@@ -163,7 +164,7 @@ I[2,2]=(n*(1+rho^2))/(1-rho^2)^2
 (H-I)/H
 
 ```
-The difference between the calculated information matrix and the algebraric form for the fisher information is very small. They are more or less the same.
+The difference between the calculated information matrix and the algebraic form for the fisher information is very small. They are more or less the same.
 
 
 ### 4. Make a plot of the profile liklihood ofρand compare with the quadraticapproximation.  Further using the z-transform (see Exercise 3.23) for ρ and the log-transform for σ2, plot the profile likelihood for z and compare with the quadratic approximation, finally derive Fishers in-formation matrix for the transformed varaibles and compare with thenumerical Hessian

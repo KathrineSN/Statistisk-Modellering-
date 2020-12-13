@@ -50,7 +50,7 @@ normal.function(data$SLV)
 
 ```{r}
 x=data$SLV
-h<-hist(x, xlab="SLV",
+h<-hist(x, xlab="SLV", breaks = 30,
    main="Histogram with Normal Curve")
 xfit<-seq(min(x),max(x),length=40)
 yfit<-dnorm(xfit,normal.function(data$SLV)$opt$par[1],normal.function(data$SLV)$opt$par[2])
@@ -91,7 +91,7 @@ t.function(data$SLV)
 
 ```{r}
 x=data$SLV
-h<-hist(x, xlab="SLV",
+h<-hist(x, xlab="SLV", breaks = 30,
    main="Histogram with t-curve Curve")
 xfit<-seq(min(x),max(x),length=40)
 yfit<-dt.scaled(xfit, df=t.function(data$SLV)$opt$par[1],mean = t.function(data$SLV)$opt$par[2],sd =t.function(data$SLV)$opt$par[3])

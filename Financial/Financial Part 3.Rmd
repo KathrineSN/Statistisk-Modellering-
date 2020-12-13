@@ -236,7 +236,7 @@ sigma1 <- seq(0.01, 0.20, length=100)
 pnll <- sapply(sigma1, lp.sigma1, m = m, x = data$SLV, pars0 = theta)
 
 ## Plot the profile likelihood
-plot(sigma1,exp(-(pnll-min(pnll))),type="l", ylim=c(0,1), xlab = 'Standard deviation', ylab = 'Profile likelihood')
+plot(sigma1,exp(-(pnll-min(pnll))),type="l", ylim=c(0,1), xlim = c(0,0.2), xlab = 'Standard deviation', ylab = 'Profile likelihood')
 lines(range(sigma1),
       c(1,1)*exp(-qchisq(0.95,df=1)/2),col=2,lty=2,lwd=2)
 rug(npars2$sigma,col=2,lwd=2)
@@ -315,15 +315,15 @@ wpars <- re.norm.mix.pn2pw(m, mu, sigma, delta)
 theta0 <- c(wpars$mu, wpars$t.sigma, wpars$t.delta)
 theta <- c(theta0[1:m],theta0[(m+2):(3*m-1)])
 
-sigma1 <- seq(0.01, 0.05, length=100)
+sigma1 <- seq(0.01, 0.20, length=100)
 
 ## profile likeihood
 pnll <- sapply(sigma1, re.lp.sigma1, m = m, x = data$SLV, pars0 = theta)
 
 ## Plot the profile likelihood
-plot(sigma1,exp(-(pnll-min(pnll))),type="l", ylim=c(0,1), xlab = 'Standard deviation', ylab = 'Profile likelihood')
+plot(sigma1,exp(-(pnll-min(pnll))),type="l", ylim=c(0,1), xlim = c(0,0.2), xlab = 'Standard deviation', ylab = 'Profile likelihood')
 lines(range(sigma1),
-      c(1,1)*exp(-qchisq(0.95,df=1)/2),col=2,lty=2,lwd=2)
+      c(1,1)*exp(-qchisq(0.95,df=1)/2), ylim=c(0,1), xlim = c(0,0.2), col=2,lty=2,lwd=2)
 rug(npars2$sigma[1],col=2,lwd=2)
 
 
