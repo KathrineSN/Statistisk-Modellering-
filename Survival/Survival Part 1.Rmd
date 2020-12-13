@@ -82,9 +82,9 @@ se_AZT_no <- 1/sqrt(I_AZT_no)
 
 
 #confidence intervallet
-(p+c(-1,1)*qnorm(0.975)*(p*(1-p))/sqrt(n))
-(p1+c(-1,1)*qnorm(0.975)*(p1*(1-p1))/sqrt(n1))
-(p2+c(-1,1)*qnorm(0.975)*(p2*(1-p2))/sqrt(n2))
+(p+c(-1,1)*qnorm(0.975)*sqrt((p*(1-p)/n)))
+(p1+c(-1,1)*qnorm(0.975)*sqrt((p1*(1-p1)/n1)))
+(p2+c(-1,1)*qnorm(0.975)*sqrt((p2*(1-p2)/n2)))
 
 #(p+c(-1,1)*qnorm(0.975)*se/sqrt(n))
 #(p1+c(-1,1)*qnorm(0.975)*se_AZT_yes/sqrt(n1))

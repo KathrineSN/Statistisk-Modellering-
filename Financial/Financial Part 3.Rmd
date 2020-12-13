@@ -494,12 +494,12 @@ for (j in 1:3){
   #hist(data$SLV, prob=TRUE, nclass=60, main="Long Term Distribution")
   delta <- natural_params$gamma[j,] # Hver enkelt r?kke er lig delta
 plot(seq(min(data$SLV), max(data$SLV), 0.001), sapply(seq(min(data$SLV), max(data$SLV), 0.001), mix.dist.new, delta=delta, npars=natural_params),ylab = "Likelihood",xlab="Weekly return", 
-     type="l", main=paste(c("One Step Distribution - State",j), collapse = " "))
+     type="l", lwd = 4, main=paste(c("One Step Distribution - State",j), collapse = " "))
    ## Samlede distribution
   
   for (i in 1:3){
    npars <- list("mu"=natural_params$mu[i],"sigma"=natural_params$sigma[i])
-    lines(seq(min(data$SLV), max(data$SLV), 0.001), sapply(seq(min(data$SLV), max(data$SLV), 0.001), mix.dist.new, delta=delta[i], npars=npars),col=1+i)}
+    lines(seq(min(data$SLV), max(data$SLV), 0.001), sapply(seq(min(data$SLV), max(data$SLV), 0.001), mix.dist.new, delta=delta[i], npars=npars),col=1+i, lwd = 4)}
 
 legend("topright",  c("Total Distribution",'Distribution of State 1','Distribution of State 2','Distribution of State 3'), col=c("black", 2,3,4), lty=1, cex=0.7)
   }
